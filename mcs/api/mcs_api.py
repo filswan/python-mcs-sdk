@@ -1,6 +1,6 @@
 from mcs import ApiClient
 from mcs.common.constants import *
-
+import json
 
 class McsAPI(ApiClient):
 
@@ -61,4 +61,24 @@ class McsAPI(ApiClient):
             params['source_file_upload_id'] = source_file_upload_id
         return self._request_with_params(GET, DEAL_DETAIL, params)
 
+    def upload_nft_metadata(self, address, file_name, image_url, tx_hash, size):
+        params = {}
+        if address:
+            params['duration'] = '525'
+            params['file_type'] = '1'
+            params['wallet_address'] = address
+        file_url = {}
+        if image_url:
+            file_url['name'] = file_name
+            file_url['image'] = image_url
+            file_url['tx_hash'] = tx_hash
+            file_url['attributes'] = [
+                {
+                    "trait_type": "Size",
+                    "value": size
+                }
+            ]
+            file_url['external_url'] = image_url
+        files = {"fileName": "test", "file": json.dumps(file_url)}
+        return self._request_with_params(POST, UPLOAD_FILE, params, files)
 
