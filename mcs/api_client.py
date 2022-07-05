@@ -11,7 +11,7 @@ class ApiClient(object):
             request_path = request_path + utils.parse_params_to_str(params)
         url = c.MCS_API + c.REST_API_VERSION + request_path
 
-        body = json.dumps(params) if method == c.POST else ""
+        body = params if method == c.POST else ""
         header = {}
         print("url:", url)
         print("body:", body)
@@ -37,5 +37,5 @@ class ApiClient(object):
     def _request_without_params(self, method, request_path):
         return self._request(method, request_path, {})
 
-    def _request_with_params(self, method, request_path, params):
-        return self._request(method, request_path, params)
+    def _request_with_params(self, method, request_path, params, files):
+        return self._request(method, request_path, params, files)
