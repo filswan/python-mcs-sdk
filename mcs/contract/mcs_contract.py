@@ -26,6 +26,7 @@ class ContractAPI(ApiClient):
         })
         signed_tx = self.w3.eth.account.signTransaction(tx, private_key)
         tx_hash = self.w3.eth.sendRawTransaction(signed_tx.rawTransaction)
+        self.w3.eth.wait_for_transaction_receipt(tx_hash, timeout=CONTRACT_TIME_OUT)
         return self.w3.toHex(tx_hash)
 
     def upload_file_pay(self, wallet_address, private_key, file_size, w_cid, rate, params):
@@ -49,6 +50,7 @@ class ContractAPI(ApiClient):
         tx = swan_payment.functions.lockTokenPayment(lock_obj).buildTransaction(options_obj)
         signed_tx = self.w3.eth.account.signTransaction(tx, private_key)
         tx_hash = self.w3.eth.sendRawTransaction(signed_tx.rawTransaction)
+        self.w3.eth.wait_for_transaction_receipt(tx_hash, timeout=CONTRACT_TIME_OUT)
         return self.w3.toHex(tx_hash)
 
     def mint_nft(self, wallet_address, private_key, nft_meta_uri):
@@ -63,4 +65,5 @@ class ContractAPI(ApiClient):
         signed_tx = self.w3.eth.account.signTransaction(tx, private_key)
         tx_hash = self.w3.eth.sendRawTransaction(signed_tx.rawTransaction)
         token_id = mint_contract.functions.totalSupply().call()
+        self.w3.eth.wait_for_transaction_receipt(tx_hash, timeout=CONTRACT_TIME_OUT)
         return self.w3.toHex(tx_hash), token_id

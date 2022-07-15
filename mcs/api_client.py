@@ -11,19 +11,20 @@ class ApiClient(object):
             request_path = request_path + utils.parse_params_to_str(params)
         url = c.MCS_API + c.REST_API_VERSION + request_path
 
-        body = params if method == c.POST else ""
         header = {}
         print("url:", url)
-        print("body:", body)
-
         # send request
         response = None
         if method == c.GET:
             response = requests.get(url, headers=header)
         elif method == c.POST:
             if files:
+                body = params
+                print("body:", body)
                 response = requests.post(url, data=body, headers=header, files=files)
             else:
+                body = json.dumps(params) if method == c.POST else ""
+                print("body:", body)
                 response = requests.post(url, data=body, headers=header)
         elif method == c.DELETE:
             response = requests.delete(url, headers=header)

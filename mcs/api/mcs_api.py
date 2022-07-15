@@ -2,6 +2,7 @@ from mcs import ApiClient
 from mcs.common.constants import *
 import json
 
+
 class McsAPI(ApiClient):
 
     def get_params(self):
@@ -18,27 +19,22 @@ class McsAPI(ApiClient):
             params['wallet_address'] = wallet_address
         if wallet_address:
             params['source_file_upload_id'] = source_file_upload_id
-        return self._request_with_params(GET, PAYMENT_INFO, params)
+        return self._request_with_params(GET, PAYMENT_INFO, params, None)
 
     def get_user_tasks_deals(self, wallet_address):
         params = {}
         if wallet_address:
             params['wallet_address'] = wallet_address
-        return self._request_with_params(GET, TASKS_DEALS, params)
+        return self._request_with_params(GET, TASKS_DEALS, params, None)
 
     def get_mint_info(self, source_file_upload_id, payload_cid, tx_hash, token_id, mint_address):
         params = {}
-        if source_file_upload_id:
-            params['source_file_upload_id'] = source_file_upload_id
-        if payload_cid:
-            params['payload_cid'] = payload_cid
-        if tx_hash:
-            params['tx_hash'] = tx_hash
-        if token_id:
-            params['token_id'] = token_id
-        if mint_address:
-            params['mint_address'] = mint_address
-        return self._request_with_params(POST, MINT_INFO, params)
+        params['source_file_upload_id'] = source_file_upload_id
+        params['payload_cid'] = payload_cid
+        params['tx_hash'] = tx_hash
+        params['token_id'] = str(token_id)
+        params['mint_address'] = mint_address
+        return self._request_with_params(POST, MINT_INFO, params, None)
 
     def upload_file(self, wallet_address, file_path):
         params = {}
@@ -59,7 +55,7 @@ class McsAPI(ApiClient):
             params['wallet_address'] = wallet_address
         if source_file_upload_id:
             params['source_file_upload_id'] = source_file_upload_id
-        return self._request_with_params(GET, DEAL_DETAIL, params)
+        return self._request_with_params(GET, DEAL_DETAIL, params, None)
 
     def upload_nft_metadata(self, address, file_name, image_url, tx_hash, size):
         params = {}
@@ -81,4 +77,5 @@ class McsAPI(ApiClient):
             file_url['external_url'] = image_url
         files = {"fileName": "test", "file": json.dumps(file_url)}
         return self._request_with_params(POST, UPLOAD_FILE, params, files)
+
 
