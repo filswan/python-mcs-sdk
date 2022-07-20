@@ -61,6 +61,15 @@ wallet_info = {
 }
 ```
 
+Approve wallet (to spend token)
+
+'''python
+def approve_usdc():
+    w3_api = ContractAPI(web3_api)
+    w3_api.approve_usdc(wallet_address,
+                        private_key, "1")
+'''
+
 Example of uploading a single file using the MCS SDK.
 
 ```python
