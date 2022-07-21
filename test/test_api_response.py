@@ -12,18 +12,17 @@ def info():
     }
     return wallet_info
 
+'''
 @pytest.fixture
 def data():
     data = {}
     # example of return responses
-    '''
     data['param'] = {'status': 'success', 'data': {'GAS_LIMIT': 8000000, 'LOCK_TIME': 6, 'MINT_CONTRACT_ADDRESS': '0x1A1e5AC88C493e0608C84c60b7bb5f04D9cF50B3',
             'PAYMENT_CONTRACT_ADDRESS': '0x80a186DCD922175019913b274568ab172F6E20b1', 'PAYMENT_RECIPIENT_ADDRESS': '0xc4fcaAdCb0b00a9501e56215c37B10fAF9e79c0a',
             'PAY_MULTIPLY_FACTOR': 1.5, 'USDC_ADDRESS': '0xe11A86849d99F524cAC3E7A0Ec1241828e332C62'}}
     data['price_rate'] = {'status': 'success', 'data': 5}
     data['payment_info'] = {"status": "success", "data": {"w_cid": "64fc6e48-cad9-430d-8a4f-0821e55020c4QmcLqL4xSXzTQUfV2GMjyHoxM8eSH3WJjQjjByaVDzoGEa",
             "pay_amount": "", "pay_tx_hash": "", "token_address": ""}}
-    '''
     return data
 
 def test_mcs_api(info, data):
@@ -44,6 +43,16 @@ def test_mcs_api(info, data):
     # API: https://mcs-api.filswan.com/api/v1/storage/deal/detail/0?wallet_address=&source_file_upload_id=
     #result['deal_detail'] = api.get_deal_detail(wallet_address, source_file_upload_id)
     assert result == data
+'''
+
+def test_approve_usdc(info):
+    wallet_address = info['wallet_address']
+    private_key = info['private_key']
+    web3_api = info['web3_api']
+    
+    w3_api = ContractAPI(web3_api)
+    w3_api.approve_usdc(wallet_address,
+                        private_key, "1")
 
 def test_upload_file_pay(info):
     wallet_address = info['wallet_address']
