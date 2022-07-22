@@ -49,6 +49,16 @@ class McsAPI(ApiClient):
         ]
         return self._request_with_params(POST, UPLOAD_FILE, params, files)
 
+    def stream_upload_file(self, wallet_address, file_path):
+        params = {}
+        if wallet_address:
+            params['wallet_address'] = wallet_address
+            params['duration'] = '525'
+            params['storage_copy'] = '5'
+            params['file'] = (file_path, open(file_path, 'rb'))
+
+        return self._request_stream_upload(UPLOAD_FILE, params)
+
     def get_deal_detail(self, wallet_address, source_file_upload_id):
         params = {}
         if wallet_address:
