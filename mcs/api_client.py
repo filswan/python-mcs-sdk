@@ -1,4 +1,5 @@
 import requests
+from requests_toolbelt.multipart.encoder import MultipartEncoder
 import json
 from mcs.common import utils, exceptions
 from mcs.common import constants as c
@@ -28,6 +29,25 @@ class ApiClient(object):
                 response = requests.post(url, data=body, headers=header)
         elif method == c.DELETE:
             response = requests.delete(url, headers=header)
+
+        # exception handle
+        if not str(response.status_code).startswith('2'):
+            raise exceptions.McsAPIException(response)
+
+        return response.json()
+
+    def _request_stream_upload(self, request_path, params):
+        url = c.MCS_API + c.REST_API_VERSION + request_path
+
+        header = {}
+        print("url:", url)
+        # send request
+        response = None
+        body = params
+        print("body:", body)
+        body = MultipartEncoder(body)
+        header['Content-Type'] = body.content_type
+        response = requests.post(url, data=body, headers=header)
 
         # exception handle
         if not str(response.status_code).startswith('2'):

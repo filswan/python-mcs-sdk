@@ -3,14 +3,16 @@ import os
 from mcs.api import McsAPI
 from mcs.contract import ContractAPI
 
+
 @pytest.fixture
 def info():
     wallet_info = {
-        'wallet_address' : '*',
-        'private_key' : '*',
-        'web3_api' : '*',
+        'wallet_address': '*',
+        'private_key': '*',
+        'web3_api': '*',
     }
     return wallet_info
+
 
 '''
 @pytest.fixture
@@ -45,14 +47,16 @@ def test_mcs_api(info, data):
     assert result == data
 '''
 
+
 def test_approve_usdc(info):
     wallet_address = info['wallet_address']
     private_key = info['private_key']
     web3_api = info['web3_api']
-    
+
     w3_api = ContractAPI(web3_api)
     w3_api.approve_usdc(wallet_address,
                         private_key, "1")
+
 
 def test_upload_file_pay(info):
     wallet_address = info['wallet_address']
@@ -89,6 +93,7 @@ def test_upload_file_pay(info):
     deal_detail = api.get_deal_detail(wallet_address, source_file_upload_id)
     assert deal_detail['status'] == 'success'
     assert deal_detail['data'] != None
+
 
 def test_mint_nft(info):
     wallet_address = info['wallet_address']
