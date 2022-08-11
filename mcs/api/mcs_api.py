@@ -21,10 +21,12 @@ class McsAPI(ApiClient):
             params['source_file_upload_id'] = source_file_upload_id
         return self._request_with_params(GET, PAYMENT_INFO, params, None)
 
-    def get_user_tasks_deals(self, wallet_address):
+    def get_user_tasks_deals(self, wallet_address, file_name=None):
         params = {}
         if wallet_address:
             params['wallet_address'] = wallet_address
+        if file_name:
+            params['file_name'] = file_name
         return self._request_with_params(GET, TASKS_DEALS, params, None)
 
     def get_mint_info(self, source_file_upload_id, payload_cid, tx_hash, token_id, mint_address):
