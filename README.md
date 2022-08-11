@@ -44,8 +44,16 @@ Instructions for developers working with MCS SDK and API.
 
 ## Installation
 
-Install using pip
+### Using pip
+Install python sdk use pip (https://pypi.org/project/python-mcs-sdk/#description)
 ```
+$ pip install python-mcs-sdk
+```
+
+### Using Github
+Install python sdk from github and install requirements using pip
+```
+$ git clone https://github.com/filswan/python-mcs-sdk.git
 $ pip install -r requirements.txt
 ```
 
