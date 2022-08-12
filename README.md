@@ -44,8 +44,16 @@ Instructions for developers working with MCS SDK and API.
 
 ## Installation
 
-Install using pip
+### Using pip
+Install python sdk use pip (https://pypi.org/project/python-mcs-sdk/#description)
 ```
+$ pip install python-mcs-sdk
+```
+
+### Using Github
+Install python sdk from github and install requirements using pip
+```
+$ git clone https://github.com/filswan/python-mcs-sdk.git
 $ pip install -r requirements.txt
 ```
 
@@ -63,12 +71,12 @@ wallet_info = {
 
 Approve wallet (to spend token)
 
-'''python
+```python
 def approve_usdc():
     w3_api = ContractAPI(web3_api)
     w3_api.approve_usdc(wallet_address,
                         private_key, "1")
-'''
+```
 
 Example of uploading a single file using the MCS SDK.
 

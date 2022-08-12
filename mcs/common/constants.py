@@ -11,7 +11,7 @@ PAYMENT_INFO = "/billing/deal/lockpayment/info"
 TASKS_DEALS = "/storage/tasks/deals"
 MINT_INFO = "/storage/mint/info"
 UPLOAD_FILE = "/storage/ipfs/upload"
-DEAL_DETAIL = "/storage/deal/detail/0"
+DEAL_DETAIL = "/storage/deal/detail/"
 # contract
 USDC_SPENDER = "0x80a186DCD922175019913b274568ab172F6E20b1"
 USDC_TOKEN = "0xe11A86849d99F524cAC3E7A0Ec1241828e332C62"

@@ -21,10 +21,12 @@ class McsAPI(ApiClient):
             params['source_file_upload_id'] = source_file_upload_id
         return self._request_with_params(GET, PAYMENT_INFO, params, None)
 
-    def get_user_tasks_deals(self, wallet_address):
+    def get_user_tasks_deals(self, wallet_address, file_name=None):
         params = {}
         if wallet_address:
             params['wallet_address'] = wallet_address
+        if file_name:
+            params['file_name'] = file_name
         return self._request_with_params(GET, TASKS_DEALS, params, None)
 
     def get_mint_info(self, source_file_upload_id, payload_cid, tx_hash, token_id, mint_address):
@@ -59,13 +61,13 @@ class McsAPI(ApiClient):
 
         return self._request_stream_upload(UPLOAD_FILE, params)
 
-    def get_deal_detail(self, wallet_address, source_file_upload_id):
+    def get_deal_detail(self, wallet_address, source_file_upload_id, deal_id='0'):
         params = {}
         if wallet_address:
             params['wallet_address'] = wallet_address
         if source_file_upload_id:
             params['source_file_upload_id'] = source_file_upload_id
-        return self._request_with_params(GET, DEAL_DETAIL, params, None)
+        return self._request_with_params(GET, DEAL_DETAIL+deal_id, params, None)
 
     def upload_nft_metadata(self, address, file_name, image_url, tx_hash, size):
         params = {}
