@@ -1,4 +1,5 @@
-MCS_API = "https://mcs-api.filswan.com/api/"
+MCS_API = "https://calibration-mcs-api.filswan.com/api/"
+MCS_BSC_API = 'https://calibration-mcs-bsc.filswan.com/api/'
 REST_API_VERSION = "v1"
 GET = "GET"
 POST = "POST"
