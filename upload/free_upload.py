@@ -1,4 +1,3 @@
-from distutils.command.upload import upload
 from mcs import McsAPI
 from mcs import ContractAPI
 from mcs.common.constants import MCS_API
@@ -30,7 +29,7 @@ class FreeUpload():
         return file_data
     
     def pay(self):
-        api = MCS_API()
+        api = McsAPI()
         w3_api = ContractAPI(self.web3_api)
 
         file_size, w_cid = self.upload_response['file_size'], self.upload_response['w_cid']
