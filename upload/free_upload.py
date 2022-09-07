@@ -17,7 +17,7 @@ class FreeUpload():
         file_data = self.upload()
         if file_data['status'] == 'Free':
             return 'free upload'
-        self.pay(file_data)
+        self.pay()
         return 'paid upload'
         
 
