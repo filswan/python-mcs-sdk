@@ -19,8 +19,22 @@ class FreeUpload():
         self.pay()
         return 'paid upload'
         
+    def free_stream_upload(self):
+        file_data = self.stream_upload()
+        if file_data['status'] == 'Free':
+            return 'free stream upload'
+        self.pay()
+        return 'paid upload'
 
     def upload(self):
+        api = McsAPI()
+
+        upload_file = api.upload_file(self.wallet_address, self.file_path)
+        file_data = upload_file["data"]
+        self.upload_response = file_data
+        return file_data
+
+    def stream_upload(self):
         api = McsAPI()
 
         upload_file = api.stream_upload_file(self.wallet_address, self.file_path)
