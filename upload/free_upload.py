@@ -23,7 +23,7 @@ class FreeUpload():
     def upload(self):
         api = McsAPI()
 
-        upload_file = api.upload_file(self.wallet_address, self.file_path)
+        upload_file = api.stream_upload_file(self.wallet_address, self.file_path)
         file_data = upload_file["data"]
         self.upload_response = file_data
         return file_data
@@ -41,6 +41,6 @@ class FreeUpload():
             w3_api.approve_usdc(self.wallet_address, self.private_key, "1")
             w3_api.upload_file_pay(self.wallet_address, self.private_key, file_size, w_cid, rate, params)
         except Exception as e:
-            return 'payment failed: ' + e
+            return 'payment failed: ' + str(e)
         
         return 'payment success'
