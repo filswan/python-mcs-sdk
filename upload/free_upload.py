@@ -2,6 +2,8 @@ from mcs import McsAPI
 from mcs import ContractAPI
 from mcs.common.constants import MCS_API
 
+import logging
+
 class FreeUpload():
 
     def __init__(self, wallet_address, private_key, web3_api, file_path):
@@ -16,15 +18,15 @@ class FreeUpload():
         file_data = self.upload()
         if file_data['status'] == 'Free':
             return 'free upload'
-        self.pay()
-        return 'paid upload'
+        result = self.pay()
+        return result
         
     def free_stream_upload(self):
         file_data = self.stream_upload()
         if file_data['status'] == 'Free':
             return 'free stream upload'
-        self.pay()
-        return 'paid upload'
+        result = self.pay()
+        return result
 
     def upload(self):
         api = McsAPI()
@@ -55,6 +57,7 @@ class FreeUpload():
             w3_api.approve_usdc(self.wallet_address, self.private_key, "1")
             w3_api.upload_file_pay(self.wallet_address, self.private_key, file_size, w_cid, rate, params)
         except Exception as e:
+            logging.error(str(e))
             return 'payment failed: ' + str(e)
         
         return 'payment success'
