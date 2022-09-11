@@ -37,9 +37,9 @@ class ContractAPI(ApiClient):
         lock_obj = {
             'id': w_cid,
             'minPayment': self.w3.toWei(amount, 'ether'),
-            'amount': int(self.w3.toWei(amount, 'ether') * float(params['PAY_MULTIPLY_FACTOR'])),
-            'lockTime': 86400 * params['LOCK_TIME'],
-            'recipient': params['PAYMENT_RECIPIENT_ADDRESS'],
+            'amount': int(self.w3.toWei(amount, 'ether') * float(params['pay_multiply_factor'])),
+            'lockTime': 86400 * params['lock_time'],
+            'recipient': params['payment_recipient_address'],
             'size': file_size,
             'copyLimit': 5,
         }
