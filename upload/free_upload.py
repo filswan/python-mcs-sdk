@@ -1,6 +1,9 @@
+from web3 import Web3
+
 from mcs import McsAPI
 from mcs import ContractAPI
-from mcs.common.constants import MCS_API
+
+from mcs.common.utils import get_amount
 
 import logging
 
@@ -47,14 +50,18 @@ class FreeUpload():
     def pay(self):
         api = McsAPI()
         w3_api = ContractAPI(self.web3_api)
+        w3 = Web3(Web3.HTTPProvider(self.web3_api))
 
         file_size, w_cid = self.upload_response['file_size'], self.upload_response['w_cid']
         params = api.get_params()["data"]
         rate = api.get_price_rate()["data"]
 
+        amount = get_amount(file_size, rate)
+        approve_amount = int(w3.toWei(amount, 'ether') * float(params['pay_multiply_factor']))
+
         # payment
         try:
-            w3_api.approve_usdc(self.wallet_address, self.private_key, "1")
+            w3_api.approve_usdc(self.wallet_address, self.private_key, approve_amount)
             w3_api.upload_file_pay(self.wallet_address, self.private_key, file_size, w_cid, rate, params)
         except Exception as e:
             logging.error(str(e))
