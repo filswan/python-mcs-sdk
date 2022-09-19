@@ -4,7 +4,7 @@ REST_API_VERSION = "v1"
 GET = "GET"
 POST = "POST"
 DELETE = "DELETE"
-FIL_PRICE_API = "https://calibration-api.filswan.com/stats/storage"
+FIL_PRICE_API = "https://api.filswan.com/stats/storage"
 # mcs api
 MCS_PARAMS = "/common/system/params"
 PRICE_RATE = "/billing/price/filecoin"
