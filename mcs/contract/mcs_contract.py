@@ -16,7 +16,7 @@ class ContractAPI(ApiClient):
         nonce = self.w3.eth.getTransactionCount(wallet_address)
         usdc_abi = get_contract_abi(USDC_ABI)
         token = self.w3.eth.contract(USDC_TOKEN, abi=usdc_abi)
-        usdc_balance = token.functions.balanceOf(wallet_address).call()
+        usdc_balance = self.w3.toWei(token.functions.balanceOf(wallet_address).call(), 'ether')
         if usdc_balance < amount:
             print("Insufficient balance")
             return
