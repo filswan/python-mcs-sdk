@@ -11,6 +11,7 @@
 - [Usage](#usage)
   - [Installation](#installation)
   - [Getting Started](#getting-started)
+  - [BSC-testnet](#bsc-testnet)
   - [Documentation](#documentation)
 - [Contributing](#contributing)
 
@@ -103,6 +104,13 @@ def upload_file_pay(wallet_info):
 if __name__ == "__main__":
   upload_file_pay(wallet_info)
 ```
+
+## BSC-testnet
+
+MCS calibration now supports bsc-testnet
+
+This the bsc-testnet api can be accessed by passing `True` to the `BSC` parameter of the `_request` function.
+Or by switching the `MCS_API` in constant to `MCS_BSC_API`
 
 ## Documentation
 
