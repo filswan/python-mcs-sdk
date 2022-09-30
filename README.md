@@ -44,13 +44,13 @@ Instructions for developers working with MCS SDK and API.
 
 ## Installation
 
-### Using pip
+### Method 1. Using pip
 Install python sdk use pip (https://pypi.org/project/python-mcs-sdk/#description)
 ```
 $ pip install python-mcs-sdk
 ```
 
-### Using Github
+### Method 2. Using Github
 Install python sdk from github and install requirements using pip
 ```
 $ git clone https://github.com/filswan/python-mcs-sdk.git
@@ -59,7 +59,7 @@ $ pip install -r requirements.txt
 
 ## Getting Started
 
-First you should set your wallet address, private key and web3 api. There can be put into a .env\
+First you should set your wallet address, private key and web3 api. There can be put into a .env (create one under the test folder for testing)\
 file under the same directory.
 ```
 wallet_address : <WALLET_ADDRESS>
