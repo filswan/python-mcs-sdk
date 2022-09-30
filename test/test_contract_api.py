@@ -5,19 +5,23 @@ from dotenv import load_dotenv
 from mcs.contract import ContractAPI
 from mcs.api import McsAPI
 
-load_dotenv()
-
-wallet_address = os.getenv('wallet_address')
-private_key = os.getenv('private_key')
-web3_api = os.getenv('web3_api')
-
 def test_approve_usdc():
+    load_dotenv()
+    wallet_address = os.getenv('wallet_address')
+    private_key = os.getenv('private_key')
+    web3_api = os.getenv('web3_api')
+
     w3_api = ContractAPI(web3_api)
     w3_api.approve_usdc(wallet_address,
                         private_key, "1")
 
 
 def test_upload_file_pay():
+    load_dotenv()
+    wallet_address = os.getenv('wallet_address')
+    private_key = os.getenv('private_key')
+    web3_api = os.getenv('web3_api')
+
     w3_api = ContractAPI(web3_api)
     api = McsAPI()
     # upload file to mcs
@@ -35,6 +39,11 @@ def test_upload_file_pay():
     w3_api.upload_file_pay(wallet_address, private_key, file_size, w_cid, rate, params)
 
 def test_stream_upload_file_pay():
+    load_dotenv()
+    wallet_address = os.getenv('wallet_address')
+    private_key = os.getenv('private_key')
+    web3_api = os.getenv('web3_api')
+
     w3_api = ContractAPI(web3_api)
     api = McsAPI()
     # upload file to mcs
@@ -52,6 +61,11 @@ def test_stream_upload_file_pay():
     w3_api.upload_file_pay(wallet_address, private_key, file_size, w_cid, rate, params)
 
 def test_mint_nft():
+    load_dotenv()
+    wallet_address = os.getenv('wallet_address')
+    private_key = os.getenv('private_key')
+    web3_api = os.getenv('web3_api')
+
     w3_api = ContractAPI(web3_api)
     api = McsAPI()
 

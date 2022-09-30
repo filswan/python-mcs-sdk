@@ -5,10 +5,6 @@ from dotenv import load_dotenv
 from mcs.api import McsAPI
 
 
-load_dotenv()
-wallet_address = os.getenv('wallet_address')
-
-
 @pytest.mark.asyncio
 async def test_get_params():
     api = McsAPI()
@@ -23,6 +19,9 @@ async def test_get_price_rate():
 
 @pytest.mark.asyncio
 async def test_upload_file():
+    load_dotenv()
+    wallet_address = os.getenv('wallet_address')
+    print(wallet_address)
     api = McsAPI()
     filepath = "/images/log_mcs.png"
     parent_path = os.path.abspath(os.path.dirname(__file__))
