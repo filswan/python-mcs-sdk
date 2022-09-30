@@ -1,27 +1,31 @@
+from itertools import chain
 import pytest
 import os
 from dotenv import load_dotenv
+
+from mcs.common.params import Params
 from mcs.api import McsAPI
 from mcs.contract import ContractAPI
 
 
 @pytest.fixture
 def info():
-
     load_dotenv()
     wallet_info = {
         'wallet_address': os.getenv('wallet_address'),
         'private_key': os.getenv('private_key'),
-        'web3_api': os.getenv('web3_api'),
+        'web3_api': os.getenv('web3_api')
     }
     return wallet_info
+
 
 def test_approve_usdc(info):
     wallet_address = info['wallet_address']
     private_key = info['private_key']
     web3_api = info['web3_api']
 
-    w3_api = ContractAPI(web3_api)
+    params = Params(chain_name='mumbai')
+    w3_api = ContractAPI(web3_api, params)
     w3_api.approve_usdc(wallet_address,
                         private_key, "1")
 
