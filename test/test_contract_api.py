@@ -1,12 +1,15 @@
 import pytest
 import os, time
+from dotenv import load_dotenv
+
 from mcs.contract import ContractAPI
 from mcs.api import McsAPI
 
-wallet_address = "*"
-private_key = "*"
-web3_api = "*"
+load_dotenv()
 
+wallet_address = os.getenv('wallet_address')
+private_key = os.getenv('private_key')
+web3_api = os.getenv('web3_api')
 
 def test_approve_usdc():
     w3_api = ContractAPI(web3_api)
