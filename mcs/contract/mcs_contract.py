@@ -6,9 +6,9 @@ from web3.middleware import geth_poa_middleware
 
 
 class ContractAPI(ApiClient):
-    def __init__(self, web3_api, params):
-        self.web3_api = web3_api
-        self.w3 = Web3(Web3.HTTPProvider(web3_api))
+    def __init__(self, rpc_endpoint, params):
+        self.rpc_endpoint = rpc_endpoint
+        self.w3 = Web3(Web3.HTTPProvider(rpc_endpoint))
         self.w3.middleware_onion.inject(geth_poa_middleware, layer=0)
 
         self.SWAN_PAYMENT_ADDRESS = params['SWAN_PAYMENT_ADDRESS']

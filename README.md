@@ -65,14 +65,14 @@ file under the same directory.
 ```
 wallet_address : <WALLET_ADDRESS>
 private_key : <PRIVATE_KEY>
-web3_api : <WEB3_API>
+rpc_endpoint : <rpc_endpoint>
 ```
 
 Approve wallet (to spend token)
 
 ```python
 def approve_usdc():
-    w3_api = ContractAPI(web3_api)
+    w3_api = ContractAPI(rpc_endpoint)
     w3_api.approve_usdc(wallet_address,
                         private_key, "1")
 ```
@@ -83,9 +83,9 @@ Example of uploading a single file using the MCS SDK.
 def upload_file_pay(wallet_info):
     wallet_address = wallet_info['wallet_address']
     private_key = wallet_info['private_key']
-    web3_api = wallet_info['web3_api']
+    rpc_endpoint = wallet_info['rpc_endpoint']
 
-    w3_api = ContractAPI(web3_api)
+    w3_api = ContractAPI(rpc_endpoint)
     api = McsAPI()
     # upload file to mcs
     filepath = "/images/log_mcs.png"

@@ -9,11 +9,11 @@ import logging
 
 class FreeUpload():
 
-    def __init__(self, wallet_address, private_key, web3_api, file_path):
+    def __init__(self, wallet_address, private_key, rpc_endpoint, file_path):
 
         self.wallet_address = wallet_address
         self.private_key = private_key
-        self.web3_api = web3_api
+        self.rpc_endpoint = rpc_endpoint
         self.file_path = file_path
         self.upload_response = None
 
@@ -49,8 +49,8 @@ class FreeUpload():
     
     def pay(self):
         api = McsAPI()
-        w3_api = ContractAPI(self.web3_api)
-        w3 = Web3(Web3.HTTPProvider(self.web3_api))
+        w3_api = ContractAPI(self.rpc_endpoint)
+        w3 = Web3(Web3.HTTPProvider(self.rpc_endpoint))
 
         file_size, w_cid = self.upload_response['file_size'], self.upload_response['w_cid']
         params = api.get_params()["data"]
