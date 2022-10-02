@@ -1,4 +1,4 @@
-MCS_API = "https://calibration-mcs-api.filswan.com/api/"
+MCS_MUMBAI_API = "https://calibration-mcs-api.filswan.com/api/"
 MCS_BSC_API = 'https://calibration-mcs-bsc.filswan.com/api/'
 REST_API_VERSION = "v1"
 GET = "GET"
@@ -14,12 +14,8 @@ MINT_INFO = "/storage/mint/info"
 UPLOAD_FILE = "/storage/ipfs/upload"
 DEAL_DETAIL = "/storage/deal/detail/"
 # contract
-USDC_SPENDER = "0x80a186DCD922175019913b274568ab172F6E20b1"
-USDC_TOKEN = "0xe11A86849d99F524cAC3E7A0Ec1241828e332C62"
 USDC_ABI = "ERC20.json"
-SWAN_PAYMENT_ADDRESS = "0x80a186DCD922175019913b274568ab172F6E20b1"
 SWAN_PAYMENT_ABI = "SwanPayment.json"
-MINT_ADDRESS = "0x1A1e5AC88C493e0608C84c60b7bb5f04D9cF50B3"
 MINT_ABI = "Minter.json"
 
 CONTRACT_TIME_OUT = 300

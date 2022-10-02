@@ -27,7 +27,7 @@ def get_amount(size, rate):
 
 
 def get_contract_abi(abi_name):
-    father_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) + "/contract/abi/"
-    with open(father_path + abi_name, 'r') as abi_file:
+    parent_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) + "/contract/abi/"
+    with open(parent_path + abi_name, 'r') as abi_file:
         abi_data = json.load(abi_file)
         return json.dumps(abi_data)

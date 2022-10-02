@@ -1,4 +1,6 @@
 pytest
+pytest-asyncio
 web3
 requests
 requests_toolbelt
+python_dotenv
