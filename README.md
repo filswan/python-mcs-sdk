@@ -59,14 +59,12 @@ $ pip install -r requirements.txt
 
 ## Getting Started
 
-First you should set your wallet address, private key and web3 api.
-
-```python
-wallet_info = {
-  'wallet_address' : <WALLET_ADDRESS>
-  'private_key' : <PRIVATE_KEY>
-  'web3_api' : <WEB3_API>
-}
+First you should set your wallet address, private key and web3 api. There can be put into a .env\
+file under the same directory.
+```
+wallet_address : <WALLET_ADDRESS>
+private_key : <PRIVATE_KEY>
+web3_api : <WEB3_API>
 ```
 
 Approve wallet (to spend token)
@@ -90,8 +88,8 @@ def upload_file_pay(wallet_info):
     api = McsAPI()
     # upload file to mcs
     filepath = "/images/log_mcs.png"
-    father_path = os.path.abspath(os.path.dirname(__file__))
-    upload_file = api.upload_file(wallet_address, father_path + filepath)
+    parent_path = os.path.abspath(os.path.dirname(__file__))
+    upload_file = api.upload_file(wallet_address, parent_path + filepath)
     file_data = upload_file["data"]
     payload_cid, source_file_upload_id, nft_uri, file_size, w_cid = file_data['payload_cid'], file_data[
         'source_file_upload_id'], file_data['ipfs_url'], file_data['file_size'], file_data['w_cid']
