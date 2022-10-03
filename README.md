@@ -10,8 +10,8 @@
 - [MCS API](#mcs-api)
 - [Usage](#usage)
   - [Installation](#installation)
-  - [Testing](#testing)
   - [Getting Started](#getting-started)
+  - [Testing](#testing)
   - [Documentation](#documentation)
 - [Contributing](#contributing)
 
@@ -28,16 +28,17 @@ A python software development kit for the Multi-Chain Storage (MCS) https://mcs.
 
 ## Prequisites
 
-- [web3](https://pypi.org/project/web3/) - web3 python package to process contract\
-- Polygon Mainnet Wallet - [Metamask Tutorial](https://docs.filswan.com/getting-started/beginner-walkthrough/public-testnet/setup-metamask) \
-- Polygon Mainnet RPC - [Signup via Alchemy](https://www.alchemy.com/) \
+- [web3](https://pypi.org/project/web3/) - web3 python package to process contract
+- Polygon Mainnet Wallet - [Metamask Tutorial](https://docs.filswan.com/getting-started/beginner-walkthrough/public-testnet/setup-metamask)
+- Polygon Mainnet RPC - [Signup via Alchemy](https://www.alchemy.com/)
 - Polygon RPC endpoint - https://polygon-rpc.com/
 
-You will also need Testnet USDC and MATIC balance to use this SDK. [Swan Faucet Tutorial](https://docs.filswan.com/development-resource/swan-token-contract/acquire-testnet-usdc-and-matic-tokens) \
-- [pytest](https://docs.pytest.org/en/7.1.x/) (for testing purpose) \
-- [requests](https://pypi.org/project/requests/) for requesting mcs api \
+You will also need Testnet USDC and MATIC balance to use this SDK. [Swan Faucet Tutorial](https://docs.filswan.com/development-resource/swan-token-contract/acquire-testnet-usdc-and-matic-tokens)
+- [pytest](https://docs.pytest.org/en/7.1.x/) (for testing purpose)
+- [requests](https://pypi.org/project/requests/) for requesting mcs api
 - [requests-toolbelt](https://pypi.org/project/requests-toolbelt/) for stream upload
-
+- [python-dotenv](https://pypi.org/project/python-dotenv/) to read `.env` file that is used to store wallet info
+ 
 # MCS API
 
 For more information about the API usage, check out the MCS API documentation (https://docs.filswan.com/development-resource/mcp-api).
@@ -57,15 +58,10 @@ $ git checkout main
 $ pip install -r requirements.txt
 ```
 
-## Testing
-You can use the pytest functions provided under the test directory to test the functionality of python mcs sdk. \
-
-`test`
-
 ## Getting Started
 
 ### Set Up Wallet Infomations
-First you should set your wallet address, private key and web3 api. There can be put into a .env file under the same directory (under test directory for using pytest functions). dotenv will only look for file that named exactly as .env under the current directory.
+First you should set your wallet address, private key and web3 api. There can be put into a .env file under the same directory (under test directory for using pytest functions). `python-dotenv` will only look for file that named exactly as .env under the current directory.
 ```
 wallet_address : <WALLET_ADDRESS>
 private_key : <PRIVATE_KEY>
@@ -82,7 +78,10 @@ def approve_usdc():
                         private_key, "1")
 ```
 
-Example of uploading a single file using the MCS SDK.
+Example of uploading a single file using the MCS SDK. 
+```diff
+- (Note that the mcs mainnet currently have 10GB of free upload amount for each wallet per month. While you can still manually pay for the upload, it is not recommanded as the lockedpayment might not be able to unlock under this circumstance. This code is only demonstration purpose and should not be used to upload file on mcs mainnet, the upload function covers free upload is under `upload/free_upload.py`)
+```
 
 ```python
 def upload_file_pay(wallet_info):
@@ -109,6 +108,11 @@ def upload_file_pay(wallet_info):
 if __name__ == "__main__":
   upload_file_pay(wallet_info)
 ```
+
+## Testing
+You can use the pytest functions provided under the test directory to test the functionality of python mcs sdk. \
+
+`test`
 
 ## Documentation
 
