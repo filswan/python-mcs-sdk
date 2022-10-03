@@ -10,6 +10,7 @@
 - [MCS API](#mcs-api)
 - [Usage](#usage)
   - [Installation](#installation)
+  - [Testing](#testing)
   - [Getting Started](#getting-started)
   - [Documentation](#documentation)
 - [Contributing](#contributing)
@@ -28,11 +29,14 @@ A python software development kit for the Multi-Chain Storage (MCS) https://mcs.
 ## Prequisites
 
 [web3](https://pypi.org/project/web3/) \
-Polygon Mumbai Testnet Wallet - [Metamask Tutorial](https://docs.filswan.com/getting-started/beginner-walkthrough/public-testnet/setup-metamask) \
-Polygon Mumbai Testnet RPC - [Signup via Alchemy](https://www.alchemy.com/)
+Polygon Mainnet Wallet - [Metamask Tutorial](https://docs.filswan.com/getting-started/beginner-walkthrough/public-testnet/setup-metamask) \
+Polygon Mainnet RPC - [Signup via Alchemy](https://www.alchemy.com/) \
+Polygon RPC endpoint - https://polygon-rpc.com/
 
 You will also need Testnet USDC and MATIC balance to use this SDK. [Swan Faucet Tutorial](https://docs.filswan.com/development-resource/swan-token-contract/acquire-testnet-usdc-and-matic-tokens) \
-[pytest](https://docs.pytest.org/en/7.1.x/) (for testing purpose)
+[pytest](https://docs.pytest.org/en/7.1.x/) (for testing purpose) \
+[requests](https://pypi.org/project/requests/) for requesting mcs api \
+[requests-toolbelt] for stream upload
 
 # MCS API
 
@@ -44,23 +48,21 @@ Instructions for developers working with MCS SDK and API.
 
 ## Installation
 
-### Method 1. Using pip
-Install python sdk use pip (https://pypi.org/project/python-mcs-sdk/#description)
-```
-$ pip install python-mcs-sdk
-```
+### Method 1. Using Github
+Install python sdk from github (checkout to the main branch if not alreayd on) and install requirements using pip
 
-### Method 2. Using Github
-Install python sdk from github and install requirements using pip
 ```
 $ git clone https://github.com/filswan/python-mcs-sdk.git
+$ git checkout main
 $ pip install -r requirements.txt
 ```
+
+## Testing
 
 ## Getting Started
 
 First you should set your wallet address, private key and web3 api. There can be put into a .env (create one under the test folder for testing)\
-file under the same directory.
+file under the same directory (dotenv will only look for file that named exactly as .env under the current directory).
 ```
 wallet_address : <WALLET_ADDRESS>
 private_key : <PRIVATE_KEY>
