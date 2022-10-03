@@ -28,15 +28,15 @@ A python software development kit for the Multi-Chain Storage (MCS) https://mcs.
 
 ## Prequisites
 
-[web3](https://pypi.org/project/web3/) \
-Polygon Mainnet Wallet - [Metamask Tutorial](https://docs.filswan.com/getting-started/beginner-walkthrough/public-testnet/setup-metamask) \
-Polygon Mainnet RPC - [Signup via Alchemy](https://www.alchemy.com/) \
-Polygon RPC endpoint - https://polygon-rpc.com/
+- [web3](https://pypi.org/project/web3/) - web3 python package to process contract\
+- Polygon Mainnet Wallet - [Metamask Tutorial](https://docs.filswan.com/getting-started/beginner-walkthrough/public-testnet/setup-metamask) \
+- Polygon Mainnet RPC - [Signup via Alchemy](https://www.alchemy.com/) \
+- Polygon RPC endpoint - https://polygon-rpc.com/
 
 You will also need Testnet USDC and MATIC balance to use this SDK. [Swan Faucet Tutorial](https://docs.filswan.com/development-resource/swan-token-contract/acquire-testnet-usdc-and-matic-tokens) \
-[pytest](https://docs.pytest.org/en/7.1.x/) (for testing purpose) \
-[requests](https://pypi.org/project/requests/) for requesting mcs api \
-[requests-toolbelt] for stream upload
+- [pytest](https://docs.pytest.org/en/7.1.x/) (for testing purpose) \
+- [requests](https://pypi.org/project/requests/) for requesting mcs api \
+- [requests-toolbelt](https://pypi.org/project/requests-toolbelt/) for stream upload
 
 # MCS API
 
@@ -58,17 +58,21 @@ $ pip install -r requirements.txt
 ```
 
 ## Testing
+You can use the pytest functions provided under the test directory to test the functionality of python mcs sdk. \
+
+`test`
 
 ## Getting Started
 
-First you should set your wallet address, private key and web3 api. There can be put into a .env (create one under the test folder for testing)\
-file under the same directory (dotenv will only look for file that named exactly as .env under the current directory).
+### Set Up Wallet Infomations
+First you should set your wallet address, private key and web3 api. There can be put into a .env file under the same directory (under test directory for using pytest functions). dotenv will only look for file that named exactly as .env under the current directory.
 ```
 wallet_address : <WALLET_ADDRESS>
 private_key : <PRIVATE_KEY>
 web3_api : <WEB3_API>
 ```
 
+### Basic functions
 Approve wallet (to spend token)
 
 ```python
