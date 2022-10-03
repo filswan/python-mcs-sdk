@@ -1,4 +1,4 @@
-MCS_API = "https://mcs-api.filswan.com/api/"
+MCS_API = "https://api.multichain.storage/api/"
 REST_API_VERSION = "v1"
 GET = "GET"
 POST = "POST"
