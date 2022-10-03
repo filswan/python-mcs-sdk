@@ -80,7 +80,7 @@ def approve_usdc():
 
 Example of uploading a single file using the MCS SDK. 
 ```diff
-- (Note that the mcs mainnet currently have 10GB of free upload amount for each wallet per month. While you can still manually pay for the upload, it is not recommanded as the lockedpayment might not be able to unlock under this circumstance. This code is only demonstration purpose and should not be used to upload file on mcs mainnet, the upload function covers free upload is under `upload/free_upload.py`)
+- (Note that the mcs mainnet currently have 10GB of free upload amount for each wallet per \month. While you can still manually pay for the upload, it is not recommanded as the \lockedpayment might not be able to unlock under this circumstance. This code is only \demonstration purpose and should not be used to upload file on mcs mainnet, the upload \function covers free upload is under `upload/free_upload.py`)
 ```
 
 ```python
