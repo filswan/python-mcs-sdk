@@ -16,6 +16,10 @@ class FreeUpload():
         self.web3_api = web3_api
         self.file_path = file_path
         self.upload_response = None
+    
+    def change_file(self, file_path):
+        self.file_path = file_path
+        return self.file_path
 
     def free_upload(self):
         file_data = self.upload()
