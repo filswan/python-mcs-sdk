@@ -78,10 +78,7 @@ def approve_usdc():
                         private_key, "1")
 ```
 
-Example of uploading a single file using the MCS SDK. 
-```diff
-- (Note that the mcs mainnet currently have 10GB of free upload amount for each wallet per \month. While you can still manually pay for the upload, it is not recommanded as the \lockedpayment might not be able to unlock under this circumstance. This code is only \demonstration purpose and should not be used to upload file on mcs mainnet, the upload \function covers free upload is under `upload/free_upload.py`)
-```
+Example of uploading a single file using the MCS SDK. (Note that the mcs mainnet currently have 10GB of free upload amount for each wallet per month. While you can still manually pay for the upload, it is not recommanded as the lockedpayment might not be able to unlock under this circumstance. This code is only demonstration purpose and should not be used to upload file on mcs mainnet, the free upload is under `upload/free_upload.py`)
 
 ```python
 def upload_file_pay(wallet_info):
@@ -109,10 +106,25 @@ if __name__ == "__main__":
   upload_file_pay(wallet_info)
 ```
 
+For free upload, the upload api will return `is_free` parameter, while this is true the file does not require to be paid using the `SwanPayment contract`. However, this free_upload only applies to the first 10GB of upload per month, and file larger than 10GB will needs to be paid. (Files cannot be partially free uploaded) \
+
+An example to use free upload:
+```python
+def free_upload():
+        file_data = upload()
+        if file_data['status'] == 'Free':
+            return 'free upload'
+        result = pay()
+        return result
+```
+
 ## Testing
 You can use the pytest functions provided under the test directory to test the functionality of python mcs sdk. \
 
-`test`
+- `test_mcs_api`: Test the mcs backend api for getting params, uploads and access deal infos. This also allows to check whether mcs backend apis are functioning.
+- `test_contract_api`: Test contract for payment. Can be used as example of calling contract functions for payment.
+- `test_api_response`: Test if the apis returns expected responses.
+- `test_free_upload`: Test `free_upload`. This will call the free upload function which check if the current upload if free and only processed to payment if the upload needs to be paid. This can be used as an example for calling `free_upload.py`.
 
 ## Documentation
 
