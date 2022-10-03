@@ -106,7 +106,7 @@ if __name__ == "__main__":
   upload_file_pay(wallet_info)
 ```
 
-For free upload, the upload api will return `is_free` parameter, while this is true the file does not require to be paid using the `SwanPayment contract`. However, this free_upload only applies to the first 10GB of upload per month, and file larger than 10GB will needs to be paid. (Files cannot be partially free uploaded) \
+For free upload, the upload api will return `is_free` parameter, while this is true the file does not require to be paid using the `SwanPayment contract`. However, this free_upload only applies to the first 10GB of upload per month, and file larger than 10GB will needs to be paid. (Files cannot be partially free uploaded)
 
 An example to use free upload:
 ```python
@@ -119,7 +119,7 @@ def free_upload():
 ```
 
 ## Testing
-You can use the pytest functions provided under the test directory to test the functionality of python mcs sdk. \
+You can use the pytest functions provided under the test directory to test the functionality of python mcs sdk.
 
 - `test_mcs_api`: Test the mcs backend api for getting params, uploads and access deal infos. This also allows to check whether mcs backend apis are functioning.
 - `test_contract_api`: Test contract for payment. Can be used as example of calling contract functions for payment.
