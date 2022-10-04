@@ -1,8 +1,11 @@
 import pytest
 import os
+from web3 import Web3
 from dotenv import load_dotenv
 from mcs.api import McsAPI
 from mcs.contract import ContractAPI
+from mcs.common.utils import get_amount
+
 
 
 @pytest.fixture
@@ -33,6 +36,8 @@ def test_upload_file_pay(info):
 
     w3_api = ContractAPI(web3_api)
     api = McsAPI()
+    w3 = Web3(Web3.HTTPProvider(web3_api))
+
 
     # upload file to mcs
     filepath = "/images/log_mcs.png"
@@ -51,6 +56,9 @@ def test_upload_file_pay(info):
     rate = api.get_price_rate()["data"]
     # test get price rate api
     assert api.get_price_rate()['status'] == 'success'
+    amount = get_amount(file_size, rate)
+    approve_amount = int(w3.toWei(amount, 'ether') * float(params['pay_multiply_factor']))
+    w3_api.approve_usdc(wallet_address, private_key, approve_amount)
     # test upload_file_pay contract
     w3_api.upload_file_pay(wallet_address, private_key, file_size, w_cid, rate, params)
     # test get payment info api
@@ -70,6 +78,7 @@ def test_mint_nft(info):
 
     w3_api = ContractAPI(web3_api)
     api = McsAPI()
+    w3 = Web3(Web3.HTTPProvider(web3_api))
 
     # upload file to mcs
     filepath = "/images/log_mcs.png"
@@ -89,6 +98,9 @@ def test_mint_nft(info):
     rate = api.get_price_rate()["data"]
     # test get price rate api
     assert api.get_price_rate()['status'] == 'success'
+    amount = get_amount(file_size, rate)
+    approve_amount = int(w3.toWei(amount, 'ether') * float(params['pay_multiply_factor']))
+    w3_api.approve_usdc(wallet_address, private_key, approve_amount)
     # test upload_file_pay contract
     tx_hash = w3_api.upload_file_pay(wallet_address, private_key, file_size, w_cid, rate, params)
     print(tx_hash)
