@@ -21,6 +21,8 @@ def parse_params_to_str(params):
 def get_amount(size, rate):
     fil_price = get_fil_price()
     amount = fil_price * size * 525 / 365 * rate
+    if amount == 0:
+        amount = 0.000000002
     return amount
 
 
