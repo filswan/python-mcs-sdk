@@ -25,8 +25,7 @@ def test_approve_usdc(info):
     rpc_endpoint = info['rpc_endpoint']
 
     w3_api = ContractAPI(rpc_endpoint)
-    w3_api.approve_usdc(wallet_address,
-                        private_key, "1")
+    w3_api.approve_usdc(wallet_address, private_key, 1)
 
 
 def test_upload_file_pay(info):
