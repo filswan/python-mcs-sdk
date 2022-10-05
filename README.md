@@ -101,6 +101,10 @@ The `MCSUpload` contains functions:
 - `pay()`:
   - return: payment success / payment failed with error message
   - this function call the payment contract to pay for the currently processing upload (info stored in upload_response)
+- `mint()`:
+  - parameters: `file_name`
+  - return: `tx_hash`, `token_id`, mcs mint update api response
+  - this functions allows to mint nft to open sea
 
 
 ### Basic functions

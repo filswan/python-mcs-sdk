@@ -17,6 +17,7 @@ class MCSUpload():
         self.rpc_endpoint = rpc_endpoint
         self.file_path = file_path
         self.upload_response = None
+        self.payment_txhash = None
     
     def change_file(self, file_path):
         self.file_path = file_path
@@ -81,9 +82,20 @@ class MCSUpload():
 
         # payment
         try:
-            w3_api.upload_file_pay(self.wallet_address, self.private_key, file_size, w_cid, rate, params)
+            self.payment_txhash = w3_api.upload_file_pay(self.wallet_address, self.private_key, file_size, w_cid, rate, params)
         except Exception as e:
             logging.error(str(e))
             return 'payment failed: ' + str(e)
         
         return 'payment success'
+    
+    def mint(self, file_name):
+        api = McsAPI()
+        w3_api = ContractAPI(self.rpc_endpoint)
+
+        file_data = self.upload_response
+        source_file_upload_id, nft_uri, file_size = file_data['source_file_upload_id'], file_data['ipfs_url'], file_data['file_size']
+        meta_url = api.upload_nft_metadata(self.wallet_address, file_name, nft_uri, self.payment_txhash, file_size)['data']['ipfs_url']
+        tx_hash, token_id = w3_api.mint_nft(self.wallet_address, self.private_key, meta_url)
+        response = api.get_mint_info(source_file_upload_id, None, tx_hash, token_id, self.wallet_address)
+        return tx_hash, token_id, response
