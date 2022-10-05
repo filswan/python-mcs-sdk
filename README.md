@@ -69,7 +69,7 @@ rpc_endpoint : <RPC_ENDPOINT>
 ```
 
 ### MCS upload
-You can use the `MCSUpload` class in `upload/mcs_upload.py` to upload file or as an example for accessing MCS api and smart contract. \
+You can use the `MCSUpload` class in `upload/mcs_upload.py` to upload file or as an example for accessing MCS api and smart contract.
 
 The `MCSUpload` contains functions:
 - `__init__()`: 
@@ -159,7 +159,6 @@ You can use the pytest functions provided under the test directory to test the f
 - `test_mcs_api`: Test the mcs backend api for getting params, uploads and access deal infos. This also allows to check whether mcs backend apis are functioning.
 - `test_contract_api`: Test contract for payment. Can be used as example of calling contract functions for payment.
 - `test_api_response`: Test if the apis returns expected responses.
-- `test_free_upload`: Test `free_upload`. This will call the free upload function which check if the current upload if free and only processed to payment if the upload needs to be paid. This can be used as an example for calling `free_upload.py`.
 
 ## Documentation
 
