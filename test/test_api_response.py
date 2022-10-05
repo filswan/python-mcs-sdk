@@ -15,16 +15,16 @@ def info():
     wallet_info = {
         'wallet_address': os.getenv('wallet_address'),
         'private_key': os.getenv('private_key'),
-        'web3_api': os.getenv('web3_api'),
+        'rpc_endpoint': os.getenv('rpc_endpoint'),
     }
     return wallet_info
 
 def test_approve_usdc(info):
     wallet_address = info['wallet_address']
     private_key = info['private_key']
-    web3_api = info['web3_api']
+    rpc_endpoint = info['rpc_endpoint']
 
-    w3_api = ContractAPI(web3_api)
+    w3_api = ContractAPI(rpc_endpoint)
     w3_api.approve_usdc(wallet_address,
                         private_key, "1")
 
@@ -32,11 +32,11 @@ def test_approve_usdc(info):
 def test_upload_file_pay(info):
     wallet_address = info['wallet_address']
     private_key = info['private_key']
-    web3_api = info['web3_api']
+    rpc_endpoint = info['rpc_endpoint']
 
-    w3_api = ContractAPI(web3_api)
+    w3_api = ContractAPI(rpc_endpoint)
     api = McsAPI()
-    w3 = Web3(Web3.HTTPProvider(web3_api))
+    w3 = Web3(Web3.HTTPProvider(rpc_endpoint))
 
 
     # upload file to mcs
@@ -74,11 +74,11 @@ def test_upload_file_pay(info):
 def test_mint_nft(info):
     wallet_address = info['wallet_address']
     private_key = info['private_key']
-    web3_api = info['web3_api']
+    rpc_endpoint = info['rpc_endpoint']
 
-    w3_api = ContractAPI(web3_api)
+    w3_api = ContractAPI(rpc_endpoint)
     api = McsAPI()
-    w3 = Web3(Web3.HTTPProvider(web3_api))
+    w3 = Web3(Web3.HTTPProvider(rpc_endpoint))
 
     # upload file to mcs
     filepath = "/images/log_mcs.png"
@@ -116,11 +116,11 @@ def test_mint_nft(info):
     print(tx_hash)
 
     # update mint info
-    mint_address = params['MINT_CONTRACT_ADDRESS']
+    mint_address = params['mint_contract_address']
     mint_info = api.get_mint_info(source_file_upload_id, None, tx_hash, token_id, mint_address)
     # test update mint info
     assert mint_info['status'] == 'success'
     assert mint_info['data']['source_file_upload_id'] == source_file_upload_id
     assert mint_info['data']['nft_tx_hash'] == tx_hash
-    assert mint_info['data']['token_id'] == str(token_id)
+    assert mint_info['data']['token_id'] == int(token_id)
     assert mint_info['data']['mint_address'] == mint_address
