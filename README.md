@@ -69,7 +69,39 @@ rpc_endpoint : <RPC_ENDPOINT>
 ```
 
 ### MCS upload
-You can use the `MCSUpload` class in `upload/mcs_upload.py` function
+You can use the `MCSUpload` class in `upload/mcs_upload.py` to upload file or as an example for accessing MCS api and smart contract. \
+
+The `MCSUpload` contains functions:
+- `__init__()`: 
+  - parameters:  `wallet_address`, `private_key`, `rpc_endpoint`, `file_path`
+  - initialize the upload function using wallet infos and file_path
+- `change_file()`:
+  - parameters: `file_path`
+  - return: the current file path
+  - changed the file_path for upload
+- `check_allowance()`:
+  - change allowance amount of the wallet
+  - return the current approved amount of the wallet
+- `approve_token()`:
+  - parameters: `amount`
+  - return: txhash for approve
+  - change the approved amount (this value will be reset to the amount rather than increment)
+- `free_upload()`:
+  - return: result of free upload
+  - this function upload and pay for the upload automatically. file will not be paid if the reutnr status from api is free (you can also upload manually).
+- `upload()`:
+  - return: api response from mcs upload
+  - upload the file and get returned payment information
+- `stream_upload()`:
+  - return: api response from mcs upload
+  - use stream upload for large file
+- `estimate_amount()`:
+  - return: estimated lockin payment
+  - can be used to check the payment amount after upload file (free upload will skip this and pay automatically)
+- `pay()`:
+  - return: payment success / payment failed with error message
+  - this function call the payment contract to pay for the currently processing upload (info stored in upload_response)
+
 
 ### Basic functions
 Approve wallet (to spend token)
