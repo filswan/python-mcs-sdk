@@ -1,7 +1,10 @@
+from itertools import chain
 import pytest
 import os
 from web3 import Web3
 from dotenv import load_dotenv
+
+from mcs.common.params import Params
 from mcs.api import McsAPI
 from mcs.contract import ContractAPI
 from mcs.common.utils import get_amount
@@ -10,7 +13,6 @@ from mcs.common.utils import get_amount
 
 @pytest.fixture
 def info():
-
     load_dotenv()
     wallet_info = {
         'wallet_address': os.getenv('wallet_address'),
@@ -18,6 +20,7 @@ def info():
         'rpc_endpoint': os.getenv('rpc_endpoint'),
     }
     return wallet_info
+
 
 def test_approve_usdc(info):
     wallet_address = info['wallet_address']

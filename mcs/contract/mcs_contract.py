@@ -11,6 +11,10 @@ class ContractAPI(ApiClient):
         self.w3 = Web3(Web3.HTTPProvider(rpc_endpoint))
         self.w3.middleware_onion.inject(geth_poa_middleware, layer=0)
 
+        self.SWAN_PAYMENT_ADDRESS = params['SWAN_PAYMENT_ADDRESS']
+        self.USDC_TOKEN = params['USDC_TOKEN']
+        self.MINT_ADDRESS = params['MINT_ADDRESS']
+
     def approve_usdc(self, wallet_address, private_key, amount):
         nonce = self.w3.eth.getTransactionCount(wallet_address)
         usdc_abi = get_contract_abi(USDC_ABI)
@@ -21,7 +25,7 @@ class ContractAPI(ApiClient):
         if int(usdc_balance) < int(amount):
             print("Insufficient balance")
             return
-        tx = token.functions.approve(USDC_SPENDER, amount).buildTransaction({
+        tx = token.functions.approve(self.SWAN_PAYMENT_ADDRESS, amount).buildTransaction({
             'from': wallet_address,
             'nonce': nonce
         })
@@ -60,7 +64,7 @@ class ContractAPI(ApiClient):
     def mint_nft(self, wallet_address, private_key, nft_meta_uri):
         nonce = self.w3.eth.getTransactionCount(wallet_address)
         mint_abi = get_contract_abi(MINT_ABI)
-        mint_contract = self.w3.eth.contract(MINT_ADDRESS, abi=mint_abi)
+        mint_contract = self.w3.eth.contract(self.MINT_ADDRESS, abi=mint_abi)
         option_obj = {
             'from': wallet_address,
             'nonce': nonce
