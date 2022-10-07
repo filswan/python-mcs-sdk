@@ -6,7 +6,7 @@ import os
 
 def get_fil_price():
     response = requests.request("GET", FIL_PRICE_API)
-    price = response.json()["data"]['average_price_per_GB_per_year']
+    price = response.json()["data"]['historical_average_price_verified']
     price = float(str.split(price)[0]) / 1024 / 1024 / 1024
     return price
 
@@ -22,7 +22,7 @@ def get_amount(size, rate):
     fil_price = get_fil_price()
     amount = fil_price * size * 525 / 365 * rate
     if amount == 0:
-        amount = 0.000000002
+        amount = 0.000002
     return amount
 
 

@@ -6,7 +6,7 @@ from web3.middleware import geth_poa_middleware
 
 
 class ContractAPI(ApiClient):
-    def __init__(self, rpc_endpoint, params):
+    def __init__(self, rpc_endpoint):
         self.rpc_endpoint = rpc_endpoint
         self.w3 = Web3(Web3.HTTPProvider(rpc_endpoint))
         self.w3.middleware_onion.inject(geth_poa_middleware, layer=0)
@@ -16,12 +16,13 @@ class ContractAPI(ApiClient):
         self.MINT_ADDRESS = params['MINT_ADDRESS']
 
     def approve_usdc(self, wallet_address, private_key, amount):
-        amount = self.w3.toWei(amount, 'ether')
         nonce = self.w3.eth.getTransactionCount(wallet_address)
         usdc_abi = get_contract_abi(USDC_ABI)
-        token = self.w3.eth.contract(self.USDC_TOKEN, abi=usdc_abi)
-        usdc_balance = self.w3.toWei(token.functions.balanceOf(wallet_address).call(), 'ether')
-        if usdc_balance < amount:
+        token = self.w3.eth.contract(USDC_TOKEN, abi=usdc_abi)
+        decimals = token.functions.decimals().call()
+        amount = amount * (10 ** decimals)
+        usdc_balance = token.functions.balanceOf(wallet_address).call()
+        if int(usdc_balance) < int(amount):
             print("Insufficient balance")
             return
         tx = token.functions.approve(self.SWAN_PAYMENT_ADDRESS, amount).buildTransaction({
@@ -37,11 +38,14 @@ class ContractAPI(ApiClient):
         amount = get_amount(file_size, rate)
         nonce = self.w3.eth.getTransactionCount(wallet_address)
         swan_payment_abi = get_contract_abi(SWAN_PAYMENT_ABI)
-        swan_payment = self.w3.eth.contract(self.SWAN_PAYMENT_ADDRESS, abi=swan_payment_abi)
+        swan_payment = self.w3.eth.contract(SWAN_PAYMENT_ADDRESS, abi=swan_payment_abi)
+        usdc_abi = get_contract_abi(USDC_ABI)
+        token = self.w3.eth.contract(USDC_TOKEN, abi=usdc_abi)
+        decimals = token.functions.decimals().call()
         lock_obj = {
             'id': w_cid,
-            'minPayment': self.w3.toWei(amount, 'ether'),
-            'amount': int(self.w3.toWei(amount, 'ether') * float(params['pay_multiply_factor'])),
+            'minPayment': int(amount * (10 ** decimals)),
+            'amount': int(amount * (10 ** decimals) * float(params['pay_multiply_factor'])),
             'lockTime': 86400 * params['lock_time'],
             'recipient': params['payment_recipient_address'],
             'size': file_size,

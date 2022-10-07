@@ -5,19 +5,22 @@ from dotenv import load_dotenv
 from mcs.contract import ContractAPI
 from mcs.api import McsAPI
 
-load_dotenv()
-
-wallet_address = os.getenv('wallet_address')
-private_key = os.getenv('private_key')
-rpc_endpoint = os.getenv('rpc_endpoint')
-
 def test_approve_usdc():
+    load_dotenv()
+    wallet_address = os.getenv('wallet_address')
+    private_key = os.getenv('private_key')
+    rpc_endpoint = os.getenv('rpc_endpoint')
+
     w3_api = ContractAPI(rpc_endpoint)
-    w3_api.approve_usdc(wallet_address,
-                        private_key, "1")
+    w3_api.approve_usdc(wallet_address, private_key, 1)
 
 
 def test_upload_file_pay():
+    load_dotenv()
+    wallet_address = os.getenv('wallet_address')
+    private_key = os.getenv('private_key')
+    rpc_endpoint = os.getenv('rpc_endpoint')
+
     w3_api = ContractAPI(rpc_endpoint)
     api = McsAPI()
     # upload file to mcs
@@ -34,24 +37,12 @@ def test_upload_file_pay():
     # test upload_file_pay contract
     w3_api.upload_file_pay(wallet_address, private_key, file_size, w_cid, rate, params)
 
-def test_stream_upload_file_pay():
-    w3_api = ContractAPI(rpc_endpoint)
-    api = McsAPI()
-    # upload file to mcs
-    filepath = "/images/log_mcs.png"
-    parent_path = os.path.abspath(os.path.dirname(__file__))
-    upload_file = api.stream_upload_file(wallet_address, parent_path + filepath)
-    file_data = upload_file["data"]
-    payload_cid, source_file_upload_id, nft_uri, file_size, w_cid = file_data['payload_cid'], file_data[
-        'source_file_upload_id'], file_data['ipfs_url'], file_data['file_size'], file_data['w_cid']
-    # get the global variable
-    params = api.get_params()["data"]
-    # get filcoin price
-    rate = api.get_price_rate()["data"]
-    # test upload_file_pay contract
-    w3_api.upload_file_pay(wallet_address, private_key, file_size, w_cid, rate, params)
-
 def test_mint_nft():
+    load_dotenv()
+    wallet_address = os.getenv('wallet_address')
+    private_key = os.getenv('private_key')
+    rpc_endpoint = os.getenv('rpc_endpoint')
+
     w3_api = ContractAPI(rpc_endpoint)
     api = McsAPI()
 

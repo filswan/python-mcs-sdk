@@ -37,7 +37,7 @@ class McsAPI(ApiClient):
         params['source_file_upload_id'] = source_file_upload_id
         params['payload_cid'] = payload_cid
         params['tx_hash'] = tx_hash
-        params['token_id'] = str(token_id)
+        params['token_id'] = int(token_id)
         params['mint_address'] = mint_address
         return self._request_with_params(POST, MINT_INFO, self.MCS_API, params, None)
 

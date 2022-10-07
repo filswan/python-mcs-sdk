@@ -1,11 +1,14 @@
 from itertools import chain
 import pytest
 import os
+from web3 import Web3
 from dotenv import load_dotenv
 
 from mcs.common.params import Params
 from mcs.api import McsAPI
 from mcs.contract import ContractAPI
+from mcs.common.utils import get_amount
+
 
 
 @pytest.fixture
@@ -14,7 +17,7 @@ def info():
     wallet_info = {
         'wallet_address': os.getenv('wallet_address'),
         'private_key': os.getenv('private_key'),
-        'rpc_endpoint': os.getenv('rpc_endpoint')
+        'rpc_endpoint': os.getenv('rpc_endpoint'),
     }
     return wallet_info
 
@@ -24,10 +27,8 @@ def test_approve_usdc(info):
     private_key = info['private_key']
     rpc_endpoint = info['rpc_endpoint']
 
-    params = Params(chain_name='mumbai')
-    w3_api = ContractAPI(rpc_endpoint, params)
-    w3_api.approve_usdc(wallet_address,
-                        private_key, "1")
+    w3_api = ContractAPI(rpc_endpoint)
+    w3_api.approve_usdc(wallet_address, private_key, 1)
 
 
 def test_upload_file_pay(info):
@@ -37,6 +38,8 @@ def test_upload_file_pay(info):
 
     w3_api = ContractAPI(rpc_endpoint)
     api = McsAPI()
+    w3 = Web3(Web3.HTTPProvider(rpc_endpoint))
+
 
     # upload file to mcs
     filepath = "/images/log_mcs.png"
@@ -55,6 +58,9 @@ def test_upload_file_pay(info):
     rate = api.get_price_rate()["data"]
     # test get price rate api
     assert api.get_price_rate()['status'] == 'success'
+    amount = get_amount(file_size, rate)
+    approve_amount = int(w3.toWei(amount, 'ether') * float(params['pay_multiply_factor']))
+    w3_api.approve_usdc(wallet_address, private_key, approve_amount)
     # test upload_file_pay contract
     w3_api.upload_file_pay(wallet_address, private_key, file_size, w_cid, rate, params)
     # test get payment info api
@@ -74,6 +80,7 @@ def test_mint_nft(info):
 
     w3_api = ContractAPI(rpc_endpoint)
     api = McsAPI()
+    w3 = Web3(Web3.HTTPProvider(rpc_endpoint))
 
     # upload file to mcs
     filepath = "/images/log_mcs.png"
@@ -93,6 +100,9 @@ def test_mint_nft(info):
     rate = api.get_price_rate()["data"]
     # test get price rate api
     assert api.get_price_rate()['status'] == 'success'
+    amount = get_amount(file_size, rate)
+    approve_amount = int(w3.toWei(amount, 'ether') * float(params['pay_multiply_factor']))
+    w3_api.approve_usdc(wallet_address, private_key, approve_amount)
     # test upload_file_pay contract
     tx_hash = w3_api.upload_file_pay(wallet_address, private_key, file_size, w_cid, rate, params)
     print(tx_hash)
@@ -108,11 +118,11 @@ def test_mint_nft(info):
     print(tx_hash)
 
     # update mint info
-    mint_address = params['MINT_CONTRACT_ADDRESS']
+    mint_address = params['mint_contract_address']
     mint_info = api.get_mint_info(source_file_upload_id, None, tx_hash, token_id, mint_address)
     # test update mint info
     assert mint_info['status'] == 'success'
     assert mint_info['data']['source_file_upload_id'] == source_file_upload_id
     assert mint_info['data']['nft_tx_hash'] == tx_hash
-    assert mint_info['data']['token_id'] == str(token_id)
+    assert mint_info['data']['token_id'] == int(token_id)
     assert mint_info['data']['mint_address'] == mint_address
