@@ -63,9 +63,9 @@ $ pip install -r requirements.txt
 ### Set Up Wallet Infomations
 First you should set your wallet address, private key and web3 api. There can be put into a .env file under the same directory (under test directory for using pytest functions). `python-dotenv` will only look for file that named exactly as .env under the current directory.
 ```
-wallet_address : <WALLET_ADDRESS>
-private_key : <PRIVATE_KEY>
-rpc_endpoint : <RPC_ENDPOINT>
+wallet_address=<WALLET_ADDRESS>
+private_key=<PRIVATE_KEY>
+rpc_endpoint=<RPC_ENDPOINT>
 ```
 
 ### MCS upload

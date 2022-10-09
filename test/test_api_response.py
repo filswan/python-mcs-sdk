@@ -1,19 +1,18 @@
-from itertools import chain
-import pytest
 import os
+
+import web3
 from web3 import Web3
 from dotenv import load_dotenv
-
-from mcs.common.params import Params
 from mcs.api import McsAPI
+from mcs.common.params import Params
 from mcs.contract import ContractAPI
 from mcs.common.utils import get_amount
 
+chain_name = "mumbai"
 
 
-@pytest.fixture
-def info():
-    load_dotenv()
+def test_info():
+    load_dotenv(".env_" + chain_name)
     wallet_info = {
         'wallet_address': os.getenv('wallet_address'),
         'private_key': os.getenv('private_key'),
@@ -22,29 +21,29 @@ def info():
     return wallet_info
 
 
-def test_approve_usdc(info):
+def test_approve_usdc():
+    info = test_info()
     wallet_address = info['wallet_address']
     private_key = info['private_key']
     rpc_endpoint = info['rpc_endpoint']
-
-    w3_api = ContractAPI(rpc_endpoint)
+    w3_api = ContractAPI(rpc_endpoint, chain_name)
     w3_api.approve_usdc(wallet_address, private_key, 1)
 
 
-def test_upload_file_pay(info):
+def test_upload_file_pay():
+    info = test_info()
     wallet_address = info['wallet_address']
     private_key = info['private_key']
     rpc_endpoint = info['rpc_endpoint']
 
-    w3_api = ContractAPI(rpc_endpoint)
-    api = McsAPI()
-    w3 = Web3(Web3.HTTPProvider(rpc_endpoint))
-
-
+    w3_api = ContractAPI(rpc_endpoint, chain_name)
+    api = McsAPI(Params(chain_name).MCS_API)
+    api.get_jwt_token(wallet_address,private_key)
     # upload file to mcs
     filepath = "/images/log_mcs.png"
     parent_path = os.path.abspath(os.path.dirname(__file__))
     upload_file = api.upload_file(wallet_address, parent_path + filepath)
+    print(upload_file)
     # test upload file
     assert upload_file['status'] == 'success'
     file_data = upload_file["data"]
@@ -59,7 +58,7 @@ def test_upload_file_pay(info):
     # test get price rate api
     assert api.get_price_rate()['status'] == 'success'
     amount = get_amount(file_size, rate)
-    approve_amount = int(w3.toWei(amount, 'ether') * float(params['pay_multiply_factor']))
+    approve_amount = int(web3.Web3.toWei(amount, 'ether') * float(params['pay_multiply_factor']))
     w3_api.approve_usdc(wallet_address, private_key, approve_amount)
     # test upload_file_pay contract
     w3_api.upload_file_pay(wallet_address, private_key, file_size, w_cid, rate, params)
@@ -73,7 +72,8 @@ def test_upload_file_pay(info):
     assert deal_detail['data'] != None
 
 
-def test_mint_nft(info):
+def test_mint_nft():
+    info = test_info()
     wallet_address = info['wallet_address']
     private_key = info['private_key']
     rpc_endpoint = info['rpc_endpoint']
