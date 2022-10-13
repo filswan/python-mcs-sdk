@@ -17,7 +17,7 @@ class McsAPI(ApiClient):
         message = encode_defunct(text=nonce)
         signed_message = Account.sign_message(message, private_key=private_key)["signature"]
         signature = web3.Web3.toHex(signed_message)
-        login = self.user_login(wallet_address, signature, nonce, "polygon.mumbai")
+        login = self.user_login(wallet_address, signature, nonce, "polygon.mainnet")
         jwt = login["data"]["jwt_token"]
         self.token = jwt
         return jwt
