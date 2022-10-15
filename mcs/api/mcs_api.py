@@ -12,12 +12,12 @@ class McsAPI(ApiClient):
         self.MCS_API = url
         self.token = None
 
-    def get_jwt_token(self, wallet_address, private_key):
+    def get_jwt_token(self, wallet_address, private_key, chain_name):
         nonce = self.user_register(wallet_address)["data"]["nonce"]
         message = encode_defunct(text=nonce)
         signed_message = Account.sign_message(message, private_key=private_key)["signature"]
         signature = web3.Web3.toHex(signed_message)
-        login = self.user_login(wallet_address, signature, nonce, "polygon.mainnet")
+        login = self.user_login(wallet_address, signature, nonce, chain_name)
         jwt = login["data"]["jwt_token"]
         self.token = jwt
         return jwt
