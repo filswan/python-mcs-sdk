@@ -15,13 +15,15 @@ class MCSUpload():
         self.upload_response = None
         self.payment_tx_hash = None
 
+        self.api = McsAPI(Params(self.chain_name).MCS_API)
+        self.api.get_jwt_token(self.wallet_address, self.private_key)
+        self.w3_api = ContractAPI(self.rpc_endpoint, self.chain_name)
+
     def approve_token(self, amount):
-        w3_api = ContractAPI(self.rpc_endpoint, self.chain_name)
-        return w3_api.approve_usdc(self.wallet_address, self.private_key, amount)
+        return self.w3_api.approve_usdc(self.wallet_address, self.private_key, amount)
 
     def stream_upload(self):
-        api = McsAPI(Params(self.chain_name).MCS_API)
-        upload_file = api.stream_upload_file(self.wallet_address, self.file_path)
+        upload_file = self.api.stream_upload_file(self.wallet_address, self.file_path)
         file_data = upload_file["data"]
         need_pay = 0
         if file_data["status"] == "Free":
@@ -33,21 +35,18 @@ class MCSUpload():
         return file_data, need_pay
 
     def estimate_amount(self):
-        api = McsAPI(Params(self.chain_name).MCS_API)
         file_size = self.upload_response['file_size']
-        rate = api.get_price_rate()["data"]
+        rate = self.api.get_price_rate()["data"]
         amount = get_amount(file_size, rate)
         return amount
 
     def pay(self):
-        api = McsAPI(Params(self.chain_name).MCS_API)
-        w3_api = ContractAPI(self.rpc_endpoint, self.chain_name)
         file_size, w_cid = self.upload_response['file_size'], self.upload_response['w_cid']
-        params = api.get_params()["data"]
-        rate = api.get_price_rate()["data"]
+        params = self.api.get_params()["data"]
+        rate = self.api.get_price_rate()["data"]
         # payment
         try:
-            self.payment_tx_hash = w3_api.upload_file_pay(self.wallet_address, self.private_key, file_size, w_cid, rate,
+            self.payment_tx_hash = self.w3_api.upload_file_pay(self.wallet_address, self.private_key, file_size, w_cid, rate,
                                                           params)
         except Exception as e:
             logging.error(str(e))
@@ -56,15 +55,12 @@ class MCSUpload():
         return 'payment success'
 
     def mint(self, file_name):
-        api = McsAPI(Params(self.chain_name).MCS_API)
-        w3_api = ContractAPI(self.rpc_endpoint, self.chain_name)
-
         file_data = self.upload_response
         source_file_upload_id, nft_uri, file_size = file_data['source_file_upload_id'], file_data['ipfs_url'], \
                                                     file_data['file_size']
         meta_url = \
-            api.upload_nft_metadata(self.wallet_address, file_name, nft_uri, self.payment_tx_hash, file_size)['data'][
+            self.api.upload_nft_metadata(self.wallet_address, file_name, nft_uri, self.payment_tx_hash, file_size)['data'][
                 'ipfs_url']
-        tx_hash, token_id = w3_api.mint_nft(self.wallet_address, self.private_key, meta_url)
-        response = api.get_mint_info(source_file_upload_id, None, tx_hash, token_id, self.wallet_address)
+        tx_hash, token_id = self.w3_api.mint_nft(self.wallet_address, self.private_key, meta_url)
+        response = self.api.get_mint_info(source_file_upload_id, None, tx_hash, token_id, self.wallet_address)
         return tx_hash, token_id, response

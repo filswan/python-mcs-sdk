@@ -8,7 +8,7 @@ from mcs.common.params import Params
 from mcs.contract import ContractAPI
 from mcs.common.utils import get_amount
 
-chain_name = "mumbai"
+chain_name = "main"
 
 
 def test_info():
@@ -78,8 +78,9 @@ def test_mint_nft():
     private_key = info['private_key']
     rpc_endpoint = info['rpc_endpoint']
 
-    w3_api = ContractAPI(rpc_endpoint)
-    api = McsAPI()
+    w3_api = ContractAPI(rpc_endpoint, chain_name)
+    api = McsAPI(Params(chain_name).MCS_API)
+    api.get_jwt_token(wallet_address,private_key)
     w3 = Web3(Web3.HTTPProvider(rpc_endpoint))
 
     # upload file to mcs
