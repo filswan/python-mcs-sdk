@@ -38,7 +38,7 @@ def test_upload_file_pay():
 
     w3_api = ContractAPI(rpc_endpoint, chain_name)
     api = McsAPI(Params(chain_name).MCS_API)
-    api.get_jwt_token(wallet_address,private_key)
+    api.get_jwt_token(wallet_address,private_key, "polygon.mainnet")
     # upload file to mcs
     filepath = "/images/log_mcs.png"
     parent_path = os.path.abspath(os.path.dirname(__file__))
@@ -80,7 +80,7 @@ def test_mint_nft():
 
     w3_api = ContractAPI(rpc_endpoint, chain_name)
     api = McsAPI(Params(chain_name).MCS_API)
-    api.get_jwt_token(wallet_address,private_key)
+    api.get_jwt_token(wallet_address,private_key, "polygon.mainnet")
     w3 = Web3(Web3.HTTPProvider(rpc_endpoint))
 
     # upload file to mcs
