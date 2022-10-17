@@ -31,9 +31,8 @@ A python software development kit for the Multi-Chain Storage (MCS) https://mcs.
 - [web3](https://pypi.org/project/web3/) - web3 python package to process contract
 - Polygon Mainnet Wallet - [Metamask Tutorial](https://docs.filswan.com/getting-started/beginner-walkthrough/public-testnet/setup-metamask)
 - Polygon Mainnet RPC - [Signup via Alchemy](https://www.alchemy.com/)
-- Polygon RPC endpoint - https://polygon-rpc.com/
+- Polygon RPC endpoint - https://polygon-rpc.com/ (you will also need USDC and MATIC balance to use this SDK.)
 
-You will also need Testnet USDC and MATIC balance to use this SDK. [Swan Faucet Tutorial](https://docs.filswan.com/development-resource/swan-token-contract/acquire-testnet-usdc-and-matic-tokens)
 - [pytest](https://docs.pytest.org/en/7.1.x/) (for testing purpose)
 - [requests](https://pypi.org/project/requests/) for requesting mcs api
 - [requests-toolbelt](https://pypi.org/project/requests-toolbelt/) for stream upload
@@ -58,46 +57,53 @@ $ git checkout main
 $ pip install -r requirements.txt
 ```
 
+### Method 2. Using Pip
+Install python sdk use pip https://pypi.org/project/python-mcs-sdk/
+
+```
+pip install python-mcs-sdk
+```
+
 ## Getting Started
 
 ### Set Up Wallet Infomations
-First you should set your wallet address, private key and web3 api. There can be put into a .env file under the same directory (under test directory for using pytest functions). `python-dotenv` will only look for file that named exactly as .env under the current directory.
+First you should set up your wallet address, private key and web3 api. There can be put into `.env_main` file under the same directory (under test directory for using pytest functions). `python-dotenv` will only look for file that named exactly as `.env_main` under the current directory.
 ```
-wallet_address : <WALLET_ADDRESS>
-private_key : <PRIVATE_KEY>
-rpc_endpoint : <RPC_ENDPOINT>
+wallet_address="<WALLET_ADDRESS>"
+private_key="<PRIVATE_KEY>"
+rpc_endpoint="<RPC_ENDPOINT>"
+```
+
+### Get MCS jwt token
+To access main functions of MCS, you will need to complete authorization with jwt toke. \
+The function `MCS.get_jwt_token` allows authorization using signature generate with `wallet_address` and `private_key`. \
+By initialize a new `MCS` instance and calling the `get_jwt_token()`, the token will store within the current `MCS` instance 
+for the use in the current session.
+
+example:
+```
+api = McsAPI(Params().MCS_API)
+jwt_token = api.get_jwt_token(wallet_address, private_key)
+print(api.jwt_token)
 ```
 
 ### MCS upload
-You can use the `MCSUpload` class in `upload/mcs_upload.py` to upload file or as an example for accessing MCS api and smart contract.
+You can use the `MCSUpload` class in `upload/mcs_upload.py` to upload file or as an simple example for accessing MCS api and smart contract.
 
 The `MCSUpload` contains functions:
 - `__init__()`: 
-  - parameters:  `wallet_address`, `private_key`, `rpc_endpoint`, `file_path`
+  - parameters:  `chain_name`, `wallet_address`, `private_key`, `rpc_endpoint`, `file_path`
   - initialize the upload function using wallet infos and file_path
-- `change_file()`:
-  - parameters: `file_path`
-  - return: the current file path
-  - changed the file_path for upload
-- `check_allowance()`:
-  - change allowance amount of the wallet
-  - return the current approved amount of the wallet
 - `approve_token()`:
   - parameters: `amount`
   - return: txhash for approve
   - change the approved amount (this value will be reset to the amount rather than increment)
-- `free_upload()`:
-  - return: result of free upload
-  - this function upload and pay for the upload automatically. file will not be paid if the reutnr status from api is free (you can also upload manually).
-- `upload()`:
-  - return: api response from mcs upload
-  - upload the file and get returned payment information
 - `stream_upload()`:
   - return: api response from mcs upload
-  - use stream upload for large file
+  - Upload file to mcs, this function will return `is_free` variable and the payment needs not require payment when `need_pay==0`
 - `estimate_amount()`:
   - return: estimated lockin payment
-  - can be used to check the payment amount after upload file (free upload will skip this and pay automatically)
+  - can be used to check the payment amount after upload file (upload will not be processed until the payment is made through contract)
 - `pay()`:
   - return: payment success / payment failed with error message
   - this function call the payment contract to pay for the currently processing upload (info stored in upload_response)
@@ -158,11 +164,11 @@ def free_upload():
 ```
 
 ## Testing
-You can use the pytest functions provided under the test directory to test the functionality of python mcs sdk.
+You can use the pytest functions provided under the test directory to test the functionality of python mcs sdk. (note that testing mcs on polygon mainnet will cost)
 
 - `test_mcs_api`: Test the mcs backend api for getting params, uploads and access deal infos. This also allows to check whether mcs backend apis are functioning.
-- `test_contract_api`: Test contract for payment. Can be used as example of calling contract functions for payment.
-- `test_api_response`: Test if the apis returns expected responses.
+- `test_api_response`: Test if the apis and mcs contracts returns expected responses.
+- `test_simple_upload`: Test the pre-build `MCSUpload` class for simple upload.
 
 
 ## Documentation

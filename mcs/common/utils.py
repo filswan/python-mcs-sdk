@@ -7,7 +7,7 @@ import os
 def get_fil_price():
     response = requests.request("GET", FIL_PRICE_API)
     price = response.json()["data"]['historical_average_price_verified']
-    price = float(str.split(price)[0]) / 1024 / 1024 / 1024
+    price = float(str.split(price)[0]) / 1024 / 1024 / 1024 / 1e8
     return price
 
 

@@ -7,12 +7,13 @@ from mcs.common import constants as c
 
 class ApiClient(object):
 
-    def _request(self, method, request_path, mcs_api, params, files=False):
+    def _request(self, method, request_path, mcs_api, params, token, files=False):
         if method == c.GET:
             request_path = request_path + utils.parse_params_to_str(params)
         url = mcs_api + c.REST_API_VERSION + request_path
-
         header = {}
+        if token:
+            header["Authorization"] = "Bearer " + token
         print("url:", url)
         # send request
         response = None
@@ -36,10 +37,11 @@ class ApiClient(object):
 
         return response.json()
 
-    def _request_stream_upload(self, request_path, mcs_api, params):
+    def _request_stream_upload(self, request_path, mcs_api, params, token):
         url = mcs_api + c.REST_API_VERSION + request_path
-
         header = {}
+        if token:
+            header["Authorization"] = "Bearer " + token
         print("url:", url)
         # send request
         response = None
@@ -55,8 +57,8 @@ class ApiClient(object):
 
         return response.json()
 
-    def _request_without_params(self, method, request_path, mcs_api):
-        return self._request(method, request_path, mcs_api, {})
+    def _request_without_params(self, method, request_path, mcs_api, token):
+        return self._request(method, request_path, mcs_api, {}, token)
 
-    def _request_with_params(self, method, request_path, mcs_api, params, files):
-        return self._request(method, request_path, mcs_api, params, files)
+    def _request_with_params(self, method, request_path, mcs_api, params, token, files):
+        return self._request(method, request_path, mcs_api, params, token, files)

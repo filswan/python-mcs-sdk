@@ -1,51 +1,43 @@
 import pytest
 import os
 from dotenv import load_dotenv
-
-from mcs.common.constants import MCS_MUMBAI_API, MCS_BSC_API
 from mcs.common.params import Params
 from mcs.api import McsAPI
 
 
 @pytest.mark.asyncio
 async def test_get_params():
-    api_mumbai = McsAPI(Params('mumbai').get_params()['MCS_API'])
-    print(api_mumbai.get_params())
+    api_main = McsAPI(Params().MCS_API)
+    print(api_main.get_params())
 
-    api_bsc = McsAPI(Params('bsc').get_params()['MCS_API'])
-    print(api_bsc.get_params())
+
+@pytest.mark.asyncio
+async def test_user_register():
+    load_dotenv(".env_main")
+    wallet_address = os.getenv('wallet_address')
+    private_key = os.getenv('private_key')
+    api = McsAPI(Params().MCS_API)
+    jwt_token = api.get_jwt_token(wallet_address, private_key)
+    print(jwt_token)
 
 
 @pytest.mark.asyncio
 async def test_get_price_rate():
-    api_mumbai = McsAPI(Params('mumbai').get_params()['MCS_API'])
-    print(api_mumbai.get_price_rate())
-
-    api_bsc = McsAPI(Params('bsc').get_params()['MCS_API'])
-    print(api_bsc.get_price_rate())
-
+    api_main = McsAPI(Params('main').MCS_API)
+    print(api_main.get_price_rate())
 
 @pytest.mark.asyncio
 async def test_upload_file():
-    load_dotenv()
+    load_dotenv(".env_main")
     wallet_address = os.getenv('wallet_address')
+    private_key = os.getenv('private_key')
     print(wallet_address)
-    api = McsAPI()
     filepath = "/images/log_mcs.png"
     parent_path = os.path.abspath(os.path.dirname(__file__))
 
-    api_mumbai = McsAPI(Params('mumbai').get_params()['MCS_API'])
-    print(api_mumbai.upload_file(wallet_address, parent_path + filepath))
+    # main net test
+    api_main = McsAPI(Params().MCS_API)
+    api_main.get_jwt_token(wallet_address, private_key, "polygon.mainnet")
+    print(api_main.upload_file(wallet_address, parent_path + filepath))
 
-    api_bsc = McsAPI(Params('bsc').get_params()['MCS_API'])
-    print(api_bsc.upload_file(wallet_address, parent_path + filepath))
 
-@pytest.mark.asyncio
-def test_stream_upload_file_pay():
-    load_dotenv()
-    wallet_address = os.getenv('wallet_address')
-    api = McsAPI()
-    # upload file to mcs
-    filepath = "/images/log_mcs.png"
-    parent_path = os.path.abspath(os.path.dirname(__file__))
-    print(api.stream_upload_file(wallet_address, parent_path + filepath))
