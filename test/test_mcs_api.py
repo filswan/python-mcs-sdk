@@ -17,7 +17,7 @@ async def test_user_register():
     wallet_address = os.getenv('wallet_address')
     private_key = os.getenv('private_key')
     api = McsAPI(Params().MCS_API)
-    jwt_token = api.get_jwt_token(wallet_address, private_key)
+    jwt_token = api.get_jwt_token(wallet_address, private_key, "polygon.mainnet")
     print(jwt_token)
 
 

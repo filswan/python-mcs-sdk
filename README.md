@@ -17,7 +17,7 @@
 
 # Introduction
 
-A python software development kit for the Multi-Chain Storage (MCS) https://mcs.filswan.com service. It provides a convenient interface for working with the MCS API. This SDK has the following functionalities:
+A python software development kit for the Multi-Chain Storage (MCS) https://www.multichain.storage/ service. It provides a convenient interface for working with the MCS API. This SDK has the following functionalities:
 
 - **POST**    upload file to Filswan IPFS gate way
 - **POST**    make payment to swan filecoin storage gate way
@@ -78,12 +78,13 @@ rpc_endpoint="<RPC_ENDPOINT>"
 To access main functions of MCS, you will need to complete authorization with jwt toke. \
 The function `MCS.get_jwt_token` allows authorization using signature generate with `wallet_address` and `private_key`. \
 By initialize a new `MCS` instance and calling the `get_jwt_token()`, the token will store within the current `MCS` instance 
-for the use in the current session.
+for the use in the current session. (Note that MCS currently only support polygon mainnet which is the only possible chain_name
+to login into)
 
 example:
 ```
 api = McsAPI(Params().MCS_API)
-jwt_token = api.get_jwt_token(wallet_address, private_key)
+jwt_token = api.get_jwt_token(wallet_address, private_key, "polygon_mainnet")
 print(api.jwt_token)
 ```
 
