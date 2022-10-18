@@ -115,53 +115,59 @@ The `MCSUpload` contains functions:
 
 
 ### Basic functions
+Load wallet and upload informations
+
+```python 
+def __init__(self, chain_name, wallet_address, private_key, rpc_endpoint, file_path):
+  self.chain_name = chain_name
+  self.wallet_address = wallet_address
+  self.private_key = private_key
+  self.rpc_endpoint = rpc_endpoint
+  self.file_path = file_path
+  self.upload_response = None
+  self.payment_tx_hash = None
+```
+
 Approve wallet (to spend token)
 
 ```python
 def approve_usdc():
-    w3_api = ContractAPI(rpc_endpoint)
-    w3_api.approve_usdc(wallet_address,
-                        private_key, "1")
+  w3_api.approve_usdc(self.wallet_address, self.private_key, amount)
 ```
 
-Example of uploading a single file using the MCS SDK. (Note that the mcs mainnet currently have 10GB of free upload amount for each wallet per month. While you can still manually pay for the upload, it is not recommanded as the lockedpayment might not be able to unlock under this circumstance. This code is only demonstration purpose and should not be used to upload file on mcs mainnet, the free upload is under `upload/free_upload.py`)
+Example of uploading a single file using the MCS SDK. (Note that the mcs mainnet currently have 10GB of free upload amount for each wallet per month. While you can still manually pay for the upload, it is not recommanded as the lockedpayment might not be able to unlock under this circumstance.)
 
 ```python
-def upload_file_pay(wallet_info):
-    wallet_address = wallet_info['wallet_address']
-    private_key = wallet_info['private_key']
-    rpc_endpoint = wallet_info['rpc_endpoint']
+def stream_upload(self):
+  upload_file = self.api.stream_upload_file(self.wallet_address, self.file_path)
+  file_data = upload_file["data"]
+  need_pay = 0
+  if file_data["status"] == "Free":
+    self.upload_response = file_data
 
-    w3_api = ContractAPI(rpc_endpoint)
-    api = McsAPI()
-    # upload file to mcs
-    filepath = "/images/log_mcs.png"
-    parent_path = os.path.abspath(os.path.dirname(__file__))
-    upload_file = api.upload_file(wallet_address, parent_path + filepath)
-    file_data = upload_file["data"]
-    payload_cid, source_file_upload_id, nft_uri, file_size, w_cid = file_data['payload_cid'], file_data[
-        'source_file_upload_id'], file_data['ipfs_url'], file_data['file_size'], file_data['w_cid']
-    # get the global variable
-    params = api.get_params()["data"]
-    # get filcoin price
-    rate = api.get_price_rate()["data"]
-    # upload file and pay contract
-    w3_api.upload_file_pay(wallet_address, private_key, file_size, w_cid, rate, params)
-
-if __name__ == "__main__":
-  upload_file_pay(wallet_info)
+  else:
+    self.upload_response = file_data
+    need_pay = 1
+    return file_data, need_pay
 ```
 
 For free upload, the upload api will return `is_free` parameter, while this is true the file does not require to be paid using the `SwanPayment contract`. However, this free_upload only applies to the first 10GB of upload per month, and file larger than 10GB will needs to be paid. (Files cannot be partially free uploaded)
 
-An example to use free upload:
+An example for payment:
 ```python
-def free_upload():
-        file_data = upload()
-        if file_data['status'] == 'Free':
-            return 'free upload'
-        result = pay()
-        return result
+def pay(self):
+  file_size, w_cid = self.upload_response['file_size'], self.upload_response['w_cid']
+  params = self.api.get_params()["data"]
+  rate = self.api.get_price_rate()["data"]
+  # payment
+  try:
+    self.payment_tx_hash = self.w3_api.upload_file_pay(self.wallet_address, 
+      self.private_key, file_size, w_cid, rate, params)
+  except Exception as e:
+    logging.error(str(e))
+    return 'payment failed: ' + str(e)
+
+  return 'payment success'
 ```
 
 ## Testing
