@@ -8,9 +8,10 @@ def test_auto_upload():
     private_key = os.getenv('private_key')
     rpc_endpoint = os.getenv('rpc_endpoint')
 
-    file_path = 'images/log_mcs.png'
+    filepath = "/images/log_mcs.png"
+    parent_path = os.path.abspath(os.path.dirname(__file__))
 
-    up = MCSUpload("polygon.mainnet", wallet_address, private_key, rpc_endpoint, file_path)
+    up = MCSUpload("polygon.mainnet", wallet_address, private_key, rpc_endpoint, parent_path+filepath)
     up.approve_token(1)
     file_data, need_pay = up.stream_upload()
     print(up.estimate_amount)

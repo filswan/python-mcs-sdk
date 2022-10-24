@@ -69,9 +69,11 @@ class ContractAPI(ApiClient):
             'from': wallet_address,
             'nonce': nonce
         }
-        tx = mint_contract.functions.mintData(wallet_address, str(nft_meta_uri)).buildTransaction(option_obj)
+        tx = mint_contract.functions.mintUnique(wallet_address, str(nft_meta_uri)).buildTransaction(option_obj)
         signed_tx = self.w3.eth.account.signTransaction(tx, private_key)
         tx_hash = self.w3.eth.sendRawTransaction(signed_tx.rawTransaction)
-        token_id = mint_contract.functions.totalSupply().call()
-        self.w3.eth.wait_for_transaction_receipt(tx_hash, timeout=CONTRACT_TIME_OUT)
+        receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash, timeout=CONTRACT_TIME_OUT)
+        result = mint_contract.events.TransferSingle().processReceipt(receipt)
+        id = result[0]['args']['id']
+        token_id = int(id)
         return self.w3.toHex(tx_hash), token_id

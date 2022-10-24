@@ -52,9 +52,9 @@ Instructions for developers working with MCS SDK and API.
 Install python sdk from github (checkout to the main branch if not alreayd on) and install requirements using pip
 
 ```
-$ git clone https://github.com/filswan/python-mcs-sdk.git
-$ git checkout main
-$ pip install -r requirements.txt
+git clone https://github.com/filswan/python-mcs-sdk.git
+git checkout main
+pip install -r requirements.txt
 ```
 
 ### Method 2. Using Pip
@@ -72,6 +72,12 @@ First you should set up your wallet address, private key and web3 api. There can
 wallet_address="<WALLET_ADDRESS>"
 private_key="<PRIVATE_KEY>"
 rpc_endpoint="<RPC_ENDPOINT>"
+```
+
+Additionally `wallet address` can be retrieved using `private key` through web3py pacakge.
+```python
+w3 = Web3(Web3.HTTPProvider(<rpc_endpoint>))
+w3.eth.account.privateKeyToAccount(<private_key>).address
 ```
 
 ### Get MCS jwt token
@@ -167,7 +173,7 @@ def pay(self):
     logging.error(str(e))
     return 'payment failed: ' + str(e)
 
-  return 'payment success'
+  return payment_tx_hash
 ```
 
 ## Testing

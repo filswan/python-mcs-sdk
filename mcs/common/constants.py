@@ -19,6 +19,6 @@ USER_LOGIN = "/user/login_by_metamask_signature"
 # contract
 USDC_ABI = "ERC20.json"
 SWAN_PAYMENT_ABI = "SwanPayment.json"
-MINT_ABI = "Minter.json"
+MINT_ABI = "SwanNFT.json"
 
 CONTRACT_TIME_OUT = 300
