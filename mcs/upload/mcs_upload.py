@@ -53,7 +53,7 @@ class MCSUpload():
             logging.error(str(e))
             return 'payment failed: ' + str(e)
 
-        return 'payment success'
+        return self.payment_tx_hash
 
     def mint(self, file_name):
         file_data = self.upload_response
