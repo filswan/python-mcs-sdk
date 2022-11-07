@@ -217,10 +217,10 @@ def pay(self):
 The estimated amount for payment can be computed after uploading the file.
 ```python
 def estimate_amount(self):
-        file_size = self.upload_response['file_size']
-        rate = self.api.get_price_rate()["data"]
-        amount = get_amount(file_size, rate)
-        return amount
+  file_size = self.upload_response['file_size']
+  rate = self.api.get_price_rate()["data"]
+  amount = get_amount(file_size, rate)
+  return amount
 ```
 
 ### Full Demo
