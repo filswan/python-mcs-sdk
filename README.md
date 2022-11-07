@@ -74,24 +74,41 @@ private_key="<PRIVATE_KEY>"
 rpc_endpoint="<RPC_ENDPOINT>"
 ```
 
+Then you can use `dotenv` package to load the `.env`.
+```python
+import os
+from dotenv import load_dotenv
+
+load_dotenv("<.env_file_name>")
+
+private_key = os.getenv('private_key')
+pc_endpoint = os.getenv('rpc_endpoint')
+```
+
 Additionally `wallet address` can be retrieved using `private key` through web3py pacakge.
 ```python
+from web3 import Web3
+
 w3 = Web3(Web3.HTTPProvider(<rpc_endpoint>))
-w3.eth.account.privateKeyToAccount(<private_key>).address
+wallet_address = w3.eth.account.privateKeyToAccount(<private_key>).address
+print(wallet_address)
 ```
 
 ### Get MCS jwt token
 To access main functions of MCS, you will need to complete authorization with jwt toke. \
 The function `MCS.get_jwt_token` allows authorization using signature generate with `wallet_address` and `private_key`. \
 By initialize a new `MCS` instance and calling the `get_jwt_token()`, the token will store within the current `MCS` instance 
-for the use in the current session. (Note that MCS currently only support polygon mainnet which is the only possible chain_name
+for the use in the current session. (Note that MCS currently only support `polygon_mainnet` which is the only possible chain_name
 to login into)
 
 example:
 ```
+from mcs import McsAPI
+from mcs.common.params import Params
+
 api = McsAPI(Params().MCS_API)
-jwt_token = api.get_jwt_token(wallet_address, private_key, "polygon_mainnet")
-print(api.jwt_token)
+jwt_token = api.get_jwt_token(wallet_address, private_key, "polygon.mainnet")
+print(api.token)
 ```
 
 ### MCS upload
@@ -121,7 +138,17 @@ The `MCSUpload` contains functions:
 
 
 ### Basic functions
-Load wallet and upload informations
+
+Import neccessary modules
+
+```python
+from mcs import McsAPI
+from mcs import ContractAPI
+from mcs.common.params import Params
+from mcs.common.utils import get_amount
+```
+
+Load wallet and upload informations.
 
 ```python 
 def __init__(self, chain_name, wallet_address, private_key, rpc_endpoint, file_path):
@@ -132,13 +159,17 @@ def __init__(self, chain_name, wallet_address, private_key, rpc_endpoint, file_p
   self.file_path = file_path
   self.upload_response = None
   self.payment_tx_hash = None
+
+  self.api = McsAPI(Params(self.chain_name).MCS_API)
+  self.api.get_jwt_token(self.wallet_address, self.private_key, self.chain_name)
+  self.w3_api = ContractAPI(self.rpc_endpoint, self.chain_name)
 ```
 
 Approve wallet (to spend token)
 
 ```python
 def approve_usdc():
-  w3_api.approve_usdc(self.wallet_address, self.private_key, amount)
+  self.w3_api.approve_usdc(self.wallet_address, self.private_key, amount)
 ```
 
 Example of uploading a single file using the MCS SDK. (Note that the mcs mainnet currently have 10GB of free upload amount for each wallet per month. While you can still manually pay for the upload, it is not recommanded as the lockedpayment might not be able to unlock under this circumstance.)
@@ -174,6 +205,15 @@ def pay(self):
     return 'payment failed: ' + str(e)
 
   return payment_tx_hash
+```
+
+The estimated amount for payment can be computed after uploading the file.
+```python
+def estimate_amount(self):
+        file_size = self.upload_response['file_size']
+        rate = self.api.get_price_rate()["data"]
+        amount = get_amount(file_size, rate)
+        return amount
 ```
 
 ## Testing
