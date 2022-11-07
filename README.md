@@ -98,7 +98,7 @@ print(wallet_address)
 To access main functions of MCS, you will need to complete authorization with jwt toke. \
 The function `MCS.get_jwt_token` allows authorization using signature generate with `wallet_address` and `private_key`. \
 By initialize a new `MCS` instance and calling the `get_jwt_token()`, the token will store within the current `MCS` instance 
-for the use in the current session. (Note that MCS currently only support `polygon_mainnet` which is the only possible chain_name
+for the use in the current session. (Note that MCS currently only support `polygon.mainnet` which is the only possible chain_name
 to login into)
 
 example:
