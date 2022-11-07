@@ -11,6 +11,7 @@
 - [Usage](#usage)
   - [Installation](#installation)
   - [Getting Started](#getting-started)
+    - [Full Demo](#full-demo)
   - [Testing](#testing)
   - [Documentation](#documentation)
 - [Contributing](#contributing)
