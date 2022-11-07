@@ -148,6 +148,12 @@ from mcs.common.params import Params
 from mcs.common.utils import get_amount
 ```
 
+Create a class for accesing MCS API and Contract
+
+```python
+class upload():
+```
+
 Load wallet and upload informations.
 
 ```python 
