@@ -23,7 +23,7 @@ async def test_user_register():
 
 @pytest.mark.asyncio
 async def test_get_price_rate():
-    api_main = McsAPI(Params('main').MCS_API)
+    api_main = McsAPI(Params().MCS_API)
     print(api_main.get_price_rate())
 
 @pytest.mark.asyncio
