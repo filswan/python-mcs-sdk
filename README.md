@@ -82,7 +82,7 @@ from dotenv import load_dotenv
 load_dotenv("<.env_file_name>")
 
 private_key = os.getenv('private_key')
-pc_endpoint = os.getenv('rpc_endpoint')
+rpc_endpoint = os.getenv('rpc_endpoint')
 ```
 
 Additionally `wallet address` can be retrieved using `private key` through web3py pacakge.
