@@ -11,6 +11,7 @@
 - [Usage](#usage)
   - [Installation](#installation)
   - [Getting Started](#getting-started)
+    - [Full Demo](#full-demo)
   - [Testing](#testing)
   - [Documentation](#documentation)
 - [Contributing](#contributing)
@@ -82,7 +83,7 @@ from dotenv import load_dotenv
 load_dotenv("<.env_file_name>")
 
 private_key = os.getenv('private_key')
-rpc_endpoint = os.getenv('rpc_endpoint')
+pc_endpoint = os.getenv('rpc_endpoint')
 ```
 
 Additionally `wallet address` can be retrieved using `private key` through web3py pacakge.
@@ -174,7 +175,7 @@ def __init__(self, chain_name, wallet_address, private_key, rpc_endpoint, file_p
 Approve wallet (to spend token)
 
 ```python
-def approve_usdc():
+def approve_usdc(self, amount):
   self.w3_api.approve_usdc(self.wallet_address, self.private_key, amount)
 ```
 
@@ -191,7 +192,7 @@ def stream_upload(self):
   else:
     self.upload_response = file_data
     need_pay = 1
-    return file_data, need_pay
+  return file_data, need_pay
 ```
 
 For free upload, the upload api will return `is_free` parameter, while this is true the file does not require to be paid using the `SwanPayment contract`. However, this free_upload only applies to the first 10GB of upload per month, and file larger than 10GB will needs to be paid. (Files cannot be partially free uploaded)
@@ -207,19 +208,99 @@ def pay(self):
     self.payment_tx_hash = self.w3_api.upload_file_pay(self.wallet_address, 
       self.private_key, file_size, w_cid, rate, params)
   except Exception as e:
-    logging.error(str(e))
+    print(str(e))
     return 'payment failed: ' + str(e)
 
-  return payment_tx_hash
+  return self.payment_tx_hash
 ```
 
 The estimated amount for payment can be computed after uploading the file.
 ```python
 def estimate_amount(self):
-        file_size = self.upload_response['file_size']
-        rate = self.api.get_price_rate()["data"]
-        amount = get_amount(file_size, rate)
-        return amount
+  file_size = self.upload_response['file_size']
+  rate = self.api.get_price_rate()["data"]
+  amount = get_amount(file_size, rate)
+  return amount
+```
+
+### Full Demo
+This is the demo code provided in the previous session of this doc combined for testing purpose.
+
+```python
+import os
+from dotenv import load_dotenv
+
+from mcs import McsAPI
+from mcs import ContractAPI
+from mcs.common.params import Params
+
+class upload():
+  def __init__(self, chain_name, wallet_address, private_key, rpc_endpoint, file_path):
+    self.chain_name = chain_name
+    self.wallet_address = wallet_address
+    self.private_key = private_key
+    self.rpc_endpoint = rpc_endpoint
+    self.file_path = file_path
+    self.upload_response = None
+    self.payment_tx_hash = None
+
+    self.api = McsAPI(Params(self.chain_name).MCS_API)
+    self.api.get_jwt_token(self.wallet_address, self.private_key, self.chain_name)
+    self.w3_api = ContractAPI(self.rpc_endpoint, self.chain_name)
+    
+  def approve_usdc(self, amount):
+    self.w3_api.approve_usdc(self.wallet_address, self.private_key, amount)
+
+  def stream_upload(self):
+    upload_file = self.api.stream_upload_file(self.wallet_address, self.file_path)
+    file_data = upload_file["data"]
+    need_pay = 0
+    if file_data["status"] == "Free":
+      self.upload_response = file_data
+
+    else:
+      self.upload_response = file_data
+      need_pay = 1
+    return file_data, need_pay
+
+  def pay(self):
+    file_size, w_cid = self.upload_response['file_size'], self.upload_response['w_cid']
+    params = self.api.get_params()["data"]
+    rate = self.api.get_price_rate()["data"]
+    # payment
+    try:
+      self.payment_tx_hash = self.w3_api.upload_file_pay(self.wallet_address, 
+      self.private_key, file_size, w_cid, rate, params)
+    except Exception as e:
+      print(str(e))
+      return 'payment failed: ' + str(e)
+
+    return self.payment_tx_hash
+
+if __name__ == "__main__":
+  import os
+  from dotenv import load_dotenv
+  load_dotenv(".env_main")
+
+  private_key = os.getenv('private_key')
+  rpc_endpoint = os.getenv('rpc_endpoint')
+
+  from web3 import Web3
+
+  w3 = Web3(Web3.HTTPProvider(rpc_endpoint))
+  wallet_address = w3.eth.account.privateKeyToAccount(private_key).address
+  print(wallet_address)
+
+  api = McsAPI(Params().MCS_API)
+  jwt_token = api.get_jwt_token(wallet_address, private_key, "polygon.mainnet")
+  print(api.token)
+
+  file_path = os.path.abspath('test/images/log_mcs.png')
+  up = upload('polygon.mainnet', wallet_address, private_key, rpc_endpoint, file_path)
+  up.approve_usdc(1)
+  file_data, need_pay = up.stream_upload()
+  if need_pay:
+    up.pay()
 ```
 
 ## Testing
