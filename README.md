@@ -181,7 +181,6 @@ You can use the pytest functions provided under the test directory to test the f
 ## Documentation
 
 For more examples please see the [SDK documentation](https://docs.filswan.com/multi-chain-storage/developer-quickstart/sdk) or \
-the test cases in the [sdk-test repository](https://github.com/filswan/python-mcs-sdk/tree/main/test), which contains sample code for all SDK functionalities
 
 # Contributing
 
