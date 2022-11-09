@@ -12,7 +12,7 @@ def test_auto_upload():
     parent_path = os.path.abspath(os.path.dirname(__file__))
 
     up = MCSUpload("polygon.mainnet", wallet_address, private_key, rpc_endpoint, parent_path+filepath)
-    up.approve_token(1)
+    up.approve_token(0)
     file_data, need_pay = up.stream_upload()
     print(up.estimate_amount)
 
