@@ -11,7 +11,6 @@
 - [Usage](#usage)
   - [Installation](#installation)
   - [Getting Started](#getting-started)
-    - [Full Demo](#full-demo)
   - [Testing](#testing)
   - [Documentation](#documentation)
 - [Contributing](#contributing)
@@ -23,9 +22,9 @@ A python software development kit for the Multi-Chain Storage (MCS) https://www.
 - **POST**    upload file to Filswan IPFS gate way
 - **POST**    make payment to swan filecoin storage gate way
 - **POST**    mint asset as NFT
-- **GET**       list of files uploaded
-- **GET**       files by cid
-- **GET**       status from filecoin
+- **GET**     list of files uploaded
+- **GET**     files by cid
+- **GET**     status from filecoin
 
 ## Prequisites
 
@@ -33,11 +32,6 @@ A python software development kit for the Multi-Chain Storage (MCS) https://www.
 - Polygon Mainnet Wallet - [Metamask Tutorial](https://docs.filswan.com/getting-started/beginner-walkthrough/public-testnet/setup-metamask)
 - Polygon Mainnet RPC - [Signup via Alchemy](https://www.alchemy.com/)
 - Polygon RPC endpoint - https://polygon-rpc.com/ (you will also need USDC and MATIC balance to use this SDK.)
-
-- [pytest](https://docs.pytest.org/en/7.1.x/) (for testing purpose)
-- [requests](https://pypi.org/project/requests/) for requesting mcs api
-- [requests-toolbelt](https://pypi.org/project/requests-toolbelt/) for stream upload
-- [python-dotenv](https://pypi.org/project/python-dotenv/) to read `.env` file that is used to store wallet info
  
 # MCS API
 
@@ -67,6 +61,8 @@ pip install python-mcs-sdk
 
 ## Getting Started
 
+This is a demo for users to use the simplified MCS upload functions. For the complete [documentations](#documentation).
+
 ### Set Up Wallet Infomations
 First you should set up your wallet address, private key and web3 api. There can be put into `.env_main` file under the same directory (under test directory for using pytest functions). `python-dotenv` will only look for file that named exactly as `.env_main` under the current directory.
 ```
@@ -75,7 +71,7 @@ private_key="<PRIVATE_KEY>"
 rpc_endpoint="<RPC_ENDPOINT>"
 ```
 
-Then you can use `dotenv` package to load the `.env`.
+Then you can use `dotenv` package to load the `.env` as environment variables.
 ```python
 import os
 from dotenv import load_dotenv
@@ -138,173 +134,8 @@ The `MCSUpload` contains functions:
   - this functions allows to mint nft to open sea
 
 
-### Basic functions
-
-Import neccessary modules
-
-```python
-from mcs import McsAPI
-from mcs import ContractAPI
-from mcs.common.params import Params
-from mcs.common.utils import get_amount
-```
-
-Create a class for accesing MCS API and Contract
-
-```python
-class upload():
-```
-
-Load wallet and upload informations.
-
-```python 
-def __init__(self, chain_name, wallet_address, private_key, rpc_endpoint, file_path):
-  self.chain_name = chain_name
-  self.wallet_address = wallet_address
-  self.private_key = private_key
-  self.rpc_endpoint = rpc_endpoint
-  self.file_path = file_path
-  self.upload_response = None
-  self.payment_tx_hash = None
-
-  self.api = McsAPI(Params(self.chain_name).MCS_API)
-  self.api.get_jwt_token(self.wallet_address, self.private_key, self.chain_name)
-  self.w3_api = ContractAPI(self.rpc_endpoint, self.chain_name)
-```
-
-Approve wallet (to spend token)
-
-```python
-def approve_usdc(self, amount):
-  self.w3_api.approve_usdc(self.wallet_address, self.private_key, amount)
-```
-
-Example of uploading a single file using the MCS SDK. (Note that the mcs mainnet currently have 10GB of free upload amount for each wallet per month. While you can still manually pay for the upload, it is not recommanded as the lockedpayment might not be able to unlock under this circumstance.)
-
-```python
-def stream_upload(self):
-  upload_file = self.api.stream_upload_file(self.wallet_address, self.file_path)
-  file_data = upload_file["data"]
-  need_pay = 0
-  if file_data["status"] == "Free":
-    self.upload_response = file_data
-
-  else:
-    self.upload_response = file_data
-    need_pay = 1
-  return file_data, need_pay
-```
-
-For free upload, the upload api will return `is_free` parameter, while this is true the file does not require to be paid using the `SwanPayment contract`. However, this free_upload only applies to the first 10GB of upload per month, and file larger than 10GB will needs to be paid. (Files cannot be partially free uploaded)
-
-An example for payment:
-```python
-def pay(self):
-  file_size, w_cid = self.upload_response['file_size'], self.upload_response['w_cid']
-  params = self.api.get_params()["data"]
-  rate = self.api.get_price_rate()["data"]
-  # payment
-  try:
-    self.payment_tx_hash = self.w3_api.upload_file_pay(self.wallet_address, 
-      self.private_key, file_size, w_cid, rate, params)
-  except Exception as e:
-    print(str(e))
-    return 'payment failed: ' + str(e)
-
-  return self.payment_tx_hash
-```
-
-The estimated amount for payment can be computed after uploading the file.
-```python
-def estimate_amount(self):
-  file_size = self.upload_response['file_size']
-  rate = self.api.get_price_rate()["data"]
-  amount = get_amount(file_size, rate)
-  return amount
-```
-
-### Full Demo
-This is the demo code provided in the previous session of this doc combined for testing purpose.
-
-```python
-import os
-from dotenv import load_dotenv
-
-from mcs import McsAPI
-from mcs import ContractAPI
-from mcs.common.params import Params
-
-class upload():
-  def __init__(self, chain_name, wallet_address, private_key, rpc_endpoint, file_path):
-    self.chain_name = chain_name
-    self.wallet_address = wallet_address
-    self.private_key = private_key
-    self.rpc_endpoint = rpc_endpoint
-    self.file_path = file_path
-    self.upload_response = None
-    self.payment_tx_hash = None
-
-    self.api = McsAPI(Params(self.chain_name).MCS_API)
-    self.api.get_jwt_token(self.wallet_address, self.private_key, self.chain_name)
-    self.w3_api = ContractAPI(self.rpc_endpoint, self.chain_name)
-    
-  def approve_usdc(self, amount):
-    self.w3_api.approve_usdc(self.wallet_address, self.private_key, amount)
-
-  def stream_upload(self):
-    upload_file = self.api.stream_upload_file(self.wallet_address, self.file_path)
-    file_data = upload_file["data"]
-    need_pay = 0
-    if file_data["status"] == "Free":
-      self.upload_response = file_data
-
-    else:
-      self.upload_response = file_data
-      need_pay = 1
-    return file_data, need_pay
-
-  def pay(self):
-    file_size, w_cid = self.upload_response['file_size'], self.upload_response['w_cid']
-    params = self.api.get_params()["data"]
-    rate = self.api.get_price_rate()["data"]
-    # payment
-    try:
-      self.payment_tx_hash = self.w3_api.upload_file_pay(self.wallet_address, 
-      self.private_key, file_size, w_cid, rate, params)
-    except Exception as e:
-      print(str(e))
-      return 'payment failed: ' + str(e)
-
-    return self.payment_tx_hash
-
-if __name__ == "__main__":
-  import os
-  from dotenv import load_dotenv
-  load_dotenv(".env_main")
-
-  private_key = os.getenv('private_key')
-  rpc_endpoint = os.getenv('rpc_endpoint')
-
-  from web3 import Web3
-
-  w3 = Web3(Web3.HTTPProvider(rpc_endpoint))
-  wallet_address = w3.eth.account.privateKeyToAccount(private_key).address
-  print(wallet_address)
-
-  api = McsAPI(Params().MCS_API)
-  jwt_token = api.get_jwt_token(wallet_address, private_key, "polygon.mainnet")
-  print(api.token)
-
-  file_path = os.path.abspath('test/images/log_mcs.png')
-  up = upload('polygon.mainnet', wallet_address, private_key, rpc_endpoint, file_path)
-  up.approve_usdc(1)
-  file_data, need_pay = up.stream_upload()
-  if need_pay:
-    up.pay()
-```
-
 ## Testing
-You can use the pytest functions provided under the test directory to test the functionality of python mcs sdk. (note that testing mcs on polygon mainnet will cost)
+You can use the pytest functions provided under the test directory to test the functionality of python mcs sdk. (note that testing mcs on polygon mainnet will cost real currency)
 
 - `test_mcs_api`: Test the mcs backend api for getting params, uploads and access deal infos. This also allows to check whether mcs backend apis are functioning.
 - `test_api_response`: Test if the apis and mcs contracts returns expected responses.
@@ -313,7 +144,8 @@ You can use the pytest functions provided under the test directory to test the f
 
 ## Documentation
 
-For more examples please see the [SDK documentation](https://docs.filswan.com/multi-chain-storage/developer-quickstart/sdk) or the example directory in the [sdk-test repository](https://github.com/filswan/python-mcs-sdk/tree/main/test), which contains sample code for all SDK functionalities
+For more examples please see the [SDK documentation](https://docs.filswan.com/multi-chain-storage/developer-quickstart/sdk) or \
+the test cases in the [sdk-test repository](https://github.com/filswan/python-mcs-sdk/tree/main/test), which contains sample code for all SDK functionalities
 
 # Contributing
 
