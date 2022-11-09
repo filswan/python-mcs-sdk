@@ -31,7 +31,7 @@ A python software development kit for the Multi-Chain Storage (MCS) https://www.
 - [web3](https://pypi.org/project/web3/) - web3 python package to process contract 
 - Polygon Mainnet Wallet - [Metamask Tutorial](https://docs.filswan.com/getting-started/beginner-walkthrough/public-testnet/setup-metamask)
 - Polygon Mainnet RPC endpoint - [Signup via Alchemy](https://www.alchemy.com/) or use https://polygon-rpc.com/ (you will also need USDC and MATIC balance to use this SDK.)
- 
+
 # MCS API
 
 For more information about the API usage, check out the MCS API documentation (https://docs.filswan.com/development-resource/mcp-api).
@@ -91,32 +91,11 @@ The `MCSUpload` contains functions:
 Let's create two files `.env_main` to store wallet informations and `demo.py` to run the demo code.
 
 ### Set Up Wallet Infomations
-First you should set up your wallet address, private key and web3 api. They can be put into `.env_main` file under the same directory (under test directory for using pytest functions). `python-dotenv` will only look for file that named exactly as `.env_main` under the current directory.
+First you should set up your wallet address, private key and web3 api. (They can be put into `.env` file for security, reade )
 ```
 wallet_address="<WALLET_ADDRESS>"
 private_key="<PRIVATE_KEY>"
 rpc_endpoint="<RPC_ENDPOINT>"
-```
-
-Then you can use `dotenv` package to load the `.env_main` as environment variables.
-```python
-import os
-from dotenv import load_dotenv
-
-load_dotenv(".env_main")
-
-private_key = os.getenv('private_key')
-rpc_endpoint = os.getenv('rpc_endpoint')
-wallet_address = os.getenv('wallet_address')
-```
-
-`wallet address` can also be retrieved using `private key` through web3py pacakge (In this case you don't need to store wallet address in the `.env` file).
-```python
-from web3 import Web3
-
-w3 = Web3(Web3.HTTPProvider(<rpc_endpoint>))
-wallet_address = w3.eth.account.privateKeyToAccount(<private_key>).address
-print(wallet_address)
 ```
 
 ### Initialize Upload
@@ -146,7 +125,7 @@ the coverage of free upload. When `need_pay == 1` then the file needs to paid an
 Before processing payment we need to approve enough token for the upload payment and gas fee. You don't need to approve any token if the upload is free. You can also choose how much you want to approve base on the estimated price.
 
 ```python
-up.approve_token(<amount>)
+upload.approve_token(<amount>)
 ```
 
 ### Estimate Payment
@@ -165,30 +144,22 @@ if need_pay:
 ```
 
 ### Full Demo Code
-Full demo code for testing, you will needs to store your own wallet info in `.env_main` and add the `amount` and `file_path` in the following script.
+Full demo code for testing, you will needs to add your own wallet infos and add the `amount` and `file_path` in the following script.
 
 ```python
-import os
-from dotenv import load_dotenv
-
 from mcs.upload.mcs_upload import MCSUpload
 
 if __name__ == '__main__':
 
     # Load wallet info
-    load_dotenv(".env_main")
-
-    private_key = os.getenv('private_key')
-    rpc_endpoint = os.getenv('rpc_endpoint')
-    wallet_address = os.getenv('wallet_address')
+    wallet_address, private_key, rpc_endpoint = <wallet_address>, <private_key>, <rpc_endpoint>
 
     # Load file path
-    file_path = os.path.abspath(<absolute/relative path>)
+    file_path = <absolute path>
 
     # Upload file
     upload = MCSUpload("polygon.mainnet", wallet_address, private_key, rpc_endpoint, file_path)
     file_data, need_pay = upload.stream_upload()
-    print("estimated payment: ", upload.estimate_amount())
 
     # Process payment
     if need_pay:
@@ -197,6 +168,7 @@ if __name__ == '__main__':
     
     print('Upload successfully')
 ```
+
 
 ## Testing
 You can use the pytest functions provided under the test directory to test the functionality of python mcs sdk. (note that testing mcs on polygon mainnet will cost real currency)
