@@ -131,7 +131,6 @@ if __name__ == '__main__':
     
     # setup env and wallet
     load_dotenv(".env")
-    wallet_address, private_key, rpc_endpoint = <wallet_address>, <private_key>, <rpc_endpoint>
 
     # Load file path
     file_path = "./test.py"
