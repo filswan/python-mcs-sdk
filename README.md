@@ -83,7 +83,7 @@ from dotenv import load_dotenv
 
 load_dotenv(".env")
 file_path="./test.py"
-upload_handle = MCSUpload("polygon.mainnet", os.getenv('wallet_address',  os.getenv('private_key'), os.getenv('rpc_endpoint', file_path))
+upload_handle = MCSUpload("polygon.mainnet", os.getenv('wallet_address'), os.getenv('private_key'), os.getenv('rpc_endpoint'), file_path)
 ```
 
 ### Upload File
@@ -134,7 +134,7 @@ if __name__ == '__main__':
     file_path = "./test.py"
 
     # Upload file
-    upload_handle = MCSUpload("polygon.mainnet", os.getenv('wallet_address',  os.getenv('private_key'), os.getenv('rpc_endpoint', file_path))
+    upload_handle = MCSUpload("polygon.mainnet", os.getenv('wallet_address'), os.getenv('private_key'), os.getenv('rpc_endpoint'), file_path)
     file_data, need_pay = upload_handle.stream_upload()
 
     # Process payment
