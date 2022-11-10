@@ -171,7 +171,7 @@ if __name__ == '__main__':
 
 ## Documentation
 
-For more examples please see the [SDK documentation](https://docs.filswan.com/multi-chain-storage/developer-quickstart/sdk) or \
+For more examples please see the [SDK documentation](https://docs.filswan.com/multi-chain-storage/developer-quickstart/sdk)
 
 # Contributing
 
