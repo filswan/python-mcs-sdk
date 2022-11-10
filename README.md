@@ -78,6 +78,7 @@ parameters. The upload process requires the user login into the MCS API using a 
 an MCSUpload.
 
 ```python
+import os
 from mcs import McsAPI
 from dotenv import load_dotenv
 
@@ -122,8 +123,10 @@ if need_pay:
 To use the full demo code, you will need to add your wallet info and add the `amount` and `file_path` in the following script.
 
 ```python
-from mcs.upload.mcs_upload import MCSUpload
+import os
 from dotenv import load_dotenv
+from mcs.upload.mcs_upload import MCSUpload
+
 if __name__ == '__main__':
     
     # setup env and wallet
