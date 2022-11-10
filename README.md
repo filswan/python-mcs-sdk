@@ -67,7 +67,11 @@ wallet_address="<WALLET_ADDRESS>"
 private_key="<PRIVATE_KEY>"
 rpc_endpoint="<RPC_ENDPOINT>"
 ```
+install  python-dotenv
 
+```
+pip install python-dotenv
+```
 ### Initialize Upload
 To start an upload, we need to create an instance of the `MCSUpload` class. Which requires `chain_name`, `wallet_address`, `private_key` and `file_path` as 
 parameters. The upload process requires the user login into the MCS API using a wallet address. Python MCS SDK can handle this process automatically when initializing
