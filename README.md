@@ -88,7 +88,7 @@ The `MCSUpload` contains functions:
   - this function allows to mint NFT to open sea
 
 ### Create File
-Let's create two files `.env_main` to store wallet information and `demo.py` to run the demo code.
+Let's create `demo.py` to run the demo code.
 
 ### Set Up Wallet Information
 First, you should set up your wallet address, private key and web3 API. (They can be put into a `.env` file)
