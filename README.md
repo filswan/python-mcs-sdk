@@ -26,7 +26,7 @@ A python software development kit for the Multi-Chain Storage (MCS) https://www.
 - **GET**     files by cid
 - **GET**     status from filecoin
 
-## Prequisites
+## Prerequisite
 
 - [web3](https://pypi.org/project/web3/) - web3 python package to process contract 
 - Polygon Mainnet Wallet - [Metamask Tutorial](https://docs.filswan.com/getting-started/beginner-walkthrough/public-testnet/setup-metamask)
