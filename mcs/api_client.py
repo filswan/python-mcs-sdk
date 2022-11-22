@@ -10,7 +10,7 @@ class ApiClient(object):
     def _request(self, method, request_path, mcs_api, params, token, files=False):
         if method == c.GET:
             request_path = request_path + utils.parse_params_to_str(params)
-        url = mcs_api + c.REST_API_VERSION + request_path
+        url = mcs_api + request_path
         header = {}
         if token:
             header["Authorization"] = "Bearer " + token
@@ -19,6 +19,9 @@ class ApiClient(object):
         response = None
         if method == c.GET:
             response = requests.get(url, headers=header)
+        elif method == c.PUT:
+            body = json.dumps(params)
+            response = requests.put(url, data=body, headers=header)
         elif method == c.POST:
             if files:
                 body = params
@@ -29,7 +32,11 @@ class ApiClient(object):
                 print("body:", body)
                 response = requests.post(url, data=body, headers=header)
         elif method == c.DELETE:
-            response = requests.delete(url, headers=header)
+            if params: 
+                body = json.dumps(params)
+                response = requests.delete(url, data=body, headers=header)
+            else :
+                response = requests.delete(url, headers=header)
 
         # exception handle
         if not str(response.status_code).startswith('2'):
@@ -38,7 +45,7 @@ class ApiClient(object):
         return response.json()
 
     def _request_stream_upload(self, request_path, mcs_api, params, token):
-        url = mcs_api + c.REST_API_VERSION + request_path
+        url = mcs_api + request_path
         header = {}
         if token:
             header["Authorization"] = "Bearer " + token
