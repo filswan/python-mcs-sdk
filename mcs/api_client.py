@@ -1,8 +1,10 @@
 import requests
-from requests_toolbelt.multipart.encoder import MultipartEncoder
+from requests_toolbelt.multipart.encoder import MultipartEncoder, MultipartEncoderMonitor
 import json
 from mcs.common import utils, exceptions
 from mcs.common import constants as c
+from tqdm import tqdm
+from pathlib import Path
 
 
 class ApiClient(object):
@@ -14,7 +16,6 @@ class ApiClient(object):
         header = {}
         if token:
             header["Authorization"] = "Bearer " + token
-        print("url:", url)
         # send request
         response = None
         if method == c.GET:
@@ -25,11 +26,9 @@ class ApiClient(object):
         elif method == c.POST:
             if files:
                 body = params
-                print("body:", body)
                 response = requests.post(url, data=body, headers=header, files=files)
             else:
                 body = json.dumps(params) if method == c.POST else ""
-                print("body:", body)
                 response = requests.post(url, data=body, headers=header)
         elif method == c.DELETE:
             if params: 
@@ -49,14 +48,23 @@ class ApiClient(object):
         header = {}
         if token:
             header["Authorization"] = "Bearer " + token
-        print("url:", url)
         # send request
-        response = None
-        body = params
-        print("body:", body)
-        body = MultipartEncoder(body)
-        header['Content-Type'] = body.content_type
-        response = requests.post(url, data=body, headers=header)
+        path = Path(params['file'][0])
+        size = path.stat().st_size
+        filename = path.name
+        with tqdm(
+            desc=filename,
+            total=size,
+            unit='B',
+            unit_scale=True,
+            unit_divisor=1024,
+        ) as bar:
+            encode = MultipartEncoder(params)
+            body = MultipartEncoderMonitor(
+                encode, lambda monitor: bar.update(monitor.bytes_read - bar.n)
+            )
+            header['Content-Type'] = body.content_type
+            response = requests.post(url, data=body, headers=header)
 
         # exception handle
         if not str(response.status_code).startswith('2'):
