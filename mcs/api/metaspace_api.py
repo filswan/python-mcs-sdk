@@ -38,7 +38,7 @@ class MetaSpaceAPI(McsAPI):
         if type(dirs) != list:
             params['dirs'] = [str(dirs)]
         print(params)
-        return self._request_with_params(DELETE, DELETE_DIRECTORY, self.MetaSpace_API, params, self.token, None)
+        return self._request_with_params(DELETE, DELETE_OBJECT, self.MetaSpace_API, params, self.token, None)
 
     def create_upload_session(self, bucket_name, file_name, file_path):
         bucket_info = self.get_bucket_info(bucket_name)
@@ -65,4 +65,4 @@ class MetaSpaceAPI(McsAPI):
         if type(items) != list:
             params['items'] = [str(items)]
         print(params)
-        return self._request_with_params(DELETE, DELETE_DIRECTORY, self.MetaSpace_API, params, self.token, None)
+        return self._request_with_params(DELETE, DELETE_OBJECT, self.MetaSpace_API, params, self.token, None)

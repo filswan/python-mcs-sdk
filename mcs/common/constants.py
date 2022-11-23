@@ -19,9 +19,8 @@ USER_REGISTER = "v1/user/register"
 USER_LOGIN = "v1/user/login_by_metamask_signature"
 # meta space api
 DIRECTORY = "v3/directory"
-DELETE_DIRECTORY = "v3/object"
+DELETE_OBJECT = "v3/object"
 UPLOAD_SESSION = "v3/file/upload"
-DELETE_FILE = "v3"
 # contract
 USDC_ABI = "ERC20.json"
 SWAN_PAYMENT_ABI = "SwanPayment.json"
