@@ -11,7 +11,7 @@
 - [Usage](#usage)
   - [Installation](#installation)
   - [Getting Started](#getting-started)
-  - [Testing](#testing)
+  - [Use MetaSpace](#use-metaspace)
   - [Documentation](#documentation)
 - [Contributing](#contributing)
 
@@ -145,6 +145,54 @@ if __name__ == '__main__':
         upload_handle.pay()
     
     print('Upload successfully')
+```
+
+## Use MetaSpace
+
+There are multiple functions provided by python MCS SDK to interact with MetaSpace API.
+
+### Login to MetaSpace
+MetaSpace use the same login process as MCS.
+
+```python
+api = MetaSpaceAPI(Params(chain_name).MCS_API)
+jwt_token = api.get_jwt_token(info['wallet_address'], info['private_key'], "polygon.mainnet")
+print(jwt_token)
+```
+
+### Check Bucket and File Information
+You can use MetaSpace APIs to check bucket and file information, including `name`, `id`, `session policy`, etc.
+
+```python
+print(api.get_buckets())
+print(api.get_bucket_info('test_bucket'))
+```
+
+### Create and Delete Buckets
+MetaSpace APIs allow user to create and delete buckets (At the current version of MetaSpace, only 1 bucket is allowed per user)
+
+To create a bucket, we need to have a bucket name.
+```python
+api.create_bucket(<bucket_name>)
+```
+
+To delete a bucket, the bucket's id is required. We can retrieve this id using the `get_bucket_id` function.
+```python
+bucket_id = api.get_bucket_id(<bucket_name>)
+api.delete_bucket(bucket_id)
+```
+
+### Upload and Delete Files
+Uploading file to MetaSpace is similar to MCS. However, MetaSpace does not allow 2 file with the same name within 1 bucket. \
+Therefore, you might want to use different file name when uploading the same file mulitple times to a bucket.
+```python
+api.upload_to_bucket(<bucket_name>, <file_name>, <file_path>)
+```
+
+Deleting file from a bucket with bucket name and file id.
+```python
+file_id = get_file_id(<bucket_name>, <file_name>):
+api.delete_from_bucket(file_id)
 ```
 
 ## Documentation
