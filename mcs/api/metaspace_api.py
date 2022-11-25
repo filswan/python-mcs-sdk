@@ -25,6 +25,20 @@ class MetaSpaceAPI(McsAPI):
     def get_bucket_info(self, bucket_name):
         return self._request_without_params(GET, DIRECTORY + '/{}'.format(bucket_name), self.MetaSpace_API, self.token)
     
+    def get_bucket_id(self, bucket_name):
+        buckets = self.get_buckets()['data']['objects']
+        for bucket in buckets:
+            if bucket['name'] == bucket_name:
+                return bucket['id']
+        return None
+    
+    def get_file_id(self, bucket_name, file_name):
+        files = self.get_bucket_info(bucket_name)['data']['objects']
+        for file in files:
+            if file['name'] == file_name:
+                return file['id']
+        return None
+
     def create_bucket(self, bucket_name):
         params = {}
         params['path'] = '/{}'.format(bucket_name)

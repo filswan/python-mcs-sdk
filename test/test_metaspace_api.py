@@ -28,21 +28,21 @@ def test_user_register():
 def test_get_buckets():
     info = test_info()
     api = MetaSpaceAPI(Params(chain_name).MCS_API)
-    jwt_token = api.get_jwt_token(info['wallet_address'], info['private_key'], "polygon.mainnet")
+    api.get_jwt_token(info['wallet_address'], info['private_key'], "polygon.mainnet")
     print(api.get_buckets())
 
 
 def test_create_bucket():
     info = test_info()
     api = MetaSpaceAPI(Params(chain_name).MCS_API)
-    jwt_token = api.get_jwt_token(info['wallet_address'], info['private_key'], "polygon.mainnet")
+    api.get_jwt_token(info['wallet_address'], info['private_key'], "polygon.mainnet")
     print(api.create_bucket('test_bucket'))
 
 
 def test_bucket_info():
     info = test_info()
     api = MetaSpaceAPI(Params(chain_name).MCS_API)
-    jwt_token = api.get_jwt_token(info['wallet_address'], info['private_key'], "polygon.mainnet")
+    api.get_jwt_token(info['wallet_address'], info['private_key'], "polygon.mainnet")
     print(api.get_bucket_info('test_bucket'))
 
 def test_upload_file():
@@ -50,8 +50,22 @@ def test_upload_file():
     api = MetaSpaceAPI(Params(chain_name).MCS_API)
     filepath = "/images/log_mcs.png"
     parentpath = os.path.abspath(os.path.dirname(__file__))
-    jwt_token = api.get_jwt_token(info['wallet_address'], info['private_key'], "polygon.mainnet")
+    api.get_jwt_token(info['wallet_address'], info['private_key'], "polygon.mainnet")
     upload = api.upload_to_bucket('test_bucket', 'mcs_logo', parentpath+filepath)
+
+def test_get_bucket_id():
+    info = test_info()
+    api = MetaSpaceAPI(Params(chain_name).MCS_API)
+    api.get_jwt_token(info['wallet_address'], info['private_key'], "polygon.mainnet")
+    print(api.get_bucket_id('test_bucket'))
+
+
+def test_get_file_id():
+    info = test_info()
+    api = MetaSpaceAPI(Params(chain_name).MCS_API)
+    api.get_jwt_token(info['wallet_address'], info['private_key'], "polygon.mainnet")
+    print(api.get_file_id('test_bucket', 'mcs_logo'))
+
 
 def test_delete_bucket():
     info = test_info()
