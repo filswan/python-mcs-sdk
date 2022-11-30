@@ -59,7 +59,6 @@ class MetaSpaceAPI(McsAPI):
         params['dirs'] = dirs
         if type(dirs) != list:
             params['dirs'] = [str(dirs)]
-        print(params)
         return self._request_with_params(DELETE, DELETE_OBJECT, self.MetaSpace_API, params, self.token, None)
 
     def create_upload_session(self, bucket_name, file_name, file_path):
@@ -72,16 +71,14 @@ class MetaSpaceAPI(McsAPI):
         params['name'] = file_name
         params['policy_id'] = bucket_info['data']['policy']['id']
         params['last_modified'] = int(time.time())
-        if params['size'] == 0:
-            return "Please upload a file larger than 0byte."
-        print(params)
         return self._request_with_params(PUT, UPLOAD_SESSION, self.MetaSpace_API, params, self.token, None)
 
     def upload_to_bucket(self, bucket_name, file_name, file_path):
         if self.special_char(bucket_name+file_name):
             return "Name cannot contain space and special characters"
+        if os.stat(file_path).st_size == 0:
+            return "Please upload a file larger than 0byte."
         session = self.create_upload_session(bucket_name, file_name, file_path)['data']['sessionID']
-        print(session)
         params = {}
         params['file'] = (file_path, open(file_path, 'rb'))
         return self._request_stream_upload(UPLOAD_SESSION+'/{}/0'.format(session), self.MetaSpace_API, params, self.token)
@@ -92,7 +89,6 @@ class MetaSpaceAPI(McsAPI):
         params['dirs'] = []
         if type(items) != list:
             params['items'] = [str(items)]
-        print(params)
         return self._request_with_params(DELETE, DELETE_OBJECT, self.MetaSpace_API, params, self.token, None)
     
     def special_char(self, line):

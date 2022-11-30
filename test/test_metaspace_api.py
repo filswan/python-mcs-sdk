@@ -48,10 +48,11 @@ def test_bucket_info():
 def test_upload_file():
     info = test_info()
     api = MetaSpaceAPI(Params(chain_name).MCS_API)
-    filepath = "/images/log_mcs.png"
+    filepath = "/images/0bFile.txt"
     parentpath = os.path.abspath(os.path.dirname(__file__))
     api.get_jwt_token(info['wallet_address'], info['private_key'], "polygon.mainnet")
     upload = api.upload_to_bucket('test_bucket', 'mcs_logo', parentpath+filepath)
+    
 
 def test_get_bucket_id():
     info = test_info()
