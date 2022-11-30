@@ -11,7 +11,7 @@
 - [Usage](#usage)
   - [Installation](#installation)
   - [Getting Started](#getting-started)
-  - [Use MetaSpace](#use-metaspace)
+  - [Use Buckets](#use-Buckets)
   - [Documentation](#documentation)
 - [Contributing](#contributing)
 
@@ -147,21 +147,21 @@ if __name__ == '__main__':
     print('Upload successfully')
 ```
 
-## Use MetaSpace
+## Use Buckets
 
-There are multiple functions provided by python MCS SDK to interact with MetaSpace API.
+There are multiple functions provided by python MCS SDK to interact with Buckets API.
 
-### Login to MetaSpace
-MetaSpace use the same login process as MCS.
+### Login to Buckets
+Buckets use the same login process as MCS.
 
 ```python
-api = MetaSpaceAPI(Params(chain_name).MCS_API)
+api = BucketsAPI(Params(chain_name).MCS_API)
 jwt_token = api.get_jwt_token(info['wallet_address'], info['private_key'], "polygon.mainnet")
 print(jwt_token)
 ```
 
 ### Check Bucket and File Information
-You can use MetaSpace APIs to check bucket and file information, including `name`, `id`, `session policy`, etc.
+You can use Buckets APIs to check bucket and file information, including `name`, `id`, `session policy`, etc.
 
 ```python
 print(api.get_buckets())
@@ -169,7 +169,7 @@ print(api.get_bucket_info('test_bucket'))
 ```
 
 ### Create and Delete Buckets
-MetaSpace APIs allow user to create and delete buckets (At the current version of MetaSpace, only 1 bucket is allowed per user)
+Buckets APIs allow user to create and delete buckets (At the current version of Buckets, only 1 bucket is allowed per user)
 
 To create a bucket, we need to have a bucket name.
 ```python
@@ -183,7 +183,7 @@ api.delete_bucket(bucket_id)
 ```
 
 ### Upload and Delete Files
-Uploading file to MetaSpace is similar to MCS. However, MetaSpace does not allow 2 file with the same name within 1 bucket. \
+Uploading file to Buckets is similar to MCS. However, Buckets does not allow 2 file with the same name within 1 bucket. \
 Therefore, you might want to use different file name when uploading the same file mulitple times to a bucket.
 ```python
 api.upload_to_bucket(<bucket_name>, <file_name>, <file_path>)

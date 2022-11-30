@@ -40,6 +40,9 @@ class ApiClient(object):
         # exception handle
         if not str(response.status_code).startswith('2'):
             raise exceptions.McsAPIException(response)
+        json_res = response.json()
+        if str(json_res['status']) == 'error':
+            raise exceptions.McsRequestException(json_res['message'])
 
         return response.json()
 
@@ -69,6 +72,9 @@ class ApiClient(object):
         # exception handle
         if not str(response.status_code).startswith('2'):
             raise exceptions.McsAPIException(response)
+        json_res = response.json()
+        if str(json_res['status']) == 'error':
+            raise exceptions.McsRequestException(json_res['message'])
 
         return response.json()
 
