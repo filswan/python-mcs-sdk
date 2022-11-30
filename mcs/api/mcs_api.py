@@ -28,22 +28,22 @@ class McsAPI(ApiClient):
     def get_price_rate(self):
         return self._request_without_params(GET, PRICE_RATE, self.MCS_API, self.token)
 
-    def get_payment_info(self, payload_cid, wallet_address, source_file_upload_id):
+    def get_payment_info(self, source_file_upload_id):
         params = {}
-        if payload_cid:
-            params['payload_cid'] = payload_cid
-        if wallet_address:
-            params['wallet_address'] = wallet_address
-        if wallet_address:
+        if source_file_upload_id:
             params['source_file_upload_id'] = source_file_upload_id
         return self._request_with_params(GET, PAYMENT_INFO, self.MCS_API, params, self.token, None)
 
-    def get_user_tasks_deals(self, wallet_address, file_name=None):
+    def get_user_tasks_deals(self, page_number=None, page_size=None, file_name=None, status=None):
         params = {}
-        if wallet_address:
-            params['wallet_address'] = wallet_address
+        if page_number:
+            params['page_number'] = page_number
+        if page_size:
+            params['page_size'] = page_size
         if file_name:
             params['file_name'] = file_name
+        if status:
+            params['status'] = status
         return self._request_with_params(GET, TASKS_DEALS, self.MCS_API, params, self.token, None)
 
     def get_mint_info(self, source_file_upload_id, payload_cid, tx_hash, token_id, mint_address):
@@ -73,10 +73,8 @@ class McsAPI(ApiClient):
             params['file'] = (file_path, open(file_path, 'rb'))
         return self._request_stream_upload(UPLOAD_FILE, self.MCS_API, params, self.token)
 
-    def get_deal_detail(self, wallet_address, source_file_upload_id, deal_id='0'):
+    def get_deal_detail(self, source_file_upload_id, deal_id='0'):
         params = {}
-        if wallet_address:
-            params['wallet_address'] = wallet_address
         if source_file_upload_id:
             params['source_file_upload_id'] = source_file_upload_id
         return self._request_with_params(GET, DEAL_DETAIL + deal_id, self.MCS_API, params, self.token, None)
