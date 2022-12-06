@@ -46,6 +46,19 @@ class ApiClient(object):
 
         return response.json()
 
+    def _request_upload(self, request_path, mcs_api, params, token):
+        url = mcs_api + request_path
+        header = {}
+        if token:
+            header["Authorization"] = "Bearer " + token
+        response = requests.post(url, data=params, headers=header)
+
+        # exception handle
+        if not str(response.status_code).startswith('2'):
+            raise exceptions.McsAPIException(response)
+
+        return response.json()
+
     def _request_stream_upload(self, request_path, mcs_api, params, token):
         url = mcs_api + request_path
         header = {}

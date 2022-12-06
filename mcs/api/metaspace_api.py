@@ -80,8 +80,8 @@ class MetaSpaceAPI(McsAPI):
             return "Please upload a file larger than 0byte."
         session = self.create_upload_session(bucket_name, file_name, file_path)['data']['sessionID']
         params = {}
-        params['file'] = (file_path, open(file_path, 'rb'))
-        return self._request_stream_upload(UPLOAD_SESSION+'/{}/0'.format(session), self.MetaSpace_API, params, self.token)
+        params= open(file_path, 'rb')
+        return self._request_upload(UPLOAD_SESSION+'/{}/0'.format(session), self.MetaSpace_API, params, self.token)
 
     def delete_from_bucket(self, items):
         params = {}
