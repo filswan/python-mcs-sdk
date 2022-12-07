@@ -9,6 +9,7 @@ import json
 
 import os
 import time
+import urllib.request
 
 class MetaSpaceAPI(McsAPI):
 
@@ -80,8 +81,8 @@ class MetaSpaceAPI(McsAPI):
             return "Please upload a file larger than 0byte."
         session = self.create_upload_session(bucket_name, file_name, file_path)['data']['sessionID']
         params = {}
-        params['file'] = (file_path, open(file_path, 'rb'))
-        return self._request_stream_upload(UPLOAD_SESSION+'/{}/0'.format(session), self.MetaSpace_API, params, self.token)
+        params= open(file_path, 'rb')
+        return self._request_upload(UPLOAD_SESSION+'/{}/0'.format(session), self.MetaSpace_API, params, self.token)
 
     def delete_from_bucket(self, items):
         params = {}
@@ -97,3 +98,14 @@ class MetaSpaceAPI(McsAPI):
         if any(c in special_characters for c in line):
             return True
         return False
+
+    def download_file(self, bucket_name, file_name):
+        objects = self.get_bucket_info(bucket_name)['data']['objects']
+        for object in objects:
+            if object['name']==file_name:
+                url = object['ipfs_url']
+                break
+        name = url.split('?filename=')[-1]
+        with open(name, 'wb') as f:
+            data = urllib.request.urlopen(url)
+            f.write(data.read())
