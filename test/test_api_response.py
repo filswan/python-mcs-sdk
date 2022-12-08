@@ -8,11 +8,11 @@ from mcs.common.params import Params
 from mcs.contract import ContractAPI
 from mcs.common.utils import get_amount
 
-chain_name = "main"
+chain_name = "polygon.mumbai"
 
 
 def test_info():
-    load_dotenv(".env_" + chain_name)
+    load_dotenv(".env_test")
     wallet_info = {
         'wallet_address': os.getenv('wallet_address'),
         'private_key': os.getenv('private_key'),
@@ -38,7 +38,7 @@ def test_upload_file_pay():
 
     w3_api = ContractAPI(rpc_endpoint, chain_name)
     api = McsAPI(Params(chain_name).MCS_API)
-    api.get_jwt_token(wallet_address,private_key, "polygon.mainnet")
+    api.get_jwt_token(wallet_address,private_key, chain_name)
     # upload file to mcs
     filepath = "/images/log_mcs.png"
     parent_path = os.path.abspath(os.path.dirname(__file__))
@@ -63,11 +63,11 @@ def test_upload_file_pay():
     # test upload_file_pay contract
     w3_api.upload_file_pay(wallet_address, private_key, file_size, w_cid, rate, params)
     # test get payment info api
-    payment_info = api.get_payment_info(payload_cid, wallet_address, source_file_upload_id)
+    payment_info = api.get_payment_info(source_file_upload_id)
     assert payment_info['status'] == 'success'
     assert payment_info['data']['w_cid'] == w_cid
     # test get deal detail
-    deal_detail = api.get_deal_detail(wallet_address, source_file_upload_id)
+    deal_detail = api.get_deal_detail(source_file_upload_id)
     assert deal_detail['status'] == 'success'
     assert deal_detail['data'] != None
 
@@ -80,7 +80,7 @@ def test_mint_nft():
 
     w3_api = ContractAPI(rpc_endpoint, chain_name)
     api = McsAPI(Params(chain_name).MCS_API)
-    api.get_jwt_token(wallet_address,private_key, "polygon.mainnet")
+    api.get_jwt_token(wallet_address,private_key, chain_name)
     w3 = Web3(Web3.HTTPProvider(rpc_endpoint))
 
     # upload file to mcs
