@@ -94,11 +94,10 @@ To upload the file to MCS, we need to call the `stream_upload()` function.
 file_data, need_pay = upload_handle.stream_upload()
 ```
 
-The upload function uploads the file to the IPFS server. MCS currently has 10GB of free upload per month for each wallet. The `need_pay` will indicates if a file is under 
-the coverage of free upload. When `need_pay == 1` then the file needs to be paid and it is free when `need_pay == 0`.
+The file will only be archived on filecoin network after you complete the payment.
 
 ### Approve Token
-Before processing payment we need to approve enough tokens for the upload payment and gas fee. You don't need to approve any token if the upload is free. You can also choose how much you want to approve based on the estimated price.
+Before processing payment we need to approve enough tokens for the upload payment and gas fee. You can also choose how much you want to approve based on the estimated price.
 
 ```python
 upload_handle.approve_token(<amount>)
@@ -112,7 +111,7 @@ print(upload_handle.estimate_amount())
 ```
 
 ### Payment
-Currently, on MCS mainnet, users only need to pay if the upload surpasses the free upload coverage. However,  users can still force a payment after upload (This is not recommended).
+Make a payment through Swan Smart Contract to complete your uploading process.
 
 ```python
 if need_pay:
@@ -183,8 +182,7 @@ api.delete_bucket(bucket_id)
 ```
 
 ### Upload and Delete Files
-Uploading file to Buckets is similar to MCS. However, Buckets does not allow 2 file with the same name within 1 bucket. \
-Therefore, you might want to use different file name when uploading the same file mulitple times to a bucket.
+Uploading file to Buckets is similar to MCS. However, Buckets does not allow 2 file with the same name within 1 bucket. Therefore, you might want to use different file name when uploading the same file mulitple times to a bucket.
 ```python
 api.upload_to_bucket(<bucket_name>, <file_name>, <file_path>)
 ```
