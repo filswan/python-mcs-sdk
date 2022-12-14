@@ -65,5 +65,5 @@ class MCSUpload():
                 'data'][
                 'ipfs_url']
         tx_hash, token_id = self.w3_api.mint_nft(self.wallet_address, self.private_key, meta_url)
-        response = self.api.get_mint_info(source_file_upload_id, None, tx_hash, token_id, self.params['mint_contract_address'])
+        response = self.api.get_mint_info(source_file_upload_id, None, tx_hash, token_id, self.params.MINT_ADDRESS)
         return tx_hash, token_id, response
