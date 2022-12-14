@@ -15,7 +15,8 @@ class MCSUpload():
         self.upload_response = None
         self.payment_tx_hash = None
 
-        self.api = McsAPI(Params(self.chain_name).MCS_API)
+        self.params = Params(self.chain_name)
+        self.api = McsAPI(self.params.MCS_API)
         self.api.get_jwt_token(self.wallet_address, self.private_key, self.chain_name)
         self.w3_api = ContractAPI(self.rpc_endpoint, self.chain_name)
 
@@ -64,5 +65,5 @@ class MCSUpload():
                 'data'][
                 'ipfs_url']
         tx_hash, token_id = self.w3_api.mint_nft(self.wallet_address, self.private_key, meta_url)
-        response = self.api.get_mint_info(source_file_upload_id, None, tx_hash, token_id, self.wallet_address)
+        response = self.api.get_mint_info(source_file_upload_id, None, tx_hash, token_id, self.params['mint_contract_address'])
         return tx_hash, token_id, response
