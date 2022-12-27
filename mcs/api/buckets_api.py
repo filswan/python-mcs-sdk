@@ -16,17 +16,17 @@ class BucketsAPI(McsAPI):
     def __init__(self, mcs_url, meta_url=None):
         self.MCS_API = mcs_url
         if meta_url:
-            self.MetaSpace_API = meta_url
-        else: self.MetaSpace_API = METASPACE_API
+            self.Buckets_API = meta_url
+        else: self.Buckets_API = BUCKETS_API
         self.token = None
     
     def get_buckets(self):
-        return self._request_without_params(GET, DIRECTORY, self.MetaSpace_API, self.token)
+        return self._request_without_params(GET, DIRECTORY, self.Buckets_API, self.token)
     
     def get_bucket_info(self, bucket_name):
         if self.special_char(bucket_name):
             return "Name cannot contain space and special characters"
-        return self._request_without_params(GET, DIRECTORY + '/{}'.format(bucket_name), self.MetaSpace_API, self.token)
+        return self._request_without_params(GET, DIRECTORY + '/{}'.format(bucket_name), self.Buckets_API, self.token)
     
     def get_bucket_id(self, bucket_name):
         if self.special_char(bucket_name):
@@ -51,7 +51,7 @@ class BucketsAPI(McsAPI):
             return "Name cannot contain space and special characters"
         params = {}
         params['path'] = '/{}'.format(bucket_name)
-        return self._request_with_params(PUT, DIRECTORY, self.MetaSpace_API, params, self.token, None)
+        return self._request_with_params(PUT, DIRECTORY, self.Buckets_API, params, self.token, None)
 
     # delete directory use its id
     def delete_bucket(self, dirs):
@@ -60,7 +60,7 @@ class BucketsAPI(McsAPI):
         params['dirs'] = dirs
         if type(dirs) != list:
             params['dirs'] = [str(dirs)]
-        return self._request_with_params(DELETE, DELETE_OBJECT, self.MetaSpace_API, params, self.token, None)
+        return self._request_with_params(DELETE, DELETE_OBJECT, self.Buckets_API, params, self.token, None)
 
     def create_upload_session(self, bucket_name, file_name, file_path):
         if self.special_char(bucket_name+file_name):
@@ -72,7 +72,7 @@ class BucketsAPI(McsAPI):
         params['name'] = file_name
         params['policy_id'] = bucket_info['data']['policy']['id']
         params['last_modified'] = int(time.time())
-        return self._request_with_params(PUT, UPLOAD_SESSION, self.MetaSpace_API, params, self.token, None)
+        return self._request_with_params(PUT, UPLOAD_SESSION, self.Buckets_API, params, self.token, None)
 
     def upload_to_bucket(self, bucket_name, file_name, file_path):
         if self.special_char(bucket_name+file_name):
@@ -82,7 +82,7 @@ class BucketsAPI(McsAPI):
         session = self.create_upload_session(bucket_name, file_name, file_path)['data']['sessionID']
         params = {}
         params= open(file_path, 'rb')
-        return self._request_upload(UPLOAD_SESSION+'/{}/0'.format(session), self.MetaSpace_API, params, self.token)
+        return self._request_upload(UPLOAD_SESSION+'/{}/0'.format(session), self.Buckets_API, params, self.token)
 
     def delete_from_bucket(self, items):
         params = {}
@@ -90,7 +90,7 @@ class BucketsAPI(McsAPI):
         params['dirs'] = []
         if type(items) != list:
             params['items'] = [str(items)]
-        return self._request_with_params(DELETE, DELETE_OBJECT, self.MetaSpace_API, params, self.token, None)
+        return self._request_with_params(DELETE, DELETE_OBJECT, self.Buckets_API, params, self.token, None)
     
     def special_char(self, line):
         special_characters = "!@#$%^&*()-+?=,<>/\'\" \n\t\v\f\r"

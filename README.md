@@ -154,10 +154,15 @@ There are multiple functions provided by python MCS SDK to interact with Buckets
 Buckets use the same login process as MCS.
 
 ```python
+from mcs import BucketsAPI
+from mcs.common.params import Params
+
 api = BucketsAPI(Params(<chain name>).MCS_API)
-jwt_token = api.get_jwt_token(info['wallet_address'], info['private_key'], "polygon.mainnet")
+jwt_token = api.get_jwt_token(<wallet_address>, <private_key>, "polygon.mainnet")
 print(jwt_token)
 ```
+
+Currently, polygon.mainnet is the only supported chain.
 
 ### Check Bucket and File Information
 You can use Buckets APIs to check bucket and file information, including `name`, `id`, `session policy`, etc.
@@ -189,7 +194,7 @@ api.upload_to_bucket(<bucket_name>, <file_name>, <file_path>)
 
 Deleting file from a bucket with bucket name and file id.
 ```python
-file_id = get_file_id(<bucket_name>, <file_name>):
+file_id = api.get_file_id(<bucket_name>, <file_name>)
 api.delete_from_bucket(file_id)
 ```
 

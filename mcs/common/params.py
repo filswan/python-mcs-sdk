@@ -11,7 +11,7 @@ class Params:
         elif chain_name == 'bsc.testnet' or chain_name == 'bsc':
             self.MCS_API = MCS_BSC_API
         else:
-            return 'unknown chain name'
+            print('unknown chain name')
 
         api = McsAPI(self.MCS_API)
         params = api.get_params()['data']
