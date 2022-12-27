@@ -91,6 +91,37 @@ class ApiClient(object):
 
         return response.json()
 
+    def _request_bucket_upload(self, request_path, mcs_api, params, token):
+        url = mcs_api + request_path
+        header = {}
+        if token:
+            header["Authorization"] = "Bearer " + token
+        # send request
+        size =1024*1024
+        filename = params['file'][0]
+        with tqdm(
+            desc=filename,
+            total=size,
+            unit='B',
+            unit_scale=True,
+            unit_divisor=1024,
+        ) as bar:
+            encode = MultipartEncoder(params)
+            body = MultipartEncoderMonitor(
+                encode, lambda monitor: bar.update(monitor.bytes_read - bar.n)
+            )
+            header['Content-Type'] = body.content_type
+            response = requests.post(url, data=body, headers=header)
+
+        # exception handle
+        if not str(response.status_code).startswith('2'):
+            raise exceptions.McsAPIException(response)
+        json_res = response.json()
+        if str(json_res['status']) == 'error':
+            raise exceptions.McsRequestException(json_res['message'])
+
+        return response.json()
+
     def _request_without_params(self, method, request_path, mcs_api, token):
         return self._request(method, request_path, mcs_api, {}, token)
 
