@@ -154,7 +154,7 @@ There are multiple functions provided by python MCS SDK to interact with Buckets
 Buckets use the same login process as MCS.
 
 ```python
-api = BucketsAPI(Params(chain_name).MCS_API)
+api = MetaSpaceAPI(Params(<chain name>).MCS_API)
 jwt_token = api.get_jwt_token(info['wallet_address'], info['private_key'], "polygon.mainnet")
 print(jwt_token)
 ```
@@ -164,7 +164,7 @@ You can use Buckets APIs to check bucket and file information, including `name`,
 
 ```python
 print(api.get_buckets())
-print(api.get_bucket_info('test_bucket'))
+print(api.get_bucket_info(<bucket name>))
 ```
 
 ### Create and Delete Buckets
