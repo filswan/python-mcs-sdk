@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv
 from mcs.common.params import Params
 from mcs.api import McsAPI
-from mcs.api import MetaSpaceAPI
+from mcs.api import BucketsAPI
 
 
 chain_name = "polygon.mumbai"
@@ -21,34 +21,34 @@ def test_info():
 
 def test_user_register():
     info = test_info()
-    api = MetaSpaceAPI(Params(chain_name).MCS_API, metaspace)
+    api = BucketsAPI(Params(chain_name).MCS_API, metaspace)
     jwt_token = api.get_jwt_token(info['wallet_address'], info['private_key'], chain_name)
     print(jwt_token)
 
 
 def test_get_buckets():
     info = test_info()
-    api = MetaSpaceAPI(Params(chain_name).MCS_API, metaspace)
+    api = BucketsAPI(Params(chain_name).MCS_API, metaspace)
     api.get_jwt_token(info['wallet_address'], info['private_key'], chain_name)
     print(api.get_buckets())
 
 
 def test_create_bucket():
     info = test_info()
-    api = MetaSpaceAPI(Params(chain_name).MCS_API, metaspace)
+    api = BucketsAPI(Params(chain_name).MCS_API, metaspace)
     api.get_jwt_token(info['wallet_address'], info['private_key'], chain_name)
     print(api.create_bucket('test_bucket'))
 
 
 def test_bucket_info():
     info = test_info()
-    api = MetaSpaceAPI(Params(chain_name).MCS_API, metaspace)
+    api = BucketsAPI(Params(chain_name).MCS_API, metaspace)
     api.get_jwt_token(info['wallet_address'], info['private_key'], chain_name)
     print(api.get_bucket_info('test_bucket'))
 
 def test_upload_file():
     info = test_info()
-    api = MetaSpaceAPI(Params(chain_name).MCS_API, metaspace)
+    api = BucketsAPI(Params(chain_name).MCS_API, metaspace)
     filepath = "/images/log_mcs.png"
     parentpath = os.path.abspath(os.path.dirname(__file__))
     api.get_jwt_token(info['wallet_address'], info['private_key'], chain_name)
@@ -57,21 +57,21 @@ def test_upload_file():
 
 def test_get_bucket_id():
     info = test_info()
-    api = MetaSpaceAPI(Params(chain_name).MCS_API,metaspace)
+    api = BucketsAPI(Params(chain_name).MCS_API,metaspace)
     api.get_jwt_token(info['wallet_address'], info['private_key'], chain_name)
     print(api.get_bucket_id('test_bucket'))
 
 
 def test_get_file_id():
     info = test_info()
-    api = MetaSpaceAPI(Params(chain_name).MCS_API, metaspace)
+    api = BucketsAPI(Params(chain_name).MCS_API, metaspace)
     api.get_jwt_token(info['wallet_address'], info['private_key'], chain_name)
     print(api.get_file_id('test_bucket', 'mcs_logo'))
 
 
 def test_delete_bucket():
     info = test_info()
-    api = MetaSpaceAPI(Params(chain_name).MCS_API, metaspace)
+    api = BucketsAPI(Params(chain_name).MCS_API, metaspace)
     jwt_token = api.get_jwt_token(info['wallet_address'], info['private_key'], chain_name)
     buckets = api.get_buckets()['data']['objects']
     for i in buckets:

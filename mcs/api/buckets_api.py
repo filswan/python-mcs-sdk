@@ -11,7 +11,7 @@ import os
 import time
 import urllib.request
 
-class MetaSpaceAPI(McsAPI):
+class BucketsAPI(McsAPI):
 
     def __init__(self, mcs_url, meta_url=None):
         self.MCS_API = mcs_url

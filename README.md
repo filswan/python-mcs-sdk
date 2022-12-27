@@ -154,7 +154,7 @@ There are multiple functions provided by python MCS SDK to interact with Buckets
 Buckets use the same login process as MCS.
 
 ```python
-api = MetaSpaceAPI(Params(<chain name>).MCS_API)
+api = BucketsAPI(Params(<chain name>).MCS_API)
 jwt_token = api.get_jwt_token(info['wallet_address'], info['private_key'], "polygon.mainnet")
 print(jwt_token)
 ```
