@@ -11,7 +11,7 @@
 - [Usage](#usage)
   - [Installation](#installation)
   - [Getting Started](#getting-started)
-  - [Use Buckets](#use-Buckets)
+  - [Use Bucket](#use-Bucket)
   - [Documentation](#documentation)
 - [Contributing](#contributing)
 
@@ -146,18 +146,18 @@ if __name__ == '__main__':
     print('Upload successfully')
 ```
 
-## Use Buckets
+## Use Bucket
 
-There are multiple functions provided by python MCS SDK to interact with Buckets API.
+There are multiple functions provided by python MCS SDK to interact with Bucket API.
 
-### Login to Buckets
+### Login to Bucket
 Buckets use the same login process as MCS.
 
 ```python
-from mcs import BucketsAPI
+from mcs import BucketAPI
 from mcs.common.params import Params
 
-api = BucketsAPI(Params(<chain name>).MCS_API)
+api = BucketAPI(Params(<chain name>).MCS_API)
 jwt_token = api.get_jwt_token(<wallet_address>, <private_key>, "polygon.mainnet")
 print(jwt_token)
 ```
@@ -165,15 +165,15 @@ print(jwt_token)
 Currently, polygon.mainnet is the only supported chain.
 
 ### Check Bucket and File Information
-You can use Buckets APIs to check bucket and file information, including `name`, `id`, `session policy`, etc.
+You can use Bucket APIs to check bucket and file information, including `name`, `id`, `session policy`, etc.
 
 ```python
 print(api.get_buckets())
 print(api.get_bucket_info(<bucket name>))
 ```
 
-### Create and Delete Buckets
-Buckets APIs allow user to create and delete buckets (At the current version of Buckets, only 1 bucket is allowed per user)
+### Create and Delete Bucket
+Buckets APIs allow user to create and delete bucket (At the current version of Bucket, only 1 bucket is allowed per user)
 
 To create a bucket, we need to have a bucket name.
 ```python
@@ -187,7 +187,7 @@ api.delete_bucket(bucket_id)
 ```
 
 ### Upload and Delete Files
-Uploading file to Buckets is similar to MCS. However, Buckets does not allow 2 file with the same name within 1 bucket. Therefore, you might want to use different file name when uploading the same file mulitple times to a bucket.
+Uploading file to Bucket is similar to MCS. However, Bucket does not allow 2 file with the same name within 1 bucket. Therefore, you might want to use different file name when uploading the same file mulitple times to a bucket.
 ```python
 api.upload_to_bucket(<bucket_name>, <file_name>, <file_path>)
 ```
