@@ -1,7 +1,7 @@
 MCS_POLYGON_MAIN_API = "https://api.multichain.storage/api/"
 MCS_POLYGON_MUMBAI_API = "https://calibration-mcs-api.filswan.com/api/"
 MCS_BSC_API = 'https://calibration-mcs-bsc.filswan.com/api/'
-METASPACE_API = "https://meta-api.multichain.storage/api/"
+BUCKET_API = "https://meta-api.multichain.storage/api/"
 GET = "GET"
 POST = "POST"
 PUT = "PUT"
