@@ -78,7 +78,6 @@ class BucketAPI(McsAPI):
         with open(file_path, 'rb') as file:
             file_hash = md5(file.read()).hexdigest()
         result = self.check_file(bucket_id, file_hash, file_name, '')
-        print(result['data']['file_is_exist'], result['data']['ipfs_is_exist'])
         if not (result['data']['file_is_exist']):
             with open(file_path, 'rb') as file:
                 i = 0
