@@ -16,10 +16,8 @@ UPLOAD_FILE = "/api/v1/storage/ipfs/upload"
 DEAL_DETAIL = "/api/v1/storage/deal/detail/"
 USER_REGISTER = "/api/v1/user/register"
 USER_LOGIN = "/api/v1/user/login_by_metamask_signature"
-# meta space api
-# DIRECTORY = "v3/directory"
-# DELETE_OBJECT = "v3/object"
-# UPLOAD_SESSION = "v3/file/upload"
+GENERATE_APIKEY = "/api/v1/user/generate_api_key"
+APIKEY_LOGIN = "/api/v1/user/login_by_api_key"
 # bucket api
 CREATE_BUCKET = "/api/v2/bucket/create"
 BUCKET_LIST = "/api/v2/bucket/get_bucket_list"

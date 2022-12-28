@@ -114,3 +114,13 @@ class McsAPI(ApiClient):
             params['signature'] = signature
             params['network'] = network
         return self._request_with_params(POST, USER_LOGIN, self.MCS_API, params, None, None)
+    
+    def api_key_login(self, apikey, access_token, chain_name):
+        params = {}
+        params['apikey'] = apikey
+        params['access_token'] = access_token
+        params['network'] = chain_name
+        return self._request_with_params(POST, APIKEY_LOGIN, self.MCS_API, params, None, None)
+    
+    def generate_apikey(self):
+        return self._request_with_params(POST, GENERATE_APIKEY, self.MCS_API, [], self.token, None)
