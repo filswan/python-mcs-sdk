@@ -2,7 +2,8 @@ from mcs.api.mcs_api import McsAPI
 from mcs.common.constants import *
 
 from hashlib import md5
-import os
+from queue import Queue
+import os, threading
 
 class BucketAPI(McsAPI):
 
@@ -58,6 +59,11 @@ class BucketAPI(McsAPI):
         params['file'] = (file_name, chunk)
         return self._request_bucket_upload(UPLOAD_CHUNK, self.MCS_API, params, self.token)
     
+    def thread_upload_chunk(self, queue, file_hash, file_name):
+        while not queue.empty():
+            chunk = queue.get()
+            self.upload_chunk(file_hash, chunk[0]+'_'+file_name, chunk[1])
+    
     def merge_file(self, bucket_id, file_hash, file_name, prefix=''):
         params = {}
         params['bucket_uid'] = bucket_id
@@ -81,10 +87,14 @@ class BucketAPI(McsAPI):
         if not (result['data']['file_is_exist']):
             with open(file_path, 'rb') as file:
                 i = 0
+                queue = Queue()
                 for chunk in self.read_chunks(file):
                     i+= 1
-                    self.upload_chunk(file_hash, str(i)+'_'+file_name, chunk)
+                    queue.put((str(i), chunk))
                 file.close()
+            for i in range(3):
+                worker = threading.Thread(target=self.thread_upload_chunk, args=(queue, file_hash, file_name))
+                worker.start()
             if not (result['data']['ipfs_is_exist']):
                 self.merge_file(bucket_id, file_hash, file_name, prefix)
         else: 
