@@ -24,7 +24,7 @@ class BucketAPI(McsAPI):
         params['file_id'] = file_id
         return self._request_with_params(GET, FILE_INFO, self.MCS_API, params, self.token, None)
 
-    def create_folder(self, file_name, prefix, bucket_id):
+    def create_folder(self, file_name, bucket_id, prefix=''):
         params = {}
         params["file_name"] = file_name
         params["prefix"] = prefix
@@ -36,7 +36,7 @@ class BucketAPI(McsAPI):
         params['file_id'] = file_id
         return self._request_with_params(GET, DELETE_FILE, self.MCS_API, params, self.token, None)
 
-    def get_file_list(self, prefix, bucket_id, limit=10, offset=0):
+    def get_file_list(self, bucket_id, prefix='', limit=10, offset=0):
         params = {}
         params['bucket_uid'] = bucket_id
         params['prefix'] = prefix
@@ -44,7 +44,7 @@ class BucketAPI(McsAPI):
         params['offset'] = offset
         return self._request_with_params(GET, FILE_LIST, self.MCS_API, params, self.token, None)
 
-    def check_file(self, bucket_id, file_hash, file_name, prefix):
+    def check_file(self, bucket_id, file_hash, file_name, prefix=''):
         params = {}
         params['bucket_uid'] = bucket_id
         params['file_hash'] = file_hash
@@ -58,7 +58,7 @@ class BucketAPI(McsAPI):
         params['file'] = (file_name, chunk)
         return self._request_bucket_upload(UPLOAD_CHUNK, self.MCS_API, params, self.token)
     
-    def merge_file(self, bucket_id, file_hash, file_name, prefix):
+    def merge_file(self, bucket_id, file_hash, file_name, prefix=''):
         params = {}
         params['bucket_uid'] = bucket_id
         params['file_hash'] = file_hash
@@ -73,11 +73,11 @@ class BucketAPI(McsAPI):
                 break
             yield data
 
-    def upload_to_bucket(self, bucket_id, file_path):
+    def upload_to_bucket(self, bucket_id, file_path, prefix=''):
         file_name = os.path.basename(file_path)
         with open(file_path, 'rb') as file:
             file_hash = md5(file.read()).hexdigest()
-        result = self.check_file(bucket_id, file_hash, file_name, '')
+        result = self.check_file(bucket_id, file_hash, file_name, prefix)
         if not (result['data']['file_is_exist']):
             with open(file_path, 'rb') as file:
                 i = 0
@@ -86,7 +86,21 @@ class BucketAPI(McsAPI):
                     self.upload_chunk(file_hash, str(i)+'_'+file_name, chunk)
                 file.close()
             if not (result['data']['ipfs_is_exist']):
-                self.merge_file(bucket_id, file_hash, file_name, '')
+                self.merge_file(bucket_id, file_hash, file_name, prefix)
         else: 
             print('File already existed')
 
+    def upload_folder(self, bucket_id, folder_path, prefix=''):
+        path = os.path.basename(folder_path)
+        folder_name = os.path.splitext(path)[0]
+        self.create_folder(folder_name, bucket_id, prefix)
+        files = os.listdir(folder_path)
+        success = []
+        for f in files:
+            f_path = os.path.join(folder_path,f)
+            if os.path.isdir(f_path):
+                success.extend(self.upload_folder(bucket_id, f_path, os.path.join(prefix,folder_name)))
+            else:
+                self.upload_to_bucket(bucket_id, f_path, os.path.join(prefix,folder_name))
+                success.append(f_path)
+        return success

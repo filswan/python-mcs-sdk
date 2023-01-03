@@ -120,7 +120,8 @@ class McsAPI(ApiClient):
         params['apikey'] = apikey
         params['access_token'] = access_token
         params['network'] = chain_name
-        return self._request_with_params(POST, APIKEY_LOGIN, self.MCS_API, params, None, None)
+        result = self._request_with_params(POST, APIKEY_LOGIN, self.MCS_API, params, None, None)
+        self.token = result['data']['jwt_token']
     
-    def generate_apikey(self):
-        return self._request_with_params(POST, GENERATE_APIKEY, self.MCS_API, [], self.token, None)
+    def generate_apikey(self, valid_days=1):
+        return self._request_with_params(POST, GENERATE_APIKEY+'?valid_days={}'.format(valid_days), self.MCS_API, [], self.token, None)
