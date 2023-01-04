@@ -17,6 +17,8 @@ def test_info():
         'wallet_address': os.getenv('wallet_address'),
         'private_key': os.getenv('private_key'),
         'rpc_endpoint': os.getenv('rpc_endpoint'),
+        'api_key': os.getenv('api_key'),
+        'access_token': os.getenv('access_token')
     }
     return wallet_info
 
@@ -35,14 +37,16 @@ def test_upload_file_pay():
     wallet_address = info['wallet_address']
     private_key = info['private_key']
     rpc_endpoint = info['rpc_endpoint']
+    api_key = info['api_key']
+    access_token = info['access_token']
 
     w3_api = ContractAPI(rpc_endpoint, chain_name)
     api = McsAPI(Params(chain_name).MCS_API)
-    api.get_jwt_token(wallet_address,private_key, chain_name)
+    api.api_key_login(api_key, access_token, chain_name)
     # upload file to mcs
     filepath = "/images/log_mcs.png"
     parent_path = os.path.abspath(os.path.dirname(__file__))
-    upload_file = api.upload_file(wallet_address, parent_path + filepath)
+    upload_file = api.upload_file(parent_path + filepath)
     print(upload_file)
     # test upload file
     assert upload_file['status'] == 'success'
@@ -77,17 +81,19 @@ def test_mint_nft():
     wallet_address = info['wallet_address']
     private_key = info['private_key']
     rpc_endpoint = info['rpc_endpoint']
+    api_key = info['api_key']
+    access_token = info['access_token']
 
     w3_api = ContractAPI(rpc_endpoint, chain_name)
     api = McsAPI(Params(chain_name).MCS_API)
-    api.get_jwt_token(wallet_address,private_key, chain_name)
+    api.api_key_login(api_key, access_token, chain_name)
     w3 = Web3(Web3.HTTPProvider(rpc_endpoint))
 
     # upload file to mcs
     filepath = "/images/log_mcs.png"
     filename = "log_mcs.png"
     parent_path = os.path.abspath(os.path.dirname(__file__))
-    upload_file = api.upload_file(wallet_address, parent_path + filepath)
+    upload_file = api.upload_file(parent_path + filepath)
     # test upload file
     assert upload_file['status'] == 'success'
     file_data = upload_file["data"]

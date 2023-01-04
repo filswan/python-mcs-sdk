@@ -3,20 +3,24 @@ from mcs import ContractAPI
 from mcs.common.params import Params
 from mcs.common.utils import get_amount
 import logging
+from web3 import Web3
 
 
 class MCSUpload():
-    def __init__(self, chain_name, wallet_address, private_key, rpc_endpoint, file_path):
+    def __init__(self, chain_name, private_key, rpc_endpoint, api_key, access_token, file_path):
         self.chain_name = chain_name
-        self.wallet_address = wallet_address
         self.private_key = private_key
         self.rpc_endpoint = rpc_endpoint
+        self.api_key = api_key
+        self.access_token = access_token
+        self.wallet_address =  Web3(Web3.HTTPProvider(self.rpc_endpoint))\
+                                .eth.account.privateKeyToAccount(self.private_key).address
         self.file_path = file_path
         self.upload_response = None
         self.payment_tx_hash = None
 
         self.api = McsAPI(Params(self.chain_name).MCS_API)
-        self.api.get_jwt_token(self.wallet_address, self.private_key, self.chain_name)
+        self.api.api_key_login(self.api_key, self.access_token, self.chain_name)
         self.w3_api = ContractAPI(self.rpc_endpoint, self.chain_name)
 
     def approve_token(self, amount):
@@ -46,9 +50,8 @@ class MCSUpload():
         rate = self.api.get_price_rate()["data"]
         # payment
         try:
-            self.payment_tx_hash = self.w3_api.upload_file_pay(self.wallet_address, self.private_key, file_size, w_cid,
-                                                               rate,
-                                                               params)
+            self.payment_tx_hash = self.w3_api.upload_file_pay(self.wallet_address, self.private_key, 
+                                        file_size, w_cid, rate, params)
         except Exception as e:
             logging.error(str(e))
             return 'payment failed: ' + str(e)
@@ -64,5 +67,6 @@ class MCSUpload():
                 'data'][
                 'ipfs_url']
         tx_hash, token_id = self.w3_api.mint_nft(self.wallet_address, self.private_key, meta_url)
-        response = self.api.get_mint_info(source_file_upload_id, None, tx_hash, token_id, self.wallet_address)
+        response = self.api.get_mint_info(source_file_upload_id, None, 
+                    tx_hash, token_id, self.api.get_params()["data"]['mint_contract_address'])
         return tx_hash, token_id, response

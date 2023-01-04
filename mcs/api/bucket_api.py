@@ -20,6 +20,13 @@ class BucketAPI(McsAPI):
         params['bucket_uid'] = bucket_id
         return self._request_with_params(GET, DELETE_BUCKET, self.MCS_API, params, self.token, None)
     
+    def get_bucket_id(self, bucket_name):
+        bucketlist = self.get_buckets()['data']
+        for bucket in bucketlist:
+            if bucket['BucketName'] == bucket_name:
+                return bucket['BucketUid']
+        return None
+    
     def get_file_info(self, file_id):
         params = {}
         params['file_id'] = file_id
@@ -44,6 +51,14 @@ class BucketAPI(McsAPI):
         params['limit'] = limit
         params['offset'] = offset
         return self._request_with_params(GET, FILE_LIST, self.MCS_API, params, self.token, None)
+    
+    def get_file_id(self, bucket_name, file_name, prefix=''):
+        filelist = self.get_file_list(self.get_bucket_id(bucket_name), prefix)['data']['FileList']
+        for file in filelist:
+            if file['Name'] == file_name and not file['IsFolder']:
+                return file['ID']
+        return None
+
 
     def check_file(self, bucket_id, file_hash, file_name, prefix=''):
         params = {}

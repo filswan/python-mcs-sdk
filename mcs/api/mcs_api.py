@@ -12,16 +12,6 @@ class McsAPI(ApiClient):
         self.MCS_API = url
         self.token = None
 
-    def get_jwt_token(self, wallet_address, private_key, chain_name):
-        nonce = self.user_register(wallet_address)["data"]["nonce"]
-        message = encode_defunct(text=nonce)
-        signed_message = Account.sign_message(message, private_key=private_key)["signature"]
-        signature = web3.Web3.toHex(signed_message)
-        login = self.user_login(wallet_address, signature, nonce, chain_name)
-        jwt = login["data"]["jwt_token"]
-        self.token = jwt
-        return jwt
-
     def get_params(self):
         return self._request_without_params(GET, MCS_PARAMS, self.MCS_API, self.token)
 
@@ -51,10 +41,9 @@ class McsAPI(ApiClient):
                   'token_id': int(token_id), 'mint_address': mint_address}
         return self._request_with_params(POST, MINT_INFO, self.MCS_API, params, self.token, None)
 
-    def upload_file(self, wallet_address, file_path):
+    def upload_file(self, file_path):
         params = {}
-        if wallet_address:
-            params['wallet_address'] = wallet_address
+        if file_path:
             params['duration'] = '525'
             params['storage_copy'] = '5'
 
@@ -99,21 +88,6 @@ class McsAPI(ApiClient):
             file_url['external_url'] = image_url
         files = {"fileName": "test", "file": json.dumps(file_url)}
         return self._request_with_params(POST, UPLOAD_FILE, self.MCS_API, params, self.token, files)
-
-    def user_register(self, wallet_address):
-        params = {}
-        if wallet_address:
-            params['public_key_address'] = wallet_address
-        return self._request_with_params(POST, USER_REGISTER, self.MCS_API, params, None, None)
-
-    def user_login(self, wallet_address, signature, nonce, network):
-        params = {}
-        if wallet_address:
-            params['public_key_address'] = wallet_address
-            params['nonce'] = nonce
-            params['signature'] = signature
-            params['network'] = network
-        return self._request_with_params(POST, USER_LOGIN, self.MCS_API, params, None, None)
     
     def api_key_login(self, apikey, access_token, chain_name):
         params = {}
@@ -122,6 +96,3 @@ class McsAPI(ApiClient):
         params['network'] = chain_name
         result = self._request_with_params(POST, APIKEY_LOGIN, self.MCS_API, params, None, None)
         self.token = result['data']['jwt_token']
-    
-    def generate_apikey(self, valid_days=1):
-        return self._request_with_params(POST, GENERATE_APIKEY+'?valid_days={}'.format(valid_days), self.MCS_API, [], self.token, None)
