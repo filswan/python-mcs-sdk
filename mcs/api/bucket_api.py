@@ -32,9 +32,9 @@ class BucketAPI(McsAPI):
         params['file_id'] = file_id
         return self._request_with_params(GET, FILE_INFO, self.MCS_API, params, self.token, None)
 
-    def create_folder(self, file_name, bucket_id, prefix=''):
+    def create_folder(self, folder_name, bucket_id, prefix=''):
         params = {}
-        params["file_name"] = file_name
+        params["file_name"] = folder_name
         params["prefix"] = prefix
         params["bucket_uid"] = bucket_id
         return self._request_with_params(POST, CREATE_FOLDER, self.MCS_API, params, self.token, None)

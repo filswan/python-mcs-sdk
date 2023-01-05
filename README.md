@@ -63,10 +63,15 @@ This is a demo for users to use the simplified MCS upload functions `MCSUpload`.
 ### Set Up Wallet Information
 Create an `.env` file
 ```
-wallet_address="<WALLET_ADDRESS>"
 private_key="<PRIVATE_KEY>"
 rpc_endpoint="<RPC_ENDPOINT>"
+
+api_key="<API_KEY>"
+access_token="<ACCESS_TOKEN>"
 ```
+
+api key and access token can be obtained from the API key tab from multichain.storage
+
 install  python-dotenv
 
 ```
@@ -84,7 +89,7 @@ from dotenv import load_dotenv
 
 load_dotenv(".env")
 file_path="./test.py"
-upload_handle = MCSUpload("polygon.mainnet", os.getenv('wallet_address'), os.getenv('private_key'), os.getenv('rpc_endpoint'), file_path)
+upload_handle = MCSUpload("polygon.mainnet", os.getenv('private_key'), os.getenv('rpc_endpoint'), os.getenv('api_key'), os.getenv('access_token'), file_path)
 ```
 
 ### Upload File
@@ -135,7 +140,7 @@ if __name__ == '__main__':
     file_path = "./test.py"
 
     # Upload file
-    upload_handle = MCSUpload("polygon.mainnet", os.getenv('wallet_address'), os.getenv('private_key'), os.getenv('rpc_endpoint'), file_path)
+    upload_handle = MCSUpload("polygon.mainnet", os.getenv('private_key'), os.getenv('rpc_endpoint'), os.getenv('api_key'), os.getenv('access_token'), file_path)
     file_data, need_pay = upload_handle.stream_upload()
 
     # Process payment
@@ -155,7 +160,7 @@ Buckets use the same login process as MCS.
 
 ```python
 api = BucketsAPI(Params(chain_name).MCS_API)
-jwt_token = api.get_jwt_token(info['wallet_address'], info['private_key'], "polygon.mainnet")
+jwt_token = api.api_key_login(info['api_key'], info['access_token'], 'polygon.mainnet')
 print(jwt_token)
 ```
 
@@ -164,7 +169,7 @@ You can use Buckets APIs to check bucket and file information, including `name`,
 
 ```python
 print(api.get_buckets())
-print(api.get_bucket_info('test_bucket'))
+print(api.get_bucket_id(<bucket_name>))
 ```
 
 ### Create and Delete Buckets
@@ -184,13 +189,31 @@ api.delete_bucket(bucket_id)
 ### Upload and Delete Files
 Uploading file to Buckets is similar to MCS. However, Buckets does not allow 2 file with the same name within 1 bucket. Therefore, you might want to use different file name when uploading the same file mulitple times to a bucket.
 ```python
-api.upload_to_bucket(<bucket_name>, <file_name>, <file_path>)
+api.upload_to_bucket(<bucket_name>, <file_name>, <file_path>, prefix=<folder_name>)
 ```
+prefix is an optional parameter which determine which folder to upload to.
 
 Deleting file from a bucket with bucket name and file id.
 ```python
-file_id = get_file_id(<bucket_name>, <file_name>):
-api.delete_from_bucket(file_id)
+file_id = get_file_id(<bucket_id>, <file_path>, prefix=<folder_name>):
+api.delete_file(<file_id>)
+```
+
+### Create, Upload and Delete Folder
+
+Create a folder in a bucket.
+```python
+api.create_folder(<folder_name>, <bucket_id>, prefix=<folder_name>)
+```
+
+Upload folder to bucket.
+```python
+api.upload_folder(<bucket_id>, <folder_path>, prefix=<folder_name>)
+```
+
+Delete folder.
+```python
+api.delete_folder(<bucket_id>, <folder_id>, prefix=<folder_name>)
 ```
 
 ## Documentation
