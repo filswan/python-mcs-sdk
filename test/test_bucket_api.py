@@ -70,3 +70,10 @@ def test_delete_bucket():
     api.api_key_login(info['api_key'], info['access_token'], chain_name)
     bucket_id = api.get_bucket_id('test_bucket')
     api.delete_bucket(bucket_id)
+
+def test_upload_folder():
+    info = test_info()
+    api = BucketAPI(Params(chain_name).MCS_API)
+    api.api_key_login(info['api_key'], info['access_token'], chain_name)
+    api.create_bucket('folder_bucket')
+    api.upload_folder(api.get_bucket_id('folder_bucket'), os.path.abspath('test'))

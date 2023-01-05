@@ -3,7 +3,7 @@ from mcs.common.constants import *
 
 from hashlib import md5
 from queue import Queue
-import os, threading
+import os, threading, time
 
 class BucketAPI(McsAPI):
 
@@ -95,6 +95,8 @@ class BucketAPI(McsAPI):
             yield data
 
     def upload_to_bucket(self, bucket_id, file_path, prefix=''):
+        if os.stat(file_path).st_size == 0:
+            return 'File size cannot be 0'
         file_name = os.path.basename(file_path)
         with open(file_path, 'rb') as file:
             file_hash = md5(file.read()).hexdigest()
@@ -107,13 +109,17 @@ class BucketAPI(McsAPI):
                     i+= 1
                     queue.put((str(i), chunk))
                 file.close()
+            threads = list()
             for i in range(3):
                 worker = threading.Thread(target=self.thread_upload_chunk, args=(queue, file_hash, file_name))
+                threads.append(worker)
                 worker.start()
+            for thread in threads:
+                thread.join()
             if not (result['data']['ipfs_is_exist']):
                 self.merge_file(bucket_id, file_hash, file_name, prefix)
-        else: 
-            print('File already existed')
+            return 'Upload success'
+        return 'File already existed'
 
     def upload_folder(self, bucket_id, folder_path, prefix=''):
         path = os.path.basename(folder_path)
@@ -127,5 +133,6 @@ class BucketAPI(McsAPI):
                 success.extend(self.upload_folder(bucket_id, f_path, os.path.join(prefix,folder_name)))
             else:
                 self.upload_to_bucket(bucket_id, f_path, os.path.join(prefix,folder_name))
+                time.sleep(0.5)
                 success.append(f_path)
         return success
