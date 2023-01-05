@@ -155,11 +155,13 @@ if __name__ == '__main__':
 
 There are multiple functions provided by python MCS SDK to interact with Buckets API.
 
-### Login to Buckets
+### Login to Bucket
 Buckets use the same login process as MCS.
 
+Getting the jwt token using api key login.
+
 ```python
-api = BucketsAPI(Params(chain_name).MCS_API)
+api = BucketAPI(Params(chain_name).MCS_API)
 jwt_token = api.api_key_login(info['api_key'], info['access_token'], 'polygon.mainnet')
 print(jwt_token)
 ```
@@ -169,8 +171,11 @@ You can use Buckets APIs to check bucket and file information, including `name`,
 
 ```python
 print(api.get_buckets())
+
 print(api.get_bucket_id(<bucket_name>))
 ```
+
+The bucket id is used for delete bucket and upload files/folder to bucket.
 
 ### Create and Delete Buckets
 Buckets APIs allow user to create and delete buckets (At the current version of Buckets, only 1 bucket is allowed per user)
@@ -214,6 +219,31 @@ api.upload_folder(<bucket_id>, <folder_path>, prefix=<folder_name>)
 Delete folder.
 ```python
 api.delete_folder(<bucket_id>, <folder_id>, prefix=<folder_name>)
+```
+
+### Full Demo Code
+
+Full demo code for upload to bucket
+
+```python
+import os
+from dotenv import load_dotenv
+from mcs.upload.mcs_upload import BucketAPI
+
+if __name__ == '__main__':
+    api = BucketAPI(Params(chain_name).MCS_API)
+    api.api_key_login(info['api_key'], info['access_token'], 'polygon.mainnet')
+
+    # Create a bucket if none already exist.
+    api.create_bucket(<bucket_name>)
+
+    bucket_id = api.get_bucket_id(<bucket_name>)
+
+    # Create a folder if necessary
+    api.create_folder(<folder_name>, <bucket_id>, prefix=<folder_name>)
+
+    # Upload file
+    api.upload_to_bucket(<bucket_name>, <file_name>, <file_path>, prefix=<folder_name>)
 ```
 
 ## Documentation
