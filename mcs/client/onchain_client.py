@@ -1,22 +1,9 @@
-import web3
-from eth_account import Account
-from eth_account.messages import encode_defunct
-from mcs import ApiClient
+from mcs.client.mcs_client import McsClient
 from mcs.common.constants import *
 import json
 
 
-class McsAPI(ApiClient):
-
-    def __init__(self, url):
-        self.MCS_API = url
-        self.token = None
-
-    def get_params(self):
-        return self._request_without_params(GET, MCS_PARAMS, self.MCS_API, self.token)
-
-    def get_price_rate(self):
-        return self._request_without_params(GET, PRICE_RATE, self.MCS_API, self.token)
+class OnchainClient(McsClient):
 
     def get_payment_info(self, source_file_upload_id):
         params = {}
@@ -88,11 +75,3 @@ class McsAPI(ApiClient):
             file_url['external_url'] = image_url
         files = {"fileName": "test", "file": json.dumps(file_url)}
         return self._request_with_params(POST, UPLOAD_FILE, self.MCS_API, params, self.token, files)
-    
-    def api_key_login(self, apikey, access_token, chain_name):
-        params = {}
-        params['apikey'] = apikey
-        params['access_token'] = access_token
-        params['network'] = chain_name
-        result = self._request_with_params(POST, APIKEY_LOGIN, self.MCS_API, params, None, None)
-        self.token = result['data']['jwt_token']

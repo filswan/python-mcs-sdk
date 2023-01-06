@@ -1,5 +1,5 @@
 from mcs.common.constants import MCS_POLYGON_MUMBAI_API, MCS_BSC_API, MCS_POLYGON_MAIN_API
-from mcs.api import McsAPI
+from mcs.client import McsClient
 
 
 class Params:
@@ -13,7 +13,7 @@ class Params:
         else:
             return 'unknown chain name'
 
-        api = McsAPI(self.MCS_API)
+        api = McsClient(self.MCS_API)
         params = api.get_params()['data']
         self.CHAIN_NAME = params['chain_name']
         self.SWAN_PAYMENT_ADDRESS = params['payment_contract_address']

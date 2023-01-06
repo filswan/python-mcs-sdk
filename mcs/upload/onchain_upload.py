@@ -1,12 +1,12 @@
-from mcs import McsAPI
-from mcs import ContractAPI
+from mcs import OnchainClient
+from mcs import ContractClient
 from mcs.common.params import Params
 from mcs.common.utils import get_amount
 import logging
 from web3 import Web3
 
 
-class MCSUpload():
+class OnchainUpload():
     def __init__(self, chain_name, private_key, rpc_endpoint, api_key, access_token, file_path):
         self.chain_name = chain_name
         self.private_key = private_key
@@ -19,12 +19,18 @@ class MCSUpload():
         self.upload_response = None
         self.payment_tx_hash = None
 
-        self.api = McsAPI(Params(self.chain_name).MCS_API)
+        self.api = OnchainClient(Params(self.chain_name).MCS_API)
         self.api.api_key_login(self.api_key, self.access_token, self.chain_name)
-        self.w3_api = ContractAPI(self.rpc_endpoint, self.chain_name)
+        self.w3_api = ContractClient(self.rpc_endpoint, self.chain_name)
 
     def approve_token(self, amount):
         return self.w3_api.approve_usdc(self.wallet_address, self.private_key, amount)
+
+    def simple_upload(self, amount):
+        self.approve_token(amount)
+        self.stream_upload()
+        payment_hash = self.pay()
+        return payment_hash
 
     def stream_upload(self):
         upload_file = self.api.stream_upload_file(self.wallet_address, self.file_path)

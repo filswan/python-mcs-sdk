@@ -1,11 +1,11 @@
-from mcs.api.mcs_api import McsAPI
+from mcs.client.mcs_client import McsClient
 from mcs.common.constants import *
 
 from hashlib import md5
 from queue import Queue
 import os, threading, time
 
-class BucketAPI(McsAPI):
+class BucketClient(McsClient):
 
     def get_buckets(self):
         return self._request_without_params(GET, BUCKET_LIST, self.MCS_API, self.token)

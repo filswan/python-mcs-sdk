@@ -1,10 +1,12 @@
 from mcs.api_client import ApiClient
-from mcs.api.mcs_api import McsAPI
-from mcs.api.bucket_api import BucketAPI
-from mcs.contract.mcs_contract import ContractAPI
+from mcs.client.mcs_client import McsClient
+from mcs.client.bucket_client import BucketClient
+from mcs.client.onchain_client import OnchainClient
+from mcs.contract.mcs_contract import ContractClient
 
 __all__ = [
-    "McsAPI",
-    "BucketAPI",
-    "ContractAPI",
+    "McsClient",
+    "BucketClient",
+    "OnchainClient",
+    "ContractClient",
 ]

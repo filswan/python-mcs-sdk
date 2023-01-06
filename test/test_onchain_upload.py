@@ -3,9 +3,9 @@ import os
 import web3
 from web3 import Web3
 from dotenv import load_dotenv
-from mcs.api import McsAPI
+from mcs.client import OnchainClient
 from mcs.common.params import Params
-from mcs.contract import ContractAPI
+from mcs.contract import ContractClient
 from mcs.common.utils import get_amount
 
 chain_name = "polygon.mumbai"
@@ -28,7 +28,7 @@ def test_approve_usdc():
     wallet_address = info['wallet_address']
     private_key = info['private_key']
     rpc_endpoint = info['rpc_endpoint']
-    w3_api = ContractAPI(rpc_endpoint, chain_name)
+    w3_api = ContractClient(rpc_endpoint, chain_name)
     w3_api.approve_usdc(wallet_address, private_key, 1)
 
 
@@ -40,8 +40,8 @@ def test_upload_file_pay():
     api_key = info['api_key']
     access_token = info['access_token']
 
-    w3_api = ContractAPI(rpc_endpoint, chain_name)
-    api = McsAPI(Params(chain_name).MCS_API)
+    w3_api = ContractClient(rpc_endpoint, chain_name)
+    api = OnchainClient(Params(chain_name).MCS_API)
     api.api_key_login(api_key, access_token, chain_name)
     # upload file to mcs
     filepath = "/images/log_mcs.png"
@@ -84,8 +84,8 @@ def test_mint_nft():
     api_key = info['api_key']
     access_token = info['access_token']
 
-    w3_api = ContractAPI(rpc_endpoint, chain_name)
-    api = McsAPI(Params(chain_name).MCS_API)
+    w3_api = ContractClient(rpc_endpoint, chain_name)
+    api = OnchainClient(Params(chain_name).MCS_API)
     api.api_key_login(api_key, access_token, chain_name)
     w3 = Web3(Web3.HTTPProvider(rpc_endpoint))
 
