@@ -85,7 +85,7 @@ class McsClient(ApiClient):
             file_url['external_url'] = image_url
         files = {"fileName": "test", "file": json.dumps(file_url)}
         return self._request_with_params(POST, UPLOAD_FILE, self.MCS_API, params, self.token, files)
-    
+
     def api_key_login(self, apikey, access_token, chain_name):
         params = {}
         params['apikey'] = apikey
