@@ -87,11 +87,13 @@ Here is the demo to get you started; you can get more information in the [docume
    1. Create a .env file that includes the following content.
 
       ```
-      private_key="<PRIVATE_KEY>"
-      rpc_endpoint="<RPC_ENDPOINT>"
-      
       api_key="<API_KEY>"
       access_token="<ACCESS_TOKEN>"
+      
+      ##If you do not use the onchain function, you do not need to configure the following
+      private_key="<PRIVATE_KEY>"
+      rpc_endpoint="<RPC_ENDPOINT>"
+
       ```
 
       1. ***The "rpc_endpoint" is the one mentioned above***
@@ -105,14 +107,11 @@ Here is the demo to get you started; you can get more information in the [docume
 2. Login to MCS
 
    ```python
-   if __name__ == '__main__':
-       load_dotenv("test/.env_main")
-       chain_name = "polygon.mainnet"
-       private_key = os.getenv('private_key')
-       rpc_endpoint = os.getenv('rpc_endpoint')
-       api_key = os.getenv('api_key')
-       access_token = os.getenv('access_token')
-       mcs_api = mcs.getclient(chain_name, api_key, access_token)
+    from mcs import ApiClient
+    if __name__ == '__main__':
+        api_key = "px71AWskyF4kFUtCUYBkOq"
+        access_token = "Q9DhHk0Y7U1gwwBySFxgrv2Yx3xDzt8z"
+        mcs_api = mcs.ApiClient(api_key, access_token)
    ```
 
    **For Onchain Storage** 
@@ -122,7 +121,8 @@ Here is the demo to get you started; you can get more information in the [docume
    * Init
 
      ```python
-     onchain = OnchainApi(mcs_api)
+     from mcs.api import OnchainAPI
+     onchain = OnchainAPI(mcs_api)
 
    * Upload File to Onchain storage
 
@@ -137,7 +137,8 @@ Here is the demo to get you started; you can get more information in the [docume
    * Init
 
      ```python
-     bucket = BucketApi(mcs_api)
+     from mcs.api import BucketAPI
+     bucket = BucketAPI(mcs_api)
 
    * Create a bucket
 
