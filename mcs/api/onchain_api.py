@@ -3,7 +3,7 @@ from mcs.common.constants import *
 import json
 
 
-class OnchainApi(object):
+class OnchainAPI(object):
     def __init__(self, api_client=None):
         if api_client is None:
             api_client = ApiClient()

@@ -1,2 +1,2 @@
-from mcs.api.bucket_api import BucketApi
-from mcs.api.onchain_api import OnchainApi
+from mcs.api.bucket_api import BucketAPI
+from mcs.api.onchain_api import OnchainAPI
