@@ -19,7 +19,7 @@
 
 A python software development kit for the Multi-Chain Storage (MCS) https://www.multichain.storage/ service. It provides a convenient interface for working with the MCS API. This SDK has the following functionalities:
 
-### ℹ️ [For Onchain Storage](#onchain)
+### [For Onchain Storage](#onchain)
 
 ---
 
@@ -30,7 +30,7 @@ A python software development kit for the Multi-Chain Storage (MCS) https://www.
 - **GET**     Files by cid
 - **GET**     Status from filecoin
 
-### ℹ️ [For Buckets Storage](#buckets)
+### [For Buckets Storage](#buckets)
 
 ---
 
