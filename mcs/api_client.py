@@ -10,7 +10,7 @@ from pathlib import Path
 
 
 class ApiClient(object):
-    def __init__(self, api_key, access_token, chain_name):
+    def __init__(self, api_key, access_token, chain_name=None):
         self.token = None
         if chain_name is None:
             chain_name = "polygon.mainnet"
