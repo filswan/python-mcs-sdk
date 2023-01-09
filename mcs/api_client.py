@@ -4,11 +4,16 @@ import requests
 import json
 from mcs.common import utils, exceptions
 from mcs.common import constants as c
+from requests_toolbelt.multipart.encoder import MultipartEncoder, MultipartEncoderMonitor
+from tqdm import tqdm
+from pathlib import Path
 
 
 class ApiClient(object):
-    def __init__(self, chain_name, api_key, access_token):
+    def __init__(self, api_key, access_token, chain_name):
         self.token = None
+        if chain_name is None:
+            chain_name = "polygon.mainnet"
         self.chain_name = chain_name
         self.api_key = api_key
         self.access_token = access_token

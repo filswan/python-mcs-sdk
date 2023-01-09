@@ -1,7 +1,7 @@
 from mcs import ApiClient
 from mcs.contract import ContractClient
 from mcs.common.utils import get_amount
-from mcs.api import OnchainApi
+from mcs.api import OnchainAPI
 import logging
 from web3 import Web3
 
@@ -18,7 +18,8 @@ class OnchainUpload():
         self.file_path = file_path
         self.upload_response = None
         self.payment_tx_hash = None
-        self.api = OnchainApi(ApiClient(self.chain_name, self.api_key, self.access_token))
+        self.api = ApiClient(self.chain_name, self.api_key, self.access_token)
+        self.onchain = OnchainAPI(self.api)
         self.w3_api = ContractClient(self.rpc_endpoint, self.chain_name)
 
     def approve_token(self, amount):
@@ -31,7 +32,7 @@ class OnchainUpload():
         return payment_hash
 
     def stream_upload(self):
-        upload_file = self.api.stream_upload_file(self.wallet_address, self.file_path)
+        upload_file = self.api._stream_upload_file(self.wallet_address, self.file_path)
         file_data = upload_file["data"]
         need_pay = 0
         if file_data["status"] == "Free":
@@ -67,10 +68,10 @@ class OnchainUpload():
         source_file_upload_id, nft_uri, file_size = file_data['source_file_upload_id'], file_data['ipfs_url'], \
             file_data['file_size']
         meta_url = \
-            self.api.upload_nft_metadata(self.wallet_address, file_name, nft_uri, self.payment_tx_hash, file_size)[
+            self.onchain.upload_nft_metadata(self.wallet_address, file_name, nft_uri, self.payment_tx_hash, file_size)[
                 'data'][
                 'ipfs_url']
         tx_hash, token_id = self.w3_api.mint_nft(self.wallet_address, self.private_key, meta_url)
-        response = self.api.get_mint_info(source_file_upload_id, None,
+        response = self.onchain.get_mint_info(source_file_upload_id, None,
                                           tx_hash, token_id, self.api.get_params()["data"]['mint_contract_address'])
         return tx_hash, token_id, response
