@@ -89,8 +89,6 @@ class BucketClient(McsClient):
             yield data
 
     def upload_to_bucket(self, bucket_id, file_path, prefix=''):
-        if os.stat(file_path).st_size == 0:
-            return 'File size cannot be 0'
         file_name = os.path.basename(file_path)
         with open(file_path, 'rb') as file:
             file_hash = md5(file.read()).hexdigest()
