@@ -92,11 +92,13 @@ class BucketClient(McsClient):
         if os.stat(file_path).st_size == 0:
             return 'File size cannot be 0'
         file_name = os.path.basename(file_path)
+        file_size = os.stat(file_path).st_size
         with open(file_path, 'rb') as file:
             file_hash = md5(file.read()).hexdigest()
         result = self.check_file(bucket_id, file_hash, file_name, prefix)
         if not (result['data']['file_is_exist']):
             with open(file_path, 'rb') as file:
+                self.upload_progress_bar(file_name, file_size)
                 i = 0
                 queue = Queue()
                 for chunk in self.read_chunks(file):

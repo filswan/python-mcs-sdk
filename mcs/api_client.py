@@ -58,7 +58,7 @@ class ApiClient(object):
             raise exceptions.McsAPIException(response)
 
         return response.json()
-
+    
     def _request_stream_upload(self, request_path, mcs_api, params, token):
         url = mcs_api + request_path
         header = {}
@@ -97,21 +97,13 @@ class ApiClient(object):
         if token:
             header["Authorization"] = "Bearer " + token
         # send request
-        size =1024*1024
-        filename = params['file'][0]
-        with tqdm(
-            desc=filename,
-            total=size,
-            unit='B',
-            unit_scale=True,
-            unit_divisor=1024,
-        ) as bar:
-            encode = MultipartEncoder(params)
-            body = MultipartEncoderMonitor(
-                encode, lambda monitor: bar.update(monitor.bytes_read - bar.n)
+        encode = MultipartEncoder(params)
+        previous = Previous()
+        body = MultipartEncoderMonitor(
+                encode, lambda monitor: self.bar.update(previous.update(monitor.bytes_read)),
             )
-            header['Content-Type'] = body.content_type
-            response = requests.post(url, data=body, headers=header)
+        header['Content-Type'] = body.content_type
+        response = requests.post(url, data=body, headers=header)
 
         # exception handle
         if not str(response.status_code).startswith('2'):
@@ -122,8 +114,20 @@ class ApiClient(object):
 
         return response.json()
 
+    def upload_progress_bar(self, file_name, file_size):
+        self.bar = tqdm(desc=file_name, total=file_size, unit='B', unit_scale=True, unit_divisor=1024)
+
     def _request_without_params(self, method, request_path, mcs_api, token):
         return self._request(method, request_path, mcs_api, {}, token)
 
     def _request_with_params(self, method, request_path, mcs_api, params, token, files):
         return self._request(method, request_path, mcs_api, params, token, files)
+
+class Previous():
+    def __init__(self):
+        self.previous = 0
+    
+    def update(self, new):
+        self.old = self.previous
+        self.previous = new
+        return self.previous - self.old
