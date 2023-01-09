@@ -1,24 +1,29 @@
-from mcs.client.mcs_client import McsClient
+from mcs.api_client import ApiClient
 from mcs.common.constants import *
-
 from hashlib import md5
 from queue import Queue
 import os, threading, time
 import urllib.request
 
 
-class BucketClient(McsClient):
+class BucketApi(object):
+    def __init__(self, api_client=None):
+        if api_client is None:
+            api_client = ApiClient()
+        self.api_client = api_client
+        self.MCS_API = api_client.MCS_API
+        self.token = self.api_client.token
 
     def get_buckets(self):
-        return self._request_without_params(GET, BUCKET_LIST, self.MCS_API, self.token)
+        return self.api_client._request_without_params(GET, BUCKET_LIST, self.MCS_API, self.token)
 
     def create_bucket(self, bucket_name):
         params = {'bucket_name': bucket_name}
-        return self._request_with_params(POST, CREATE_BUCKET, self.MCS_API, params, self.token, None)
+        return self.api_client._request_with_params(POST, CREATE_BUCKET, self.MCS_API, params, self.token, None)
 
     def delete_bucket(self, bucket_id):
         params = {'bucket_uid': bucket_id}
-        return self._request_with_params(GET, DELETE_BUCKET, self.MCS_API, params, self.token, None)
+        return self.api_client._request_with_params(GET, DELETE_BUCKET, self.MCS_API, params, self.token, None)
 
     def get_bucket_id(self, bucket_name):
         bucketlist = self.get_buckets()['data']
@@ -29,32 +34,38 @@ class BucketClient(McsClient):
 
     def get_file_info(self, file_id):
         params = {'file_id': file_id}
-        return self._request_with_params(GET, FILE_INFO, self.MCS_API, params, self.token, None)
+        return self.api_client._request_with_params(GET, FILE_INFO, self.MCS_API, params, self.token, None)
 
     def create_folder(self, folder_name, bucket_id, prefix=''):
         params = {"file_name": folder_name, "prefix": prefix, "bucket_uid": bucket_id}
-        return self._request_with_params(POST, CREATE_FOLDER, self.MCS_API, params, self.token, None)
+        return self.api_client._request_with_params(POST, CREATE_FOLDER, self.MCS_API, params, self.token, None)
 
     def delete_file(self, file_id):
         params = {'file_id': file_id}
-        return self._request_with_params(GET, DELETE_FILE, self.MCS_API, params, self.token, None)
+        return self.api_client._request_with_params(GET, DELETE_FILE, self.MCS_API, params, self.token, None)
 
     def get_file_list(self, bucket_id, prefix='', limit=10):
         params = {'bucket_uid': bucket_id, 'prefix': prefix, 'limit': limit, 'offset': 0}
-        count = self._request_with_params(GET, FILE_LIST, self.MCS_API, params, self.token, None)['data']['Count']
+        count = self.api_client._request_with_params(GET, FILE_LIST, self.MCS_API, params, self.token, None)['data'][
+            'Count']
         result = {}
-        for i in range(count//10+1):
+        for i in range(count // 10 + 1):
             params['offset'] = i
-            result['Page{}'.format(i+1)] = self._request_with_params(GET, FILE_LIST, self.MCS_API, params, self.token, None)['data']['FileList']
+            result['Page{}'.format(i + 1)] = \
+                self.api_client._request_with_params(GET, FILE_LIST, self.MCS_API, params, self.token, None)['data'][
+                    'FileList']
         return result
-    
+
     def get_full_file_list(self, bucket_id, prefix=''):
         params = {'bucket_uid': bucket_id, 'prefix': prefix, 'limit': 100, 'offset': 0}
-        count = self._request_with_params(GET, FILE_LIST, self.MCS_API, params, self.token, None)['data']['Count']
+        count = self.api_client._request_with_params(GET, FILE_LIST, self.MCS_API, params, self.token, None)['data'][
+            'Count']
         result = []
-        for i in range(count//10+1):
+        for i in range(count // 10 + 1):
             params['offset'] = i
-            result.extend(self._request_with_params(GET, FILE_LIST, self.MCS_API, params, self.token, None)['data']['FileList'])
+            result.extend(
+                self.api_client._request_with_params(GET, FILE_LIST, self.MCS_API, params, self.token, None)['data'][
+                    'FileList'])
         return result
 
     def get_file_id(self, bucket_name, file_name, prefix=''):
@@ -66,11 +77,11 @@ class BucketClient(McsClient):
 
     def check_file(self, bucket_id, file_hash, file_name, prefix=''):
         params = {'bucket_uid': bucket_id, 'file_hash': file_hash, 'file_name': file_name, 'prefix': prefix}
-        return self._request_with_params(POST, CHECK_UPLOAD, self.MCS_API, params, self.token, None)
+        return self.api_client._request_with_params(POST, CHECK_UPLOAD, self.MCS_API, params, self.token, None)
 
     def upload_chunk(self, file_hash, file_name, chunk):
         params = {'hash': file_hash, 'file': (file_name, chunk)}
-        return self._request_bucket_upload(UPLOAD_CHUNK, self.MCS_API, params, self.token)
+        return self.api_client._request_bucket_upload(UPLOAD_CHUNK, self.MCS_API, params, self.token)
 
     def thread_upload_chunk(self, queue, file_hash, file_name):
         while not queue.empty():
@@ -79,7 +90,7 @@ class BucketClient(McsClient):
 
     def merge_file(self, bucket_id, file_hash, file_name, prefix=''):
         params = {'bucket_uid': bucket_id, 'file_hash': file_hash, 'file_name': file_name, 'prefix': prefix}
-        return self._request_with_params(POST, MERGE_FILE, self.MCS_API, params, self.token, None)
+        return self.api_client._request_with_params(POST, MERGE_FILE, self.MCS_API, params, self.token, None)
 
     def read_chunks(self, file, chunk_size=10485760):
         while True:
@@ -130,11 +141,11 @@ class BucketClient(McsClient):
                 time.sleep(0.5)
                 success.append(f_path)
         return success
-    
+
     def download_file(self, bucket_id, file_name, prefix='', dir=''):
         file_list = self.get_full_file_list(bucket_id, prefix)
         for file in file_list:
-            if file['Name']==file_name:
+            if file['Name'] == file_name:
                 url = file['IpfsUrl']
                 print(url)
                 download_path = os.path.join(dir, file_name)

@@ -1,12 +1,11 @@
 from web3 import Web3
 from mcs.common.constants import *
-from mcs import ApiClient
 from mcs.common.params import Params
 from mcs.common.utils import get_contract_abi, get_amount
 from web3.middleware import geth_poa_middleware
 
 
-class ContractClient(ApiClient):
+class ContractClient():
     def __init__(self, rpc_endpoint, chain_name):
         self.rpc_endpoint = rpc_endpoint
         self.w3 = Web3(Web3.HTTPProvider(rpc_endpoint))

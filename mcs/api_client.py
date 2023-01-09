@@ -1,13 +1,37 @@
+from mcs.common.constants import *
+from mcs.common.params import Params
 import requests
-from requests_toolbelt.multipart.encoder import MultipartEncoder, MultipartEncoderMonitor
 import json
 from mcs.common import utils, exceptions
 from mcs.common import constants as c
-from tqdm import tqdm
-from pathlib import Path
 
 
 class ApiClient(object):
+    def __init__(self, chain_name, api_key, access_token):
+        self.token = None
+        self.chain_name = chain_name
+        self.api_key = api_key
+        self.access_token = access_token
+        self.MCS_API = Params(self.chain_name).MCS_API
+        self.api_key_login(self.api_key, self.access_token, self.chain_name)
+        self.CHAIN_NAME = self.get_params()['data']['chain_name']
+        self.SWAN_PAYMENT_ADDRESS = self.get_params()['data']['payment_contract_address']
+        self.USDC_TOKEN = self.get_params()['data']['usdc_address']
+        self.MINT_ADDRESS = self.get_params()['data']['mint_contract_address']
+
+    def get_params(self):
+        return self._request_without_params(GET, MCS_PARAMS, self.MCS_API, self.token)
+
+    def get_price_rate(self):
+        return self._request_without_params(GET, PRICE_RATE, self.MCS_API, self.token)
+
+    def api_key_login(self, apikey, access_token, chain_name):
+        params = {}
+        params['apikey'] = apikey
+        params['access_token'] = access_token
+        params['network'] = chain_name
+        result = self._request_with_params(POST, APIKEY_LOGIN, self.MCS_API, params, None, None)
+        self.token = result['data']['jwt_token']
 
     def _request(self, method, request_path, mcs_api, params, token, files=False):
         if method == c.GET:
@@ -31,10 +55,47 @@ class ApiClient(object):
                 body = json.dumps(params) if method == c.POST else ""
                 response = requests.post(url, data=body, headers=header)
         elif method == c.DELETE:
-            if params: 
+            if params:
                 body = json.dumps(params)
                 response = requests.delete(url, data=body, headers=header)
-            else :
+            else:
+                response = requests.delete(url, headers=header)
+
+        # exception handle
+        if not str(response.status_code).startswith('2'):
+            raise exceptions.McsAPIException(response)
+        json_res = response.json()
+        if str(json_res['status']) == 'error':
+            raise exceptions.McsRequestException(json_res['message'])
+
+        return response.json()
+
+    def _request(self, method, request_path, mcs_api, params, token, files=False):
+        if method == c.GET:
+            request_path = request_path + utils.parse_params_to_str(params)
+        url = mcs_api + request_path
+        header = {}
+        if token:
+            header["Authorization"] = "Bearer " + token
+        # send request
+        response = None
+        if method == c.GET:
+            response = requests.get(url, headers=header)
+        elif method == c.PUT:
+            body = json.dumps(params)
+            response = requests.put(url, data=body, headers=header)
+        elif method == c.POST:
+            if files:
+                body = params
+                response = requests.post(url, data=body, headers=header, files=files)
+            else:
+                body = json.dumps(params) if method == c.POST else ""
+                response = requests.post(url, data=body, headers=header)
+        elif method == c.DELETE:
+            if params:
+                body = json.dumps(params)
+                response = requests.delete(url, data=body, headers=header)
+            else:
                 response = requests.delete(url, headers=header)
 
         # exception handle
@@ -69,11 +130,11 @@ class ApiClient(object):
         size = path.stat().st_size
         filename = path.name
         with tqdm(
-            desc=filename,
-            total=size,
-            unit='B',
-            unit_scale=True,
-            unit_divisor=1024,
+                desc=filename,
+                total=size,
+                unit='B',
+                unit_scale=True,
+                unit_divisor=1024,
         ) as bar:
             encode = MultipartEncoder(params)
             body = MultipartEncoderMonitor(
@@ -97,14 +158,14 @@ class ApiClient(object):
         if token:
             header["Authorization"] = "Bearer " + token
         # send request
-        size =1024*1024
+        size = 1024 * 1024
         filename = params['file'][0]
         with tqdm(
-            desc=filename,
-            total=size,
-            unit='B',
-            unit_scale=True,
-            unit_divisor=1024,
+                desc=filename,
+                total=size,
+                unit='B',
+                unit_scale=True,
+                unit_divisor=1024,
         ) as bar:
             encode = MultipartEncoder(params)
             body = MultipartEncoderMonitor(
