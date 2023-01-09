@@ -109,8 +109,8 @@ Here is the demo to get you started; you can get more information in the [docume
    ```python
     from mcs import ApiClient
     if __name__ == '__main__':
-        api_key = "px71AWskyF4kFUtCUYBkOq"
-        access_token = "Q9DhHk0Y7U1gwwBySFxgrv2Yx3xDzt8z"
+        api_key = "api_key"
+        access_token = "access_token"
         mcs_api = mcs.ApiClient(api_key, access_token)
    ```
 
