@@ -1,1 +1,1 @@
-from mcs.contract.mcs_contract import ContractAPI
+from mcs.contract.mcs_contract import ContractClient
