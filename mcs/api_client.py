@@ -18,7 +18,7 @@ class APIClient(object):
         self.api_key = api_key
         self.access_token = access_token
         self.MCS_API = Params(self.chain_name).MCS_API
-        self.api_key_login(self.api_key, self.access_token, self.chain_name)
+        self.api_key_login()
         self.CHAIN_NAME = self.get_params()['data']['chain_name']
         self.SWAN_PAYMENT_ADDRESS = self.get_params()['data']['payment_contract_address']
         self.USDC_TOKEN = self.get_params()['data']['usdc_address']
@@ -30,13 +30,14 @@ class APIClient(object):
     def get_price_rate(self):
         return self._request_without_params(GET, PRICE_RATE, self.MCS_API, self.token)
 
-    def api_key_login(self, apikey, access_token, chain_name):
+    def api_key_login(self):
         params = {}
-        params['apikey'] = apikey
-        params['access_token'] = access_token
-        params['network'] = chain_name
+        params['apikey'] = self.api_key
+        params['access_token'] = self.access_token
+        params['network'] = self.chain_name
         result = self._request_with_params(POST, APIKEY_LOGIN, self.MCS_API, params, None, None)
         self.token = result['data']['jwt_token']
+        return self.token
 
     def _request(self, method, request_path, mcs_api, params, token, files=False):
         if method == c.GET:
@@ -72,19 +73,6 @@ class APIClient(object):
         json_res = response.json()
         if str(json_res['status']) == 'error':
             raise exceptions.McsRequestException(json_res['message'])
-
-        return response.json()
-
-    def _request_upload(self, request_path, mcs_api, params, token):
-        url = mcs_api + request_path
-        header = {}
-        if token:
-            header["Authorization"] = "Bearer " + token
-        response = requests.post(url, data=params, headers=header)
-
-        # exception handle
-        if not str(response.status_code).startswith('2'):
-            raise exceptions.McsAPIException(response)
 
         return response.json()
 
