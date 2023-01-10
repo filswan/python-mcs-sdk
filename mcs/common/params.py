@@ -1,6 +1,5 @@
 from mcs.common.constants import MCS_POLYGON_MUMBAI_API, MCS_BSC_API, MCS_POLYGON_MAIN_API
 
-
 class Params:
     def __init__(self, chain_name='polygon.mainnet'):
         if chain_name == 'polygon.mainnet' or chain_name == 'main':

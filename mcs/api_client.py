@@ -18,7 +18,8 @@ class APIClient(object):
         self.api_key = api_key
         self.access_token = access_token
         self.MCS_API = Params(self.chain_name).MCS_API
-        self.api_key_login()
+        if api_key and access_token:
+            self.api_key_login()
         self.CHAIN_NAME = self.get_params()['data']['chain_name']
         self.SWAN_PAYMENT_ADDRESS = self.get_params()['data']['payment_contract_address']
         self.USDC_TOKEN = self.get_params()['data']['usdc_address']
