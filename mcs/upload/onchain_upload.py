@@ -1,4 +1,4 @@
-from mcs import ApiClient
+from mcs import APIClient
 from mcs.contract import ContractClient
 from mcs.common.utils import get_amount
 from mcs.api import OnchainAPI
@@ -18,7 +18,7 @@ class OnchainUpload():
         self.file_path = file_path
         self.upload_response = None
         self.payment_tx_hash = None
-        self.api = ApiClient(self.chain_name, self.api_key, self.access_token)
+        self.api = APIClient(self.chain_name, self.api_key, self.access_token)
         self.onchain = OnchainAPI(self.api)
         self.w3_api = ContractClient(self.rpc_endpoint, self.chain_name)
 

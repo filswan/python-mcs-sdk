@@ -1,4 +1,4 @@
-from mcs.api_client import ApiClient
+from mcs.api_client import APIClient
 from mcs.common.constants import *
 from hashlib import md5
 from queue import Queue
@@ -9,7 +9,7 @@ import urllib.request
 class BucketAPI(object):
     def __init__(self, api_client=None):
         if api_client is None:
-            api_client = ApiClient()
+            api_client = APIClient()
         self.api_client = api_client
         self.MCS_API = api_client.MCS_API
         self.token = self.api_client.token
@@ -103,6 +103,7 @@ class BucketAPI(object):
         if os.stat(file_path).st_size == 0:
             return 'File size cannot be 0'
         file_name = os.path.basename(file_path)
+        file_size = os.stat(file_path).st_size
         with open(file_path, 'rb') as file:
             file_hash = md5(file.read()).hexdigest()
         result = self.check_file(bucket_id, file_hash, file_name, prefix)
@@ -110,6 +111,7 @@ class BucketAPI(object):
             with open(file_path, 'rb') as file:
                 i = 0
                 queue = Queue()
+                self.api_client.upload_progress_bar(file_name, file_size)
                 for chunk in self.read_chunks(file):
                     i += 1
                     queue.put((str(i), chunk))

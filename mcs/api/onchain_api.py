@@ -1,4 +1,4 @@
-from mcs.api_client import ApiClient
+from mcs.api_client import APIClient
 from mcs.common.constants import *
 import json
 
@@ -6,7 +6,7 @@ import json
 class OnchainAPI(object):
     def __init__(self, api_client=None):
         if api_client is None:
-            api_client = ApiClient()
+            api_client = APIClient()
         self.api_client = api_client
         self.MCS_API = api_client.MCS_API
         self.token = self.api_client.token
