@@ -80,7 +80,7 @@ A python software development kit for the Multi-Chain Storage (MCS) https://www.
 
 ---
 
-Here is the demo to get you started; you can get more information in the [documentation.](#https://docs.filswan.com/multi-chain-storage/developer-quickstart/sdk)
+Here is the demo to get you started; you can get more information in the [SDK documentation.](https://docs.filswan.com/multi-chain-storage/developer-quickstart/sdk)
 
 1. Set Up Wallet Information
 
