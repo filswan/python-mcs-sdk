@@ -1,19 +1,20 @@
 from web3 import Web3
 from mcs.common.constants import *
-from mcs import ApiClient
 from mcs.common.params import Params
 from mcs.common.utils import get_contract_abi, get_amount
 from web3.middleware import geth_poa_middleware
+from mcs.api_client import APIClient
 
 
-class ContractAPI(ApiClient):
+class ContractClient():
     def __init__(self, rpc_endpoint, chain_name):
         self.rpc_endpoint = rpc_endpoint
         self.w3 = Web3(Web3.HTTPProvider(rpc_endpoint))
         self.w3.middleware_onion.inject(geth_poa_middleware, layer=0)
-        self.SWAN_PAYMENT_ADDRESS = Params(chain_name).SWAN_PAYMENT_ADDRESS
-        self.USDC_TOKEN = Params(chain_name).USDC_TOKEN
-        self.MINT_ADDRESS = Params(chain_name).MINT_ADDRESS
+        data = APIClient(None, None, chain_name).get_params()['data']
+        self.SWAN_PAYMENT_ADDRESS = data['payment_contract_address']
+        self.USDC_TOKEN = data['usdc_address']
+        self.MINT_ADDRESS = data['mint_contract_address']
 
     def approve_usdc(self, wallet_address, private_key, amount):
         nonce = self.w3.eth.getTransactionCount(wallet_address)

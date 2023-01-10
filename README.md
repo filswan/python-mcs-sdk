@@ -6,201 +6,159 @@
 # Table of Contents <!-- omit in toc -->
 
 - [Introduction](#introduction)
+  - [For Onchain Storage](#onchain)
+  - [For Buckets Storage](#buckets)
+  
+- [Getting Started](#started)
   - [Prerequisites](#prerequisites)
-- [MCS API](#mcs-api)
-- [Usage](#usage)
   - [Installation](#installation)
-  - [Getting Started](#getting-started)
-  - [Use Bucket](#use-Bucket)
-  - [Documentation](#documentation)
+  - [Examples](#examples)
 - [Contributing](#contributing)
 
-# Introduction
+# ℹ️ [Introduction](#introduction)
 
 A python software development kit for the Multi-Chain Storage (MCS) https://www.multichain.storage/ service. It provides a convenient interface for working with the MCS API. This SDK has the following functionalities:
 
-- **POST**    upload file to Filswan IPFS gateway
-- **POST**    make payment to swan filecoin storage gateway
-- **POST**    mint asset as NFT
-- **GET**     list of files uploaded
-- **GET**     files by cid
-- **GET**     status from filecoin
+### [For Onchain Storage](#onchain)
 
-## Prerequisite
+---
 
-- [web3](https://pypi.org/project/web3/) - web3 python package to process contract 
-- Polygon Mainnet Wallet - [Metamask Tutorial](https://docs.filswan.com/getting-started/beginner-walkthrough/public-testnet/setup-metamask)
-- Polygon Mainnet RPC endpoint - https://polygon-rpc.com (USDC and Matic is required if you want to make payment.)
+- **POST**    Upload file to Filswan IPFS gateway
+- **GET**     List of files uploaded
+- **GET**     Files by cid
+- **GET**     Status from filecoin
+- **CONTRACT**    Make payment to swan filecoin storage gateway
+- **CONTRACT**    Mint asset as NFT
 
-# MCS API
+### [For Buckets Storage](#buckets)
 
-For more information about API usage, check out the MCS API documentation (https://docs.filswan.com/development-resource/mcp-api).
+---
 
-# Usage
+* **POST** Create a bucket
+* **POST** Create a folder
+* **POST** Upload File to the bucket
+* **POST** Rename bucket
+* **GET** Delete bucket
+* **GET** Bucket List
+* **GET** File List
+* **GET** File information
+* **GET** Delete File
 
-Instructions for developers working with MCS SDK and API.
+### 🆕 [Getting Started](#started)
 
-## Installation
-### Method 1. pip install (Recommended)
-Install python SDK using pip https://pypi.org/project/python-mcs-sdk/
+---
 
-```
-pip install python-mcs-sdk
-```
+* [**Prerequisites**](#prerequisites)
 
-### Method 2. Build from source
-Install python SDK from GitHub (checkout to the main branch for mainnet support) and install requirements using pip
-```
-git clone https://github.com/filswan/python-mcs-sdk.git
-git checkout main
-pip install -r requirements.txt
-```
+  * [web3](https://pypi.org/project/web3/) - web3 python package to process contract 
 
-## Getting Started
+  - Polygon Mainnet Wallet - [Metamask Tutorial](https://docs.filswan.com/getting-started/beginner-walkthrough/public-testnet/setup-metamask)
 
-This is a demo for users to use the simplified MCS upload functions `MCSUpload`. For the complete [documentation](#documentation).
+  - Polygon Mainnet RPC endpoint - https://polygon-rpc.com (USDC and Matic are required if you want to make payment.)
 
-### Set Up Wallet Information
-Create an `.env` file
-```
-wallet_address="<WALLET_ADDRESS>"
-private_key="<PRIVATE_KEY>"
-rpc_endpoint="<RPC_ENDPOINT>"
-```
-install  python-dotenv
+* ### **[Installation](#installation)**
 
-```
-pip install python-dotenv
-```
-### Initialize Upload
-To start an upload, we need to create an instance of the `MCSUpload` class. Which requires `chain_name`, `wallet_address`, `private_key` and `file_path` as 
-parameters. The upload process requires the user login into the MCS API using a wallet address. Python MCS SDK can handle this process automatically when initializing
-an MCSUpload.
+  1. Method 1. Pip install (Recommended):
 
-```python
-import os
-from mcs import McsAPI
-from dotenv import load_dotenv
+      Install python SDK using pip https://pypi.org/project/python-mcs-sdk/
 
-load_dotenv(".env")
-file_path="./test.py"
-upload_handle = MCSUpload("polygon.mainnet", os.getenv('wallet_address'), os.getenv('private_key'), os.getenv('rpc_endpoint'), file_path)
-```
+     ```
+     pip install python-mcs-sdk
+     ```
 
-### Upload File
-To upload the file to MCS, we need to call the `stream_upload()` function.
+  2. Method 2. Build from source
 
-```python
-file_data, need_pay = upload_handle.stream_upload()
-```
+     Install python SDK from GitHub (checkout to the main branch for main net support) and install requirements using pip:
 
-The file will only be archived on filecoin network after you complete the payment.
+     ```
+     git clone https://github.com/filswan/python-mcs-sdk.git
+     git checkout main
+     pip install -r requirements.txt
+     ```
 
-### Approve Token
-Before processing payment we need to approve enough tokens for the upload payment and gas fee. You can also choose how much you want to approve based on the estimated price.
+### 👨‍💻 [Examples](#examples)
 
-```python
-upload_handle.approve_token(<amount>)
-```
+---
 
-### Estimate Payment
-The estimated payment can be accessed using the `estimate_amount()` function.
+Here is the demo to get you started; you can get more information in the [SDK documentation.](https://docs.filswan.com/multi-chain-storage/developer-quickstart/sdk)
 
-```python
-print(upload_handle.estimate_amount())
-```
+1. Set Up Wallet Information
 
-### Payment
-Make a payment through Swan Smart Contract to complete your uploading process.
+   1. Create a .env file that includes the following content.
 
-```python
-if need_pay:
-  upload_handle.pay()
-```
+      ```
+      api_key="<API_KEY>"
+      access_token="<ACCESS_TOKEN>"
+      
+      ##If you do not use the onchain function, you do not need to configure the following
+      private_key="<PRIVATE_KEY>"
+      rpc_endpoint="<RPC_ENDPOINT>"
 
-### Full Demo Code
-To use the full demo code, you will need to add your wallet info and add the `amount` and `file_path` in the following script.
+      ```
 
-```python
-import os
-from dotenv import load_dotenv
-from mcs.upload.mcs_upload import MCSUpload
+      1. ***The "rpc_endpoint" is the one mentioned above***
+      2. ***"Private_key" will be obtained from the wallet***
+      3. ***The "api_key" and "access_token" can be generated from the Setting page in the [multichain.storage](#https://www.multichain.storage/) page***
 
-if __name__ == '__main__':
-    
-    # setup env and wallet
-    load_dotenv(".env")
+      b. Install dotenv
 
-    # Load file path
-    file_path = "./test.py"
+      ​	`pip install python-dotenv`
 
-    # Upload file
-    upload_handle = MCSUpload("polygon.mainnet", os.getenv('wallet_address'), os.getenv('private_key'), os.getenv('rpc_endpoint'), file_path)
-    file_data, need_pay = upload_handle.stream_upload()
+2. Login to MCS
 
-    # Process payment
-    if need_pay:
-        upload_handle.approve_token(<amount>)
-        upload_handle.pay()
-    
-    print('Upload successfully')
-```
+   ```python
+    from mcs import ApiClient
+    if __name__ == '__main__':
+        api_key = "api_key"
+        access_token = "access_token"
+        mcs_api = mcs.ApiClient(api_key, access_token)
+   ```
 
-## Use Bucket
+   **For Onchain Storage** 
 
-There are multiple functions provided by python MCS SDK to interact with Bucket API.
+   ---
 
-### Login to Bucket
-Buckets use the same login process as MCS.
+   * Init
 
-```python
-from mcs import BucketAPI
-from mcs.common.params import Params
+     ```python
+     from mcs.api import OnchainAPI
+     onchain = OnchainAPI(mcs_api)
 
-api = BucketAPI(Params(<chain name>).MCS_API)
-jwt_token = api.get_jwt_token(<wallet_address>, <private_key>, "polygon.mainnet")
-print(jwt_token)
-```
+   * Upload File to Onchain storage
 
-Currently, polygon.mainnet is the only supported chain.
+     ```python
+     print(onchain.upload_file('<File Path>'))
+     ```
 
-### Check Bucket and File Information
-You can use Bucket APIs to check bucket and file information, including `name`, `id`, `session policy`, etc.
+   **For Bucket Storage**
 
-```python
-print(api.get_buckets())
-print(api.get_bucket_info(<bucket name>))
-```
+   ---
 
-### Create and Delete Bucket
-Buckets APIs allow user to create and delete bucket (At the current version of Bucket, only 1 bucket is allowed per user)
+   * Init
 
-To create a bucket, we need to have a bucket name.
-```python
-api.create_bucket(<bucket_name>)
-```
+     ```python
+     from mcs.api import BucketAPI
+     bucket = BucketAPI(mcs_api)
 
-To delete a bucket, the bucket's id is required. We can retrieve this id using the `get_bucket_id` function.
-```python
-bucket_id = api.get_bucket_id(<bucket_name>)
-api.delete_bucket(bucket_id)
-```
+   * Create a bucket
 
-### Upload and Delete Files
-Uploading file to Bucket is similar to MCS. However, Bucket does not allow 2 file with the same name within 1 bucket. Therefore, you might want to use different file name when uploading the same file mulitple times to a bucket.
-```python
-api.upload_to_bucket(<bucket_name>, <file_name>, <file_path>)
-```
+     ```python
+     print(bucket.create_bucket('<bucket name>'))
+     ```
 
-Deleting file from a bucket with bucket name and file id.
-```python
-file_id = api.get_file_id(<bucket_name>, <file_name>)
-api.delete_from_bucket(file_id)
-```
+   * Upload a file to the bucket
 
-## Documentation
+     ```python
+     print(bucket.upload_to_bucket('<bucket_id>,<file_path>,prefix=''))
+     ```
 
-For more examples please see the [SDK documentation](https://docs.filswan.com/multi-chain-storage/developer-quickstart/sdk)
+     *The prefix field defines the file-folder relationship, leaving it blank if the file exists directly in the Bucket or the folder name if the file exists in a folder that already exists in the Bucket.*
+
+     ***You have to create a bucket before you upload a file.***
+
+     ***Note that if you upload a file with the prefix field defined in a folder that has not yet been created, you will not be able to see the file until you create a folder with the same name.***
+
+For more examples, please see the [SDK documentation.](https://docs.filswan.com/multi-chain-storage/developer-quickstart/sdk)
 
 # Contributing
 
@@ -208,7 +166,7 @@ Feel free to join in and discuss. Suggestions are welcome! [Open an issue](https
 
 ## Sponsors
 
-This project is sponsored by Filecoin Foundation
+Filecoin Foundation sponsors this project
 
 [Flink SDK - A data provider offers Chainlink Oracle service for Filecoin Network ](https://github.com/filecoin-project/devgrants/issues/463)
 
