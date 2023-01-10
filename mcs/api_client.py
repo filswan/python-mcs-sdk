@@ -87,11 +87,11 @@ class APIClient(object):
         size = path.stat().st_size
         filename = path.name
         with tqdm(
-                desc=filename,
-                total=size,
-                unit='B',
-                unit_scale=True,
-                unit_divisor=1024,
+            desc=filename,
+            total=size,
+            unit='B',
+            unit_scale=True,
+            unit_divisor=1024,
         ) as bar:
             encode = MultipartEncoder(params)
             body = MultipartEncoderMonitor(
