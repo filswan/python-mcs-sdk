@@ -24,11 +24,11 @@ A python software development kit for the Multi-Chain Storage (MCS) https://www.
 ---
 
 - **POST**    Upload file to Filswan IPFS gateway
-- **POST**    Make payment to swan filecoin storage gateway
-- **POST**    Mint asset as NFT
 - **GET**     List of files uploaded
 - **GET**     Files by cid
 - **GET**     Status from filecoin
+- **CONTRACT**    Make payment to swan filecoin storage gateway
+- **CONTRACT**    Mint asset as NFT
 
 ### [For Buckets Storage](#buckets)
 
