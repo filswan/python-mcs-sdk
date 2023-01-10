@@ -16,9 +16,7 @@ class OnchainUpload():
         self.wallet_address = Web3(Web3.HTTPProvider(self.rpc_endpoint)) \
             .eth.account.privateKeyToAccount(self.private_key).address
         self.file_path = file_path
-        self.upload_response = None
-        self.payment_tx_hash = None
-        self.api = APIClient(self.chain_name, self.api_key, self.access_token)
+        self.api = APIClient(self.api_key, self.access_token, self.chain_name)
         self.onchain = OnchainAPI(self.api)
         self.w3_api = ContractClient(self.rpc_endpoint, self.chain_name)
 
@@ -32,16 +30,9 @@ class OnchainUpload():
         return payment_hash
 
     def stream_upload(self):
-        upload_file = self.api._stream_upload_file(self.wallet_address, self.file_path)
+        upload_file = self.onchain.stream_upload_file(self.wallet_address, self.file_path)
         file_data = upload_file["data"]
-        need_pay = 0
-        if file_data["status"] == "Free":
-            self.upload_response = file_data
-
-        else:
-            self.upload_response = file_data
-            need_pay = 1
-        return file_data, need_pay
+        self.upload_response = file_data
 
     def estimate_amount(self):
         file_size = self.upload_response['file_size']
