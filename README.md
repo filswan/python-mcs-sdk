@@ -93,7 +93,6 @@ Here is the demo to get you started; you can get more information in the [SDK do
       ##If you do not use the onchain function, you do not need to configure the following
       private_key="<PRIVATE_KEY>"
       rpc_endpoint="<RPC_ENDPOINT>"
-
       ```
 
       1. ***The "rpc_endpoint" is the one mentioned above***
@@ -107,11 +106,11 @@ Here is the demo to get you started; you can get more information in the [SDK do
 2. Login to MCS
 
    ```python
-    from mcs import ApiClient
+    from mcs import APIClient
     if __name__ == '__main__':
         api_key="<API_KEY>"
         access_token="<ACCESS_TOKEN>"
-        mcs_api = mcs.ApiClient(api_key, access_token)
+        mcs_api = APIClient(api_key, access_token)
    ```
 
    **For Onchain Storage** 
@@ -121,8 +120,9 @@ Here is the demo to get you started; you can get more information in the [SDK do
    * Init
 
      ```python
-     from mcs.api import OnchainAPI
+     from mcs import OnchainAPI
      onchain = OnchainAPI(mcs_api)
+     ```
 
    * Upload File to Onchain storage
 
@@ -137,8 +137,9 @@ Here is the demo to get you started; you can get more information in the [SDK do
    * Init
 
      ```python
-     from mcs.api import BucketAPI
+     from mcs import BucketAPI
      bucket = BucketAPI(mcs_api)
+     ```
 
    * Create a bucket
 
@@ -149,7 +150,7 @@ Here is the demo to get you started; you can get more information in the [SDK do
    * Upload a file to the bucket
 
      ```python
-     print(bucket.upload_to_bucket('<bucket_id>,<file_path>,prefix=''))
+     print(bucket.upload_to_bucket('<bucket_id>', '<file_path>' ,prefix=''))
      ```
 
      *The prefix field defines the file-folder relationship, leaving it blank if the file exists directly in the Bucket or the folder name if the file exists in a folder that already exists in the Bucket.*
