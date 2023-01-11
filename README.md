@@ -107,7 +107,7 @@ Here is the demo to get you started; you can get more information in the [SDK do
 2. Login to MCS
 
    ```python
-    from mcs import ApiClient
+    from mcs import APIClient
     if __name__ == '__main__':
         api_key="<API_KEY>"
         access_token="<ACCESS_TOKEN>"
