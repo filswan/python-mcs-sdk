@@ -93,6 +93,7 @@ Here is the demo to get you started; you can get more information in the [SDK do
       ##If you do not use the onchain function, you do not need to configure the following
       private_key="<PRIVATE_KEY>"
       rpc_endpoint="<RPC_ENDPOINT>"
+      wallet_address="<WALLET_ADDRESS>"
 
       ```
 
