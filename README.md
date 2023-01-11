@@ -111,7 +111,7 @@ Here is the demo to get you started; you can get more information in the [SDK do
     if __name__ == '__main__':
         api_key="<API_KEY>"
         access_token="<ACCESS_TOKEN>"
-        mcs_api = mcs.ApiClient(api_key, access_token)
+        mcs_api = APIClient(api_key, access_token)
    ```
 
    **For Onchain Storage** 
