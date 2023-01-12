@@ -11,7 +11,7 @@ class ContractClient():
         self.rpc_endpoint = rpc_endpoint
         self.w3 = Web3(Web3.HTTPProvider(rpc_endpoint))
         self.w3.middleware_onion.inject(geth_poa_middleware, layer=0)
-        data = APIClient(None, None, chain_name).get_params()['data']
+        data = APIClient(None, None, chain_name, False).get_params()['data']
         self.SWAN_PAYMENT_ADDRESS = data['payment_contract_address']
         self.USDC_TOKEN = data['usdc_address']
         self.MINT_ADDRESS = data['mint_contract_address']

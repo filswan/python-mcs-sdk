@@ -45,7 +45,7 @@ def test_upload_file_pay():
     # upload file to mcs
     filepath = "/images/log_mcs.png"
     parent_path = os.path.abspath(os.path.dirname(__file__))
-    upload_file = onchain_api.upload_file(parent_path + filepath)
+    upload_file = onchain_api.stream_upload_file(parent_path + filepath)
     print(upload_file)
     # test upload file
     assert upload_file['status'] == 'success'
@@ -91,7 +91,7 @@ def test_mint_nft():
     filepath = "/images/log_mcs.png"
     filename = "log_mcs.png"
     parent_path = os.path.abspath(os.path.dirname(__file__))
-    upload_file = onchain_api.upload_file(parent_path + filepath)
+    upload_file = onchain_api.stream_upload_file(parent_path + filepath)
     # test upload file
     assert upload_file['status'] == 'success'
     file_data = upload_file["data"]

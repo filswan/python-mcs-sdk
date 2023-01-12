@@ -10,7 +10,7 @@ from pathlib import Path
 
 
 class APIClient(object):
-    def __init__(self, api_key, access_token, chain_name=None):
+    def __init__(self, api_key, access_token, chain_name=None, login=True):
         self.token = None
         if chain_name is None:
             chain_name = "polygon.mainnet"
@@ -18,15 +18,11 @@ class APIClient(object):
         self.api_key = api_key
         self.access_token = access_token
         self.MCS_API = Params(self.chain_name).MCS_API
-        if api_key and access_token:
+        if login:
             self.api_key_login()
-        self.CHAIN_NAME = self.get_params()['data']['chain_name']
-        self.SWAN_PAYMENT_ADDRESS = self.get_params()['data']['payment_contract_address']
-        self.USDC_TOKEN = self.get_params()['data']['usdc_address']
-        self.MINT_ADDRESS = self.get_params()['data']['mint_contract_address']
 
     def get_params(self):
-        return self._request_without_params(GET, MCS_PARAMS, self.MCS_API, self.token)
+        return self._request_without_params(GET, MCS_PARAMS, self.MCS_API, None)
 
     def get_price_rate(self):
         return self._request_without_params(GET, PRICE_RATE, self.MCS_API, self.token)
