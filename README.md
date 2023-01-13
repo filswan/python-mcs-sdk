@@ -1,11 +1,10 @@
-# python-mcs-sdk
+# Multichain Storage SDK - Python
 
 [![Made by FilSwan](https://img.shields.io/badge/made%20by-FilSwan-green.svg)](https://www.filswan.com/)
 [![Chat on discord](https://img.shields.io/badge/join%20-discord-brightgreen.svg)](https://discord.com/invite/KKGhy8ZqzK)
-
+A python software development kit for the Multi-Chain Storage(MCS) https://www.multichain.storage service. It provides a convenient interface for working with the MCS API. 
 # Table of Contents <!-- omit in toc -->
 
-- [Introduction](#ℹ️-Introduction)
 - [Getting Started](#-Getting-Started)
   - [Prerequisites](#Prerequisites)
   - [Installation](#Installation)
@@ -15,123 +14,88 @@
   - [For Buckets Storage](#For-Buckets-Storage)
 - [Contributing](#contributing)
 
-## ℹ️ Introduction
-
-A python software development kit for the Multi-Chain Storage (MCS) https://www.multichain.storage/ service. It provides a convenient interface for working with the MCS API. 
-
 ## 🆕 Getting Started
 
 ### Prerequisites
 
-  * [web3](https://pypi.org/project/web3/) - web3 python package to process contract 
+- Create a .env file that includes the following content.
 
-  - Polygon Mainnet Wallet - [Metamask Tutorial](https://docs.filswan.com/getting-started/beginner-walkthrough/public-testnet/setup-metamask)
+```
+# Can be found in https://www.multichain.storage/#/api_key
+# Please save your APIKey and Access Token after you have generated it, you will not find it again after you created it
+api_key="<API_KEY>" 
+access_token="<ACCESS_TOKEN>"
 
-  - Polygon Mainnet RPC endpoint - https://polygon-rpc.com (USDC and Matic are required if you want to make payment.)
+#If you do not use the onchain function, you do not need to configure the following
+private_key="<PRIVATE_KEY>" # private key of your wallet
+rpc_endpoint="<RPC_ENDPOINT>"# e.g https://polygon-rpc.com
 
-  - .env File
+```
+- Install dotenv for importing .env file
 
-    - Create a .env file that includes the following content.
-
-      ```
-      api_key="<API_KEY>"
-      access_token="<ACCESS_TOKEN>"
-      
-      ##If you do not use the onchain function, you do not need to configure the following
-      private_key="<PRIVATE_KEY>"
-      rpc_endpoint="<RPC_ENDPOINT>"
-      ```
-
-      1. ***The "rpc_endpoint" is the one mentioned above***
-      2. ***"Private_key" will be obtained from the wallet***
-      3. ***The "api_key" and "access_token" can be generated from the [APIKey](https://www.multichain.storage/#/api_key) page***
-      4. ***Please save your APIKey and Access Token after you have generated it, as the Token is not allowed to be viewed repeatedly***
-
-  - dotenv
-
-    ```
-    `pip install python-dotenv`
-    ```
+```
+pip install python-dotenv
+```
 
 ### Installation
 
-  1. Method 1. Pip install (Recommended):
+-  via _pip_ (Recommended):
 
-     Install python SDK using pip https://pypi.org/project/python-mcs-sdk/
+ ```
+ pip install python-mcs-sdk
+ ```
 
-     ```
-     pip install python-mcs-sdk
-     ```
+-  Build from source (optional)
 
-  2. Method 2. Build from source
+ Install python SDK from GitHub (checkout to the main branch for main net support) and install requirements using pip:
 
-     Install python SDK from GitHub (checkout to the main branch for main net support) and install requirements using pip:
-
-     ```
-     git clone https://github.com/filswan/python-mcs-sdk.git
-     git checkout main
-     pip install -r requirements.txt
-     ```
+ ```
+ git clone https://github.com/filswan/python-mcs-sdk.git
+ git checkout main
+ pip install -r requirements.txt
+ ```
 
 ## 👨‍💻 Examples
 
-Here is the demo to get you started; you can get more information in the [SDK documentation.](https://docs.filswan.com/multi-chain-storage/developer-quickstart/sdk)
+**Authentication**
 
-1. Login to MCS
+ ```python
+from mcs import APIClient
+if __name__ == '__main__':
+    api_key = os.getenv('api_key')
+    access_token = os.getenv('access_token')
+    mcs_api = APIClient(api_key, access_token)
+ ```
 
-   ```python
-    from mcs import APIClient
-    if __name__ == '__main__':
-        api_key = os.getenv('api_key')
-        access_token = os.getenv('access_token')
-        mcs_api = APIClient(api_key, access_token)
-   ```
+### Onchain Storage
+   
+Onchain storage is designed for stored file information in smart contract.It requires payment for each file
 
-   **For Onchain Storage** 
+* Upload File to Onchain storage
 
-   ---
+ ```python
+ from mcs import OnchainAPI
+ onchain = OnchainAPI(mcs_api)
 
-   * Init
+ print(onchain.upload_file('<File Path>'))
+ ```
+### Bucket Storage
 
-     ```python
-     from mcs import OnchainAPI
-     onchain = OnchainAPI(mcs_api)
-     ```
+- Create a bucket
+```python
+ from mcs import BucketAPI
+ bucket_client = BucketAPI(mcs_api)
+ bucket_data = bucket_client.create_bucket('YOUR_BUCKET')
 
-   * Upload File to Onchain storage
+ print(bucket_data)
+ ```
 
-     ```python
-     print(onchain.upload_file('<File Path>'))
-     ```
+-  Upload a file to the bucket
 
-   **For Bucket Storage**
-
-   ---
-
-   * Init
-
-     ```python
-     from mcs import BucketAPI
-     bucket = BucketAPI(mcs_api)
-     ```
-
-   * Create a bucket
-
-     ```python
-     print(bucket.create_bucket('<bucket name>'))
-     ```
-
-   * Upload a file to the bucket
-
-     ```python
-     print(bucket.upload_to_bucket('<bucket_id>', '<file_path>' ,prefix=''))
-     ```
-
-     *The prefix field defines the file-folder relationship, leaving it blank if the file exists directly in the Bucket or the folder name if the file exists in a folder that already exists in the Bucket.*
-
-     ***You have to create a bucket before you upload a file.***
-
-     ***Note that if you upload a file with the prefix field defined in a folder that has not yet been created, you will not be able to see the file until you create a folder with the same name.***
+```python
+file_data = bucket_client.upload_to_bucket(bucket_data["BucketUid"], 'YOUR_FILE_PATH' ,prefix='') //prefix is your targeted bucket related path from the root('./')
+print(file_data)
+ ```
 
 For more examples, please see the [SDK documentation.](https://docs.filswan.com/multi-chain-storage/developer-quickstart/sdk)
 
