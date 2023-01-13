@@ -16,46 +16,38 @@ A python software development kit for the Multi-Chain Storage(MCS) https://www.m
 
 ## 🆕 Getting Started
 
-### Prerequisites
-
-- Create a .env file that includes the following content.
-
-```
-# Can be found in https://www.multichain.storage/#/api_key
-# Please save your APIKey and Access Token after you have generated it, you will not find it again after you created it
-api_key="<API_KEY>" 
-access_token="<ACCESS_TOKEN>"
-
-#If you do not use the onchain function, you do not need to configure the following
-private_key="<PRIVATE_KEY>" # private key of your wallet
-rpc_endpoint="<RPC_ENDPOINT>"# e.g https://polygon-rpc.com
-
-```
-- Install dotenv for importing .env file
-
-```
-pip install python-dotenv
-```
-
 ### Installation
 
 -  via _pip_ (Recommended):
 
  ```
  pip install python-mcs-sdk
+ pip install python-dotenv
  ```
-
 -  Build from source (optional)
-
- Install python SDK from GitHub (checkout to the main branch for main net support) and install requirements using pip:
 
  ```
  git clone https://github.com/filswan/python-mcs-sdk.git
  git checkout main
  pip install -r requirements.txt
+ pip install python-dotenv
  ```
 
-## 👨‍💻 Examples
+### Setup Credentials
+
+Create a .env file includes the access credentials and wallet private key.
+
+api_key/access_token can be found in https://www.multichain.storage/#/api_key, make sure save your APIKey and Access Token after you have generated it, you will not find it again after you created it
+
+```
+api_key="<API_KEY>" 
+access_token="<ACCESS_TOKEN>"
+
+#for onchain storage only
+private_key="<PRIVATE_KEY>" # private key of your wallet
+rpc_endpoint="<RPC_ENDPOINT>"# e.g https://polygon-rpc.com
+
+```
 
 **Authentication**
 
@@ -66,6 +58,9 @@ if __name__ == '__main__':
     access_token = os.getenv('access_token')
     mcs_api = APIClient(api_key, access_token)
  ```
+
+## 👨‍💻 Examples
+
 
 ### Onchain Storage
    
