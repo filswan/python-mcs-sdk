@@ -48,7 +48,7 @@ A python software development kit for the Multi-Chain Storage (MCS) https://www.
 
       1. ***The "rpc_endpoint" is the one mentioned above***
       2. ***"Private_key" will be obtained from the wallet***
-      3. ***The "api_key" and "access_token" can be generated from the Setting page in the [multichain.storage](#https://www.multichain.storage/) page***
+      3. ***The "api_key" and "access_token" can be generated from the [APIKey](#https://www.multichain.storage/#/api_key) page***
 
   - dotenv
 
