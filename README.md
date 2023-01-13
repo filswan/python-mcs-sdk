@@ -5,50 +5,23 @@
 
 # Table of Contents <!-- omit in toc -->
 
-- [Introduction](#introduction)
-  - [For Onchain Storage](#onchain)
-  - [For Buckets Storage](#buckets)
-  
-- [Getting Started](#started)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
-  - [Examples](#examples)
+- [Introduction](#ℹ️-Introduction)
+- [Getting Started](#-Getting-Started)
+  - [Prerequisites](#Prerequisites)
+  - [Installation](#Installation)
+- [Examples](#-Examples)
+- [Functions](#ℹ️-Functions)
+  - [For Onchain Storage](#For-Onchain-Storage)
+  - [For Buckets Storage](#For-Buckets-Storage)
 - [Contributing](#contributing)
 
-# ℹ️ [Introduction](#introduction)
+## ℹ️ Introduction
 
-A python software development kit for the Multi-Chain Storage (MCS) https://www.multichain.storage/ service. It provides a convenient interface for working with the MCS API. This SDK has the following functionalities:
+A python software development kit for the Multi-Chain Storage (MCS) https://www.multichain.storage/ service. It provides a convenient interface for working with the MCS API. 
 
-### [For Onchain Storage](#onchain)
+## 🆕 Getting Started
 
----
-
-- **POST**    Upload file to Filswan IPFS gateway
-- **GET**     List of files uploaded
-- **GET**     Files by cid
-- **GET**     Status from filecoin
-- **CONTRACT**    Make payment to swan filecoin storage gateway
-- **CONTRACT**    Mint asset as NFT
-
-### [For Buckets Storage](#buckets)
-
----
-
-* **POST** Create a bucket
-* **POST** Create a folder
-* **POST** Upload File to the bucket
-* **POST** Rename bucket
-* **GET** Delete bucket
-* **GET** Bucket List
-* **GET** File List
-* **GET** File information
-* **GET** Delete File
-
-### 🆕 [Getting Started](#started)
-
----
-
-* [**Prerequisites**](#prerequisites)
+### Prerequisites
 
   * [web3](https://pypi.org/project/web3/) - web3 python package to process contract 
 
@@ -56,11 +29,35 @@ A python software development kit for the Multi-Chain Storage (MCS) https://www.
 
   - Polygon Mainnet RPC endpoint - https://polygon-rpc.com (USDC and Matic are required if you want to make payment.)
 
-* ### **[Installation](#installation)**
+  - .env File
+
+    - Create a .env file that includes the following content.
+
+      ```
+      api_key="<API_KEY>"
+      access_token="<ACCESS_TOKEN>"
+      
+      ##If you do not use the onchain function, you do not need to configure the following
+      private_key="<PRIVATE_KEY>"
+      rpc_endpoint="<RPC_ENDPOINT>"
+      ```
+
+      1. ***The "rpc_endpoint" is the one mentioned above***
+      2. ***"Private_key" will be obtained from the wallet***
+      3. ***The "api_key" and "access_token" can be generated from the [APIKey](https://www.multichain.storage/#/api_key) page***
+      4. ***Please save your APIKey and Access Token after you have generated it, as the Token is not allowed to be viewed repeatedly***
+
+  - dotenv
+
+    ```
+    `pip install python-dotenv`
+    ```
+
+### Installation
 
   1. Method 1. Pip install (Recommended):
 
-      Install python SDK using pip https://pypi.org/project/python-mcs-sdk/
+     Install python SDK using pip https://pypi.org/project/python-mcs-sdk/
 
      ```
      pip install python-mcs-sdk
@@ -76,40 +73,17 @@ A python software development kit for the Multi-Chain Storage (MCS) https://www.
      pip install -r requirements.txt
      ```
 
-### 👨‍💻 [Examples](#examples)
-
----
+## 👨‍💻 Examples
 
 Here is the demo to get you started; you can get more information in the [SDK documentation.](https://docs.filswan.com/multi-chain-storage/developer-quickstart/sdk)
 
-1. Set Up Wallet Information
-
-   1. Create a .env file that includes the following content.
-
-      ```
-      api_key="<API_KEY>"
-      access_token="<ACCESS_TOKEN>"
-      
-      ##If you do not use the onchain function, you do not need to configure the following
-      private_key="<PRIVATE_KEY>"
-      rpc_endpoint="<RPC_ENDPOINT>"
-      ```
-
-      1. ***The "rpc_endpoint" is the one mentioned above***
-      2. ***"Private_key" will be obtained from the wallet***
-      3. ***The "api_key" and "access_token" can be generated from the Setting page in the [multichain.storage](#https://www.multichain.storage/) page***
-
-      b. Install dotenv
-
-      ​	`pip install python-dotenv`
-
-2. Login to MCS
+1. Login to MCS
 
    ```python
     from mcs import APIClient
     if __name__ == '__main__':
-        api_key="<API_KEY>"
-        access_token="<ACCESS_TOKEN>"
+        api_key = os.getenv('api_key')
+        access_token = os.getenv('access_token')
         mcs_api = APIClient(api_key, access_token)
    ```
 
@@ -161,11 +135,40 @@ Here is the demo to get you started; you can get more information in the [SDK do
 
 For more examples, please see the [SDK documentation.](https://docs.filswan.com/multi-chain-storage/developer-quickstart/sdk)
 
-# Contributing
+## ℹ️ Functions
+
+This SDK has the following functionalities:
+
+### For Onchain Storage
+
+---
+
+- **POST**    Upload file to Filswan IPFS gateway
+- **GET**     List of files uploaded
+- **GET**     Files by cid
+- **GET**     Status from filecoin
+- **CONTRACT**    Make payment to swan filecoin storage gateway
+- **CONTRACT**    Mint asset as NFT
+
+### For Buckets Storage
+
+---
+
+* **POST** Create a bucket
+* **POST** Create a folder
+* **POST** Upload File to the bucket
+* **POST** Rename bucket
+* **GET** Delete bucket
+* **GET** Bucket List
+* **GET** File List
+* **GET** File information
+* **GET** Delete File
+
+## Contributing
 
 Feel free to join in and discuss. Suggestions are welcome! [Open an issue](https://github.com/filswan/python-mcs-sdk/issues) or [Join the Discord](https://discord.com/invite/KKGhy8ZqzK)!
 
-## Sponsors
+### Sponsors
 
 Filecoin Foundation sponsors this project
 
