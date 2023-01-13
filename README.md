@@ -22,8 +22,6 @@ A python software development kit for the Multi-Chain Storage (MCS) https://www.
 
 ## 🆕 [Getting Started](#started)
 
----
-
 * [**Prerequisites**](#prerequisites)
 
   * [web3](https://pypi.org/project/web3/) - web3 python package to process contract 
@@ -78,8 +76,6 @@ A python software development kit for the Multi-Chain Storage (MCS) https://www.
      ```
 
 ## 👨‍💻 [Examples](#examples)
-
----
 
 Here is the demo to get you started; you can get more information in the [SDK documentation.](https://docs.filswan.com/multi-chain-storage/developer-quickstart/sdk)
 
