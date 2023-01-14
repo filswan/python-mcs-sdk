@@ -67,6 +67,8 @@ Onchain storage is designed for stored file information in smart contract.It req
 
  print(onchain.upload_file('<File Path>'))
  ```
+* Pay for the storage
+Please move forward for [How to pay for the storage](https://docs.filswan.com/multichain.storage/developer-quickstart/sdk/python-mcs-sdk/onchain-storage/advanced-usage): 
 ### Bucket Storage
 
 - Create a bucket
