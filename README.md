@@ -22,7 +22,6 @@ A python software development kit for the Multi-Chain Storage(MCS) https://www.m
 
  ```
  pip install python-mcs-sdk
- pip install python-dotenv
  ```
 -  Build from source (optional)
 
@@ -30,18 +29,14 @@ A python software development kit for the Multi-Chain Storage(MCS) https://www.m
  git clone https://github.com/filswan/python-mcs-sdk.git
  git checkout main
  pip install -r requirements.txt
- pip install python-dotenv
  ```
 
 ### Setup Credentials
 
-Create a .env file includes the access credentials and wallet private key.
-
 api_key/access_token can be found in https://www.multichain.storage/#/api_key, make sure save your APIKey and Access Token after you have generated it, you will not find it again after you created it
 
 ```
-api_key="<API_KEY>" 
-access_token="<ACCESS_TOKEN>"
+
 
 #for onchain storage only
 private_key="<PRIVATE_KEY>" # private key of your wallet
@@ -54,9 +49,9 @@ rpc_endpoint="<RPC_ENDPOINT>"# e.g https://polygon-rpc.com
  ```python
 from mcs import APIClient
 if __name__ == '__main__':
-    api_key = os.getenv('api_key')
-    access_token = os.getenv('access_token')
-    mcs_api = APIClient(api_key, access_token)
+  api_key="<API_KEY>" 
+  access_token="<ACCESS_TOKEN>"
+  mcs_api = APIClient(api_key, access_token)
  ```
 
 ## 👨‍💻 Examples
