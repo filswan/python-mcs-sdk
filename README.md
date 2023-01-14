@@ -36,8 +36,6 @@ A python software development kit for the Multi-Chain Storage(MCS) https://www.m
 api_key/access_token can be found in https://www.multichain.storage/#/api_key, make sure save your APIKey and Access Token after you have generated it, you will not find it again after you created it
 
 ```
-
-
 #for onchain storage only
 private_key="<PRIVATE_KEY>" # private key of your wallet
 rpc_endpoint="<RPC_ENDPOINT>"# e.g https://polygon-rpc.com
