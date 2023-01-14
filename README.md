@@ -2,11 +2,11 @@
 
 [![Made by FilSwan](https://img.shields.io/badge/made%20by-FilSwan-green.svg)](https://www.filswan.com/)
 [![Chat on discord](https://img.shields.io/badge/join%20-discord-brightgreen.svg)](https://discord.com/invite/KKGhy8ZqzK)
+
 A python software development kit for the Multi-Chain Storage(MCS) https://www.multichain.storage service. It provides a convenient interface for working with the MCS API. 
 # Table of Contents <!-- omit in toc -->
 
 - [Getting Started](#-Getting-Started)
-  - [Prerequisites](#Prerequisites)
   - [Installation](#Installation)
 - [Examples](#-Examples)
 - [Functions](#ℹ️-Functions)
