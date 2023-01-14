@@ -78,17 +78,17 @@ Onchain storage is designed for stored file information in smart contract.It req
 
 - Create a bucket
 ```python
- from mcs import BucketAPI
- bucket_client = BucketAPI(mcs_api)
- bucket_data = bucket_client.create_bucket('YOUR_BUCKET')
-
- print(bucket_data)
+  from mcs import BucketAPI
+  bucket_client = BucketAPI(mcs_api)
+  bucket_data = bucket_client.create_bucket('YOUR_BUCKET')
+  print(bucket_data)
  ```
 
 -  Upload a file to the bucket
 
 ```python
-file_data = bucket_client.upload_to_bucket(bucket_data["BucketUid"], 'YOUR_FILE_PATH' ,prefix='') //prefix is your targeted bucket related path from the root('./')
+# prefix is your targeted bucket related path from the root('./')
+file_data = bucket_client.upload_to_bucket(bucket_data["data"], 'YOUR_FILE_PATH' ,prefix='') 
 print(file_data)
  ```
 
