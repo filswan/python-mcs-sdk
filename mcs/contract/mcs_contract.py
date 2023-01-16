@@ -21,7 +21,7 @@ class ContractClient():
         usdc_abi = get_contract_abi(USDC_ABI)
         token = self.w3.eth.contract(self.USDC_TOKEN, abi=usdc_abi)
         decimals = token.functions.decimals().call()
-        amount = amount * (10 ** decimals)
+        amount = int(amount * (10 ** decimals))
         usdc_balance = token.functions.balanceOf(wallet_address).call()
         if int(usdc_balance) < int(amount):
             print("Insufficient balance")
