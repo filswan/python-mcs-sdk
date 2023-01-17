@@ -47,30 +47,30 @@ class BucketAPI(object):
     def get_file_list(self, bucket_id, prefix='', limit=10):
         params = {'bucket_uid': bucket_id, 'prefix': prefix, 'limit': limit, 'offset': 0}
         count = self.api_client._request_with_params(GET, FILE_LIST, self.MCS_API, params, self.token, None)['data'][
-            'Count']
+            'count']
         result = {}
         for i in range(count // 10 + 1):
             params['offset'] = i
             result['page{}'.format(i + 1)] = \
                 self.api_client._request_with_params(GET, FILE_LIST, self.MCS_API, params, self.token, None)['data'][
-                    'FileList']
+                    'file_list']
         return result
 
     def get_full_file_list(self, bucket_id, prefix=''):
         params = {'bucket_uid': bucket_id, 'prefix': prefix, 'limit': 100, 'offset': 0}
         count = self.api_client._request_with_params(GET, FILE_LIST, self.MCS_API, params, self.token, None)['data'][
-            'Count']
+            'count']
         result = []
         for i in range(count // 10 + 1):
             params['offset'] = i
             result.extend(
                 self.api_client._request_with_params(GET, FILE_LIST, self.MCS_API, params, self.token, None)['data'][
-                    'FileList'])
+                    'file_list'])
         return result
 
     def get_file_id(self, bucket_name, file_name, prefix=''):
-        filelist = self.get_full_file_list(self.get_bucket_id(bucket_name), prefix)
-        for file in filelist:
+        file_list = self.get_full_file_list(self.get_bucket_id(bucket_name), prefix)
+        for file in file_list:
             if file['name'] == file_name and not file['is_folder']:
                 return file['id']
         return None
