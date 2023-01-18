@@ -49,7 +49,8 @@ from mcs import APIClient
 if __name__ == '__main__':
   api_key="<API_KEY>" 
   access_token="<ACCESS_TOKEN>"
-  mcs_api = APIClient(api_key, access_token)
+  mcs_api = APIClient(api_key, access_token,chain_name)
+  # polygon.mainnet for mainnet, polygon.mumbai for testnet
  ```
 
 ## 👨‍💻 Examples
