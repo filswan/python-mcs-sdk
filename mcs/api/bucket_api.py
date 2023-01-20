@@ -28,8 +28,8 @@ class BucketAPI(object):
     def get_bucket_id(self, bucket_name):
         bucketlist = self.get_buckets()['data']
         for bucket in bucketlist:
-            if bucket['BucketName'] == bucket_name:
-                return bucket['BucketUid']
+            if bucket['bucket_name'] == bucket_name:
+                return bucket['bucket_uid']
         return None
 
     def get_file_info(self, file_id):
@@ -47,32 +47,32 @@ class BucketAPI(object):
     def get_file_list(self, bucket_id, prefix='', limit=10):
         params = {'bucket_uid': bucket_id, 'prefix': prefix, 'limit': limit, 'offset': 0}
         count = self.api_client._request_with_params(GET, FILE_LIST, self.MCS_API, params, self.token, None)['data'][
-            'Count']
+            'count']
         result = {}
         for i in range(count // 10 + 1):
             params['offset'] = i
-            result['Page{}'.format(i + 1)] = \
+            result['page{}'.format(i + 1)] = \
                 self.api_client._request_with_params(GET, FILE_LIST, self.MCS_API, params, self.token, None)['data'][
-                    'FileList']
+                    'file_list']
         return result
 
     def get_full_file_list(self, bucket_id, prefix=''):
         params = {'bucket_uid': bucket_id, 'prefix': prefix, 'limit': 100, 'offset': 0}
         count = self.api_client._request_with_params(GET, FILE_LIST, self.MCS_API, params, self.token, None)['data'][
-            'Count']
+            'count']
         result = []
         for i in range(count // 10 + 1):
             params['offset'] = i
             result.extend(
                 self.api_client._request_with_params(GET, FILE_LIST, self.MCS_API, params, self.token, None)['data'][
-                    'FileList'])
+                    'file_list'])
         return result
 
     def get_file_id(self, bucket_name, file_name, prefix=''):
-        filelist = self.get_full_file_list(self.get_bucket_id(bucket_name), prefix)
-        for file in filelist:
-            if file['Name'] == file_name and not file['IsFolder']:
-                return file['ID']
+        file_list = self.get_full_file_list(self.get_bucket_id(bucket_name), prefix)
+        for file in file_list:
+            if file['name'] == file_name and not file['is_folder']:
+                return file['id']
         return None
 
     def check_file(self, bucket_id, file_hash, file_name, prefix=''):
@@ -147,8 +147,8 @@ class BucketAPI(object):
     def download_file(self, bucket_id, file_name, prefix='', dir=''):
         file_list = self.get_full_file_list(bucket_id, prefix)
         for file in file_list:
-            if file['Name'] == file_name:
-                url = file['IpfsUrl']
+            if file['name'] == file_name:
+                url = file['ipfs_url']
                 print(url)
                 download_path = os.path.join(dir, file_name)
                 with open(download_path, 'wb') as f:
