@@ -67,7 +67,8 @@ class APIClient(object):
         # exception handle
         if not str(response.status_code).startswith('2'):
             json_res = response.json()
-            print(json_res['message'])
+            # print(json_res['message'])
+            return None
         #     raise exceptions.McsAPIException(response)
         #
         # if str(json_res['status']) == 'error':

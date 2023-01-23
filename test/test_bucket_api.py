@@ -26,7 +26,8 @@ def test_user_register():
 def test_list_buckets():
     info = test_info()
     api = BucketAPI(APIClient(info['api_key'], info['access_token'], chain_name))
-    print(api.list_buckets()[0].bucket_name)
+    for i in api.list_buckets():
+        print(i.to_json())
 
 
 def test_create_bucket():
@@ -44,7 +45,7 @@ def test_delete_bucket():
 def test_get_bucket():
     info = test_info()
     api = BucketAPI(APIClient(info['api_key'], info['access_token'], chain_name))
-    print(api.get_bucket('22222').address)
+    print(api.get_bucket('123121'))
 
 
 def test_create_folder():
@@ -76,7 +77,8 @@ def test_get_file():
 def test_get_file_list():
     info = test_info()
     api = BucketAPI(APIClient(info['api_key'], info['access_token'], chain_name))
-    print((api.list_files(12312, '44444/55555', '1', '0')))
+    for i in api.list_files(12312, '44444/55555', 100, '0'):
+        print(i.to_json())
 
 
 def test_download_file():

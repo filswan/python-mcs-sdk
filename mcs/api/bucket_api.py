@@ -29,35 +29,37 @@ class BucketAPI(object):
     def create_bucket(self, bucket_name):
         params = {'bucket_name': bucket_name}
         result = self.api_client._request_with_params(POST, CREATE_BUCKET, self.MCS_API, params, self.token, None)
+        if result is None:
+            print("Error: This bucket already exists")
+            return False
         if result['status'] == 'success':
             return True
-        else:
-            return False
 
     def delete_bucket(self, bucket_name):
         bucket_id = self._get_bucket_id(bucket_name)
         params = {'bucket_uid': bucket_id}
         result = self.api_client._request_with_params(GET, DELETE_BUCKET, self.MCS_API, params, self.token, None)
+        if result is None:
+            print("Error: Can't find this bucket")
+            return False
         if result['status'] == 'success':
             return True
-        else:
-            return False
 
-    def get_bucket(self, bucket_name="", bucket_id=""):
+    def get_bucket(self, bucket_name='', bucket_id=''):
         bucketlist = self.list_buckets()
-        if bucket_id != "" and bucket_name != "":
+        if bucket_id != '' and bucket_name != '':
             for bucket in bucketlist:
                 if bucket.bucket_name == bucket_name and bucket.bucket_uid == bucket_id:
                     return bucket
-        if bucket_name != "" and bucket_id == "":
+        if bucket_name != '' and bucket_id == '':
             for bucket in bucketlist:
                 if bucket.bucket_name == bucket_name:
                     return bucket
-        if bucket_name == "" and bucket_id != "":
+        if bucket_name == '' and bucket_id != '':
             for bucket in bucketlist:
                 if bucket.bucket_uid == bucket_id:
                     return bucket
-        print("Error:User does not have this bucket")
+        print("Error: User does not have this bucket")
         return None
 
     # object name
@@ -67,7 +69,7 @@ class BucketAPI(object):
         for file in file_list:
             if file.name == file_name:
                 return file
-        print("Error:can't find this object")
+        print("Error: Can't find this object")
         return None
 
     def create_folder(self, bucket_name, folder_name, prefix=''):
@@ -88,13 +90,13 @@ class BucketAPI(object):
                 file_id = file.id
         params = {'file_id': file_id}
         if file_id == '':
-            print("Error: can't find the object")
+            print("Error: Can't find the file")
             return False
         result = self.api_client._request_with_params(GET, DELETE_FILE, self.MCS_API, params, self.token, None)
         if result['status'] == 'success':
             return True
         else:
-            print("Error: can't delete the object")
+            print("Error: Can't delete the file")
             return False
 
     def list_files(self, bucket_name, prefix='', limit='10', offset="0"):
@@ -113,7 +115,8 @@ class BucketAPI(object):
         prefix, file_name = object_to_filename(object_name)
         bucket_id = self._get_bucket_id(bucket_name)
         if os.stat(file_path).st_size == 0:
-            return 'File size cannot be 0'
+            print("Error:File size cannot be 0")
+            return None
         file_name = os.path.basename(file_path)
         file_size = os.stat(file_path).st_size
         with open(file_path, 'rb') as file:
@@ -166,8 +169,9 @@ class BucketAPI(object):
             with open(local_filename, 'wb') as f:
                 data = urllib.request.urlopen(ipfs_url)
                 f.write(data.read())
-            return 'success'
-        return 'file does not exist'
+            return True
+        print('Error: File does not exist')
+        return False
 
     def _check_file(self, bucket_id, file_hash, file_name, prefix=''):
         params = {'bucket_uid': bucket_id, 'file_hash': file_hash, 'file_name': file_name, 'prefix': prefix}
