@@ -1,147 +1,102 @@
-# python-mcs-sdk
+# Multichain Storage SDK - Python
 
 [![Made by FilSwan](https://img.shields.io/badge/made%20by-FilSwan-green.svg)](https://www.filswan.com/)
 [![Chat on discord](https://img.shields.io/badge/join%20-discord-brightgreen.svg)](https://discord.com/invite/KKGhy8ZqzK)
 
+A python software development kit for the Multi-Chain Storage(MCS) https://www.multichain.storage service. It provides a convenient interface for working with the MCS API. 
 # Table of Contents <!-- omit in toc -->
 
-- [Introduction](#introduction)
-  - [For Onchain Storage](#onchain)
-  - [For Buckets Storage](#buckets)
-
-- [Getting Started](#started)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
-  - [Examples](#examples)
-- [Functions](#functions)
+- [Getting Started](#-Getting-Started)
+  - [Installation](#Installation)
+- [Examples](#-Examples)
+- [Functions](#ℹ️-Functions)
+  - [For Onchain Storage](#For-Onchain-Storage)
+  - [For Buckets Storage](#For-Buckets-Storage)
 - [Contributing](#contributing)
 
-## ℹ️ [Introduction](#introduction)
+## 🆕 Getting Started
 
-A python software development kit for the Multi-Chain Storage (MCS) https://www.multichain.storage/ service. It provides a convenient interface for working with the MCS API. 
+### Installation
 
-## 🆕 [Getting Started](#started)
+-  via _pip_ (Recommended):
 
-* [**Prerequisites**](#prerequisites)
+ ```
+ pip install python-mcs-sdk
+ ```
+-  Build from source (optional)
 
-  * [web3](https://pypi.org/project/web3/) - web3 python package to process contract 
+ ```
+ git clone https://github.com/filswan/python-mcs-sdk.git
+ git checkout main
+ pip install -r requirements.txt
+ ```
 
-  - Polygon Mainnet Wallet - [Metamask Tutorial](https://docs.filswan.com/getting-started/beginner-walkthrough/public-testnet/setup-metamask)
+### Setup Credentials
 
-  - Polygon Mainnet RPC endpoint - https://polygon-rpc.com (USDC and Matic are required if you want to make payment.)
+api_key/access_token can be found in https://www.multichain.storage/#/api_key, make sure save your APIKey and Access Token after you have generated it, you will not find it again after you created it
 
-  - .env File
+```
+#for onchain storage only
+private_key="<PRIVATE_KEY>" # private key of your wallet
+rpc_endpoint="<RPC_ENDPOINT>"# e.g https://polygon-rpc.com
 
-    - Create a .env file that includes the following content.
+```
 
-      ```
-      api_key="<API_KEY>"
-      access_token="<ACCESS_TOKEN>"
-      
-      ##If you do not use the onchain function, you do not need to configure the following
-      private_key="<PRIVATE_KEY>"
-      rpc_endpoint="<RPC_ENDPOINT>"
-      wallet_address="<WALLET_ADDRESS>"
-      ```
+**Authentication**
 
-      1. ***The "rpc_endpoint" is the one mentioned above***
-      2. ***"Private_key" will be obtained from the wallet***
-      3. ***The "api_key" and "access_token" can be generated from the [APIKey](https://www.multichain.storage/#/api_key) page***
-      4. ***Please save your APIKey and Access Token after you have generated it, as the Token is not allowed to be viewed repeatedly***
+ ```python
+from mcs import APIClient
+if __name__ == '__main__':
+  api_key="<API_KEY>" 
+  access_token="<ACCESS_TOKEN>"
+  mcs_api = APIClient(api_key, access_token,chain_name)
+  # polygon.mainnet for mainnet, polygon.mumbai for testnet
+ ```
 
-  - dotenv
+## 👨‍💻 Examples
 
-    ```
-    `pip install python-dotenv`
-    ```
 
-* ## **[Installation](#installation)**
+### Onchain Storage
+   
+Onchain storage is designed for stored file information in smart contract.It requires payment for each file
 
-  1. Method 1. Pip install (Recommended):
+* Upload File to Onchain storage
 
-     Install python SDK using pip https://pypi.org/project/python-mcs-sdk/
+ ```python
+ from mcs import OnchainAPI
+ onchain = OnchainAPI(mcs_api)
 
-     ```
-     pip install python-mcs-sdk
-     ```
+ print(onchain.upload_file('<File Path>'))
+ ```
+* Pay for the storage contract
 
-  2. Method 2. Build from source
+Please move forward for [How to pay for the storage](https://docs.filswan.com/multichain.storage/developer-quickstart/sdk/python-mcs-sdk/onchain-storage/advanced-usage)
 
-     Install python SDK from GitHub (checkout to the main branch for main net support) and install requirements using pip:
+### Bucket Storage
 
-     ```
-     git clone https://github.com/filswan/python-mcs-sdk.git
-     git checkout main
-     pip install -r requirements.txt
-     ```
+- Create a bucket
+```python
+  from mcs import BucketAPI
+  bucket_client = BucketAPI(mcs_api)
+  bucket_data = bucket_client.create_bucket('YOUR_BUCKET')
+  print(bucket_data)
+ ```
 
-## 👨‍💻 [Examples](#examples)
+-  Upload a file to the bucket
 
-Here is the demo to get you started; you can get more information in the [SDK documentation.](https://docs.filswan.com/multi-chain-storage/developer-quickstart/sdk)
-
-1. Login to MCS
-
-   ```python
-    from mcs import APIClient
-    if __name__ == '__main__':
-        api_key = os.getenv('api_key')
-        access_token = os.getenv('access_token')
-        mcs_api = APIClient(api_key, access_token)
-   ```
-
-   **For Onchain Storage** 
-
-   ---
-
-   * Init
-
-     ```python
-     from mcs import OnchainAPI
-     onchain = OnchainAPI(mcs_api)
-     ```
-
-   * Upload File to Onchain storage
-
-     ```python
-     print(onchain.upload_file('<File Path>'))
-     ```
-
-   **For Bucket Storage**
-
-   ---
-
-   * Init
-
-     ```python
-     from mcs import BucketAPI
-     bucket = BucketAPI(mcs_api)
-     ```
-
-   * Create a bucket
-
-     ```python
-     print(bucket.create_bucket('<bucket name>'))
-     ```
-
-   * Upload a file to the bucket
-
-     ```python
-     print(bucket.upload_to_bucket('<bucket_id>', '<file_path>' ,prefix=''))
-     ```
-
-     *The prefix field defines the file-folder relationship, leaving it blank if the file exists directly in the Bucket or the folder name if the file exists in a folder that already exists in the Bucket.*
-
-     ***You have to create a bucket before you upload a file.***
-
-     ***Note that if you upload a file with the prefix field defined in a folder that has not yet been created, you will not be able to see the file until you create a folder with the same name.***
+```python
+# prefix is your targeted bucket related path from the root('./')
+file_data = bucket_client.upload_to_bucket(bucket_data["data"], 'YOUR_FILE_PATH' ,prefix='') 
+print(file_data)
+ ```
 
 For more examples, please see the [SDK documentation.](https://docs.filswan.com/multi-chain-storage/developer-quickstart/sdk)
 
-## ℹ️ [Functions](#functions)
+## ℹ️ Functions
 
 This SDK has the following functionalities:
 
-### [For Onchain Storage](#onchain)
+### For Onchain Storage
 
 ---
 
@@ -152,7 +107,7 @@ This SDK has the following functionalities:
 - **CONTRACT**    Make payment to swan filecoin storage gateway
 - **CONTRACT**    Mint asset as NFT
 
-### [For Buckets Storage](#buckets)
+### For Buckets Storage
 
 ---
 
