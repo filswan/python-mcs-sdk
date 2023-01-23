@@ -66,10 +66,12 @@ class APIClient(object):
 
         # exception handle
         if not str(response.status_code).startswith('2'):
-            raise exceptions.McsAPIException(response)
-        json_res = response.json()
-        if str(json_res['status']) == 'error':
-            raise exceptions.McsRequestException(json_res['message'])
+            json_res = response.json()
+            print(json_res['message'])
+        #     raise exceptions.McsAPIException(response)
+        #
+        # if str(json_res['status']) == 'error':
+        #     raise exceptions.McsRequestException(json_res['message'])
 
         return response.json()
 
@@ -83,11 +85,11 @@ class APIClient(object):
         size = path.stat().st_size
         filename = path.name
         with tqdm(
-            desc=filename,
-            total=size,
-            unit='B',
-            unit_scale=True,
-            unit_divisor=1024,
+                desc=filename,
+                total=size,
+                unit='B',
+                unit_scale=True,
+                unit_divisor=1024,
         ) as bar:
             encode = MultipartEncoder(params)
             body = MultipartEncoderMonitor(
@@ -114,8 +116,8 @@ class APIClient(object):
         encode = MultipartEncoder(params)
         previous = Previous()
         body = MultipartEncoderMonitor(
-                encode, lambda monitor: self.bar.update(previous.update(monitor.bytes_read)),
-            )
+            encode, lambda monitor: self.bar.update(previous.update(monitor.bytes_read)),
+        )
         header['Content-Type'] = body.content_type
         response = requests.post(url, data=body, headers=header)
 
@@ -127,7 +129,7 @@ class APIClient(object):
             raise exceptions.McsRequestException(json_res['message'])
 
         return response.json()
-    
+
     def upload_progress_bar(self, file_name, file_size):
         self.bar = tqdm(desc=file_name, total=file_size, unit='B', unit_scale=True, unit_divisor=1024)
 
@@ -137,10 +139,11 @@ class APIClient(object):
     def _request_with_params(self, method, request_path, mcs_api, params, token, files):
         return self._request(method, request_path, mcs_api, params, token, files)
 
+
 class Previous():
     def __init__(self):
         self.previous = 0
-    
+
     def update(self, new):
         self.old = self.previous
         self.previous = new

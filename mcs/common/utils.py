@@ -31,3 +31,14 @@ def get_contract_abi(abi_name):
     with open(parent_path + abi_name, 'r') as abi_file:
         abi_data = json.load(abi_file)
         return json.dumps(abi_data)
+
+
+def object_to_filename(object_name):
+    index = object_name.rfind('/')
+    if index == -1:
+        prefix = ''
+        file_name = object_name
+    else:
+        prefix = object_name[0:index]
+        file_name = object_name[index + 1:]
+    return prefix, file_name
