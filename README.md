@@ -49,14 +49,33 @@ rpc_endpoint="<RPC_ENDPOINT>"# e.g https://polygon-rpc.com
  ```python
 from mcs import APIClient
 if __name__ == '__main__':
-  api_key="<API_KEY>" 
-  access_token="<ACCESS_TOKEN>"
-  mcs_api = APIClient(api_key, access_token,chain_name)
-  # polygon.mainnet for mainnet, polygon.mumbai for testnet
+    api_key="<API_KEY>"
+    access_token="<ACCESS_TOKEN>"
+    mcs_api = APIClient(api_key, access_token, chain_name)
+    # polygon.mainnet for mainnet, polygon.mumbai for testnet
  ```
 
 ## 👨‍💻 Examples
 
+### Bucket Storage
+
+- Create a bucket
+
+```python
+from mcs import BucketAPI
+    bucket_client = BucketAPI(mcs_api)
+    bucket_data = bucket_client.create_bucket('YOUR_BUCKET_NAME')
+    print(bucket_data)
+```
+
+-  Upload a file to the bucket
+
+```python
+    # file_path is the path relative to the current file
+    # object_name is your target path. e.g: 'FOLDER_NAME/FILENAME'
+    file_data = bucket_client.upload_file('YOUR_BUCKET_NAME', 'OBJECT_NAME' , 'FILE_PATH') 
+    print(file_data.to_json())
+```
 
 ### Onchain Storage
 
@@ -65,35 +84,14 @@ Onchain storage is designed for stored file information in smart contract.It req
 * Upload File to Onchain storage
 
  ```python
- from mcs import OnchainAPI
- onchain = OnchainAPI(mcs_api)
-
- print(onchain.upload_file('<File Path>'))
+from mcs import OnchainAPI
+    onchain = OnchainAPI(mcs_api)
+    print(onchain.upload_file('<File Path>'))
  ```
 
 * Pay for the storage contract
 
 Please move forward for [How to pay for the storage](https://docs.filswan.com/multichain.storage/developer-quickstart/sdk/python-mcs-sdk/onchain-storage/advanced-usage)
-
-### Bucket Storage
-
-- Create a bucket
-
-```python
-  from mcs import BucketAPI
-  bucket_client = BucketAPI(mcs_api)
-  bucket_data = bucket_client.create_bucket('YOUR_BUCKET_NAME')
-  print(bucket_data)
-```
-
--  Upload a file to the bucket
-
-```python
-# file_path is the path relative to the current file
-# object_name is your target path. e.g: 'FOLDER_NAME/FILENAME'
-file_data = bucket_client.upload_file('YOUR_BUCKET_NAME', 'OBJECT_NAME' , 'FILE_PATH') 
-print(file_data.to_json())
-```
 
 For more examples, please see the [SDK documentation.](https://docs.filswan.com/multi-chain-storage/developer-quickstart/sdk)
 
