@@ -62,10 +62,12 @@ if __name__ == '__main__':
 - Create a bucket
 
 ```python
-  from mcs import BucketAPI
-  bucket_client = BucketAPI(mcs_api)
-  bucket_data = bucket_client.create_bucket('YOUR_BUCKET_NAME')
-  print(bucket_data)
+from mcs import APIClient
+if __name__ == '__main__':
+    api_key="<API_KEY>"
+    access_token="<ACCESS_TOKEN>"
+    mcs_api = APIClient(api_key, access_token,chain_name)
+    # polygon.mainnet for mainnet, polygon.mumbai for testnet
 ```
 
 -  Upload a file to the bucket
