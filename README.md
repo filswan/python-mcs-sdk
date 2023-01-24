@@ -90,6 +90,7 @@ Please move forward for [How to pay for the storage](https://docs.filswan.com/mu
 
 ```python
 # file_path is the path relative to the current file
+# object_name is your target path
 file_data = bucket_client.upload_file('YOUR_BUCKET_NAME', 'OBJECT_NAME' , 'FILE_PATH') 
 print(file_data)
 ```
