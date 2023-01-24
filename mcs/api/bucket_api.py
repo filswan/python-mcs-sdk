@@ -21,7 +21,7 @@ class BucketAPI(object):
         result = self.api_client._request_without_params(GET, BUCKET_LIST, self.MCS_API, self.token)
         bucket_info_list = []
         if result['status'] != 'success':
-            print("\033[31mError: "+ result['message'] + "\033[0m" )
+            print("\033[31mError: " + result['message'] + "\033[0m" )
             return
         data = result['data']
         for bucket in data:
@@ -136,30 +136,32 @@ class BucketAPI(object):
         with open(file_path, 'rb') as file:
             file_hash = md5(file.read()).hexdigest()
         result = self._check_file(bucket_id, file_hash, file_name, prefix)
-        if not (result['status'] == 'error'):
-            if not (result['data']['file_is_exist']):
-                if not (result['data']['ipfs_is_exist']):
-                    with open(file_path, 'rb') as file:
-                        i = 0
-                        queue = Queue()
-                        self.api_client.upload_progress_bar(file_name, file_size)
-                        for chunk in self._read_chunks(file):
-                            i += 1
-                            queue.put((str(i), chunk))
-                        file.close()
-                    threads = list()
-                    for i in range(3):
-                        worker = threading.Thread(target=self._thread_upload_chunk, args=(queue, file_hash, file_name))
-                        threads.append(worker)
-                        worker.start()
-                    for thread in threads:
-                        thread.join()
-                    result = self._merge_file(bucket_id, file_hash, file_name, prefix)
-                file_id = result['data']['file_id']
-                file_info = self._get_file_info(file_id)
-                return file_info
-            print("\033[31mError:File already existed\033[0m")
-        print("\033[31mError: " + result['message'] + "\033[0m")
+        if result is None:
+            print("\033[31mError:Cannot found bucket\033[0m")
+            return
+        if not (result['data']['file_is_exist']):
+            if not (result['data']['ipfs_is_exist']):
+                with open(file_path, 'rb') as file:
+                    i = 0
+                    queue = Queue()
+                    self.api_client.upload_progress_bar(file_name, file_size)
+                    for chunk in self._read_chunks(file):
+                        i += 1
+                        queue.put((str(i), chunk))
+                    file.close()
+                threads = list()
+                for i in range(3):
+                    worker = threading.Thread(target=self._thread_upload_chunk, args=(queue, file_hash, file_name))
+                    threads.append(worker)
+                    worker.start()
+                for thread in threads:
+                    thread.join()
+                result = self._merge_file(bucket_id, file_hash, file_name, prefix)
+            file_id = result['data']['file_id']
+            file_info = self._get_file_info(file_id)
+            print("\033[32mFile upload successfully\033[0m")
+            return file_info
+        print("\033[31mError:File already existed\033[0m")
         return None
 
     # def upload_folder(self, bucket_id, folder_path, prefix=''):
