@@ -90,9 +90,9 @@ Please move forward for [How to pay for the storage](https://docs.filswan.com/mu
 
 ```python
 # file_path is the path relative to the current file
-# object_name is your target path
+# object_name is your target path. e.g: 'FOLDER_NAME/FILENAME'
 file_data = bucket_client.upload_file('YOUR_BUCKET_NAME', 'OBJECT_NAME' , 'FILE_PATH') 
-print(file_data)
+print(file_data.to_json())
 ```
 
 For more examples, please see the [SDK documentation.](https://docs.filswan.com/multi-chain-storage/developer-quickstart/sdk)

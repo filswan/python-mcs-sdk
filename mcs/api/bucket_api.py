@@ -131,7 +131,6 @@ class BucketAPI(object):
         if os.stat(file_path).st_size == 0:
             print("\033[31mError:File size cannot be 0\033[0m")
             return None
-        file_name = os.path.basename(file_path)
         file_size = os.stat(file_path).st_size
         with open(file_path, 'rb') as file:
             file_hash = md5(file.read()).hexdigest()

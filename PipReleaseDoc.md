@@ -1,8 +1,8 @@
-[![Made by FilSwan](https://img.shields.io/badge/made%20by-FilSwan-green.svg)](https://www.filswan.com/)[![Chat on discord](https://img.shields.io/badge/join%20-discord-brightgreen.svg)](https://discord.com/invite/KKGhy8ZqzK)
+[![Made by FilSwan](https://img.shields.io/badge/made%20by-FilSwan-green.svg)](https://www.filswan.com/) [![Chat on discord](https://img.shields.io/badge/join%20-discord-brightgreen.svg)](https://discord.com/invite/KKGhy8ZqzK)
 
 Python-MCS-SDK is a python software development kit for the [Multi-Chain Storage(MCS)](https://www.multichain.storage) service. It provides a convenient interface for working with the MCS API.
 
-Please take a look at our documentation for how to install and use pip:
+Please take a look at our documentation for how to install and use Python-MCS-SDK:
 
 - [Prerequisites](https://docs.filswan.com/multichain.storage/developer-quickstart/sdk/python-mcs-sdk/prerequisite)
 - [Get Started](https://docs.filswan.com/multichain.storage/developer-quickstart/sdk/python-mcs-sdk/get-started)
