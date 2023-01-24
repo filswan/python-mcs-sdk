@@ -1,4 +1,5 @@
 from mcs.api_client import APIClient
+from mcs.object.onchain_storage import PaymentInfo, SourceFile
 from mcs.common.constants import *
 import json
 
@@ -12,22 +13,30 @@ class OnchainAPI(object):
         self.token = self.api_client.token
 
     def get_payment_info(self, source_file_upload_id):
-        params = {}
         if source_file_upload_id:
-            params['source_file_upload_id'] = source_file_upload_id
-        return self.api_client._request_with_params(GET, PAYMENT_INFO, self.MCS_API, params, self.token, None)
+            params = {'source_file_upload_id' : source_file_upload_id}
+            result = self.api_client._request_with_params(GET, PAYMENT_INFO, self.MCS_API, params, self.token, None)
+            if result['status'] != 'success':
+                print("\033[31mError: " + result['message'] + "\033[0m" )
+                return
+            return PaymentInfo(result['data'])
+        print("\033[31mError: source file id is None\033[0m")
+        return 
 
-    def get_user_tasks_deals(self, page_number=None, page_size=None, file_name=None, status=None):
-        params = {}
-        if page_number:
-            params['page_number'] = page_number
-        if page_size:
-            params['page_size'] = page_size
-        if file_name:
-            params['file_name'] = file_name
-        if status:
-            params['status'] = status
-        return self.api_client._request_with_params(GET, TASKS_DEALS, self.MCS_API, params, self.token, None)
+    def get_user_tasks_deals(self):
+        params = {'page_size' : 10}
+        result = self.api_client._request_with_params(GET, TASKS_DEALS, self.MCS_API, params, self.token, None)
+        if result['status'] != 'success':
+            print("\033[31mError: " + result['message'] + "\033[0m" )
+            return
+        total_count = result['data']['total_record_count']
+        sourcefiles = []
+        for i in range(total_count//10 + 1):
+            params['page_number'] = i+1
+            result = self.api_client._request_with_params(GET, TASKS_DEALS, self.MCS_API, params, self.token, None)
+            for i in result['data']['source_file_upload']:
+                sourcefiles.append(SourceFile(i))
+        return sourcefiles
 
     def get_mint_info(self, source_file_upload_id, payload_cid, tx_hash, token_id, mint_address):
         params = {'source_file_upload_id': source_file_upload_id, 'payload_cid': payload_cid, 'tx_hash': tx_hash,
@@ -35,17 +44,22 @@ class OnchainAPI(object):
         return self.api_client._request_with_params(POST, MINT_INFO, self.MCS_API, params, self.token, None)
 
     def stream_upload_file(self, file_path):
-        params = {}
-        params['duration'] = '525'
-        params['storage_copy'] = '5'
-        params['file'] = (file_path, open(file_path, 'rb'))
-        return self.api_client._request_stream_upload(UPLOAD_FILE, self.MCS_API, params, self.token)
+        if file_path:
+            params = {'duration' : '525', 'storage_copy' : '5', 'file' : (file_path, open(file_path, 'rb'))}
+            result = self.api_client._request_stream_upload(UPLOAD_FILE, self.MCS_API, params, self.token)
+            if result['status'] != 'success':
+                print("\033[31mError: " + result['message'] + "\033[0m" )
+                return
+            return SourceFile(result['data'])
+        print("\033[31mError: file path is None\033[0m")
+        return 
 
     def get_deal_detail(self, source_file_upload_id, deal_id='0'):
-        params = {}
         if source_file_upload_id:
-            params['source_file_upload_id'] = source_file_upload_id
-        return self.api_client._request_with_params(GET, DEAL_DETAIL + deal_id, self.MCS_API, params, self.token, None)
+            params = {'source_file_upload_id' : source_file_upload_id}
+            return self.api_client._request_with_params(GET, DEAL_DETAIL + deal_id, self.MCS_API, params, self.token, None)
+        print("\033[31mError: source file upload id is None\033[0m")
+        return
 
     def upload_nft_metadata(self, address, file_name, image_url, tx_hash, size):
         params = {}
@@ -66,4 +80,8 @@ class OnchainAPI(object):
             ]
             file_url['external_url'] = image_url
         files = {"fileName": "test", "file": json.dumps(file_url)}
-        return self.api_client._request_with_params(POST, UPLOAD_FILE, self.MCS_API, params, self.token, files)
+        result =  self.api_client._request_with_params(POST, UPLOAD_FILE, self.MCS_API, params, self.token, files)
+        if result['status'] != 'success':
+            print("\033[31mError: " + result['message'] + "\033[0m" )
+            return
+        return result['data']

@@ -30,18 +30,10 @@ class OnchainUpload():
         return payment_hash
 
     def stream_upload(self):
-        upload_file = self.onchain.stream_upload_file(self.wallet_address, self.file_path)
-        file_data = upload_file["data"]
-        self.upload_response = file_data
-
-    def estimate_amount(self):
-        file_size = self.upload_response['file_size']
-        rate = self.api.get_price_rate()["data"]
-        amount = get_amount(file_size, rate)
-        return amount
+        self.upload_response = self.onchain.stream_upload_file(self.file_path)
 
     def pay(self):
-        file_size, w_cid = self.upload_response['file_size'], self.upload_response['w_cid']
+        file_size, w_cid = self.upload_response.file_size, self.upload_response.w_cid
         params = self.api.get_params()["data"]
         rate = self.api.get_price_rate()["data"]
         # payment
@@ -56,8 +48,8 @@ class OnchainUpload():
 
     def mint(self, file_name):
         file_data = self.upload_response
-        source_file_upload_id, nft_uri, file_size = file_data['source_file_upload_id'], file_data['ipfs_url'], \
-            file_data['file_size']
+        source_file_upload_id, nft_uri, file_size = file_data.source_file_upload_id, file_data.ipfs_url, \
+            file_data.file_size
         meta_url = \
             self.onchain.upload_nft_metadata(self.wallet_address, file_name, nft_uri, self.payment_tx_hash, file_size)[
                 'data'][
