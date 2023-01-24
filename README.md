@@ -4,6 +4,7 @@
 [![Chat on discord](https://img.shields.io/badge/join%20-discord-brightgreen.svg)](https://discord.com/invite/KKGhy8ZqzK)
 
 A python software development kit for the Multi-Chain Storage(MCS) https://www.multichain.storage service. It provides a convenient interface for working with the MCS API. 
+
 # Table of Contents <!-- omit in toc -->
 
 - [Getting Started](#-Getting-Started)
@@ -21,14 +22,15 @@ A python software development kit for the Multi-Chain Storage(MCS) https://www.m
 -  via _pip_ (Recommended):
 
  ```
- pip install python-mcs-sdk
+pip install python-mcs-sdk
  ```
+
 -  Build from source (optional)
 
  ```
- git clone https://github.com/filswan/python-mcs-sdk.git
- git checkout main
- pip install -r requirements.txt
+git clone https://github.com/filswan/python-mcs-sdk.git
+git checkout main
+pip install -r requirements.txt
  ```
 
 ### Setup Credentials
@@ -57,7 +59,7 @@ if __name__ == '__main__':
 
 
 ### Onchain Storage
-   
+
 Onchain storage is designed for stored file information in smart contract.It requires payment for each file
 
 * Upload File to Onchain storage
@@ -68,6 +70,7 @@ Onchain storage is designed for stored file information in smart contract.It req
 
  print(onchain.upload_file('<File Path>'))
  ```
+
 * Pay for the storage contract
 
 Please move forward for [How to pay for the storage](https://docs.filswan.com/multichain.storage/developer-quickstart/sdk/python-mcs-sdk/onchain-storage/advanced-usage)
@@ -75,20 +78,22 @@ Please move forward for [How to pay for the storage](https://docs.filswan.com/mu
 ### Bucket Storage
 
 - Create a bucket
+
 ```python
   from mcs import BucketAPI
   bucket_client = BucketAPI(mcs_api)
-  bucket_data = bucket_client.create_bucket('YOUR_BUCKET')
+  bucket_data = bucket_client.create_bucket('YOUR_BUCKET_NAME')
   print(bucket_data)
- ```
+```
 
 -  Upload a file to the bucket
 
 ```python
-# prefix is your targeted bucket related path from the root('./')
-file_data = bucket_client.upload_to_bucket(bucket_data["data"], 'YOUR_FILE_PATH' ,prefix='') 
-print(file_data)
- ```
+# file_path is the path relative to the current file
+# object_name is your target path. e.g: 'FOLDER_NAME/FILENAME'
+file_data = bucket_client.upload_file('YOUR_BUCKET_NAME', 'OBJECT_NAME' , 'FILE_PATH') 
+print(file_data.to_json())
+```
 
 For more examples, please see the [SDK documentation.](https://docs.filswan.com/multi-chain-storage/developer-quickstart/sdk)
 

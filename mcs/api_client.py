@@ -10,7 +10,7 @@ from pathlib import Path
 
 
 class APIClient(object):
-    def __init__(self, api_key, access_token, chain_name=None):
+    def __init__(self, api_key, access_token, chain_name=None, login=True):
         self.token = None
         if chain_name is None:
             chain_name = "polygon.mainnet"
@@ -18,26 +18,30 @@ class APIClient(object):
         self.api_key = api_key
         self.access_token = access_token
         self.MCS_API = Params(self.chain_name).MCS_API
-        if api_key and access_token:
+        if login:
             self.api_key_login()
-        self.CHAIN_NAME = self.get_params()['data']['chain_name']
-        self.SWAN_PAYMENT_ADDRESS = self.get_params()['data']['payment_contract_address']
-        self.USDC_TOKEN = self.get_params()['data']['usdc_address']
-        self.MINT_ADDRESS = self.get_params()['data']['mint_contract_address']
 
     def get_params(self):
-        return self._request_without_params(GET, MCS_PARAMS, self.MCS_API, self.token)
+        return self._request_without_params(GET, MCS_PARAMS, self.MCS_API, None)
 
     def get_price_rate(self):
         return self._request_without_params(GET, PRICE_RATE, self.MCS_API, self.token)
 
     def api_key_login(self):
-        params = {}
-        params['apikey'] = self.api_key
-        params['access_token'] = self.access_token
-        params['network'] = self.chain_name
+        params = {'apikey': self.api_key, 'access_token': self.access_token, 'network': self.chain_name}
+        if params.get('apikey') == '' or params.get('access_token') == '':
+            print("\033[31mAPIkey or access token does not exist\033[0m")
+            return False
         result = self._request_with_params(POST, APIKEY_LOGIN, self.MCS_API, params, None, None)
+        if result is None:
+            print("\033[31mRequest Error\033[0m")
+            return
+        if result['status'] != "success":
+            print("\033[31mError: " + result['message'] + ". \nPlease check your APIkey and access token, or "
+                                                  "check whether the current network environment corresponds to the APIkey.\033[0m")
+            return
         self.token = result['data']['jwt_token']
+        print("\033[32mLogin successful\033[0m")
         return self.token
 
     def _request(self, method, request_path, mcs_api, params, token, files=False):
@@ -70,10 +74,13 @@ class APIClient(object):
 
         # exception handle
         if not str(response.status_code).startswith('2'):
-            raise exceptions.McsAPIException(response)
-        json_res = response.json()
-        if str(json_res['status']) == 'error':
-            raise exceptions.McsRequestException(json_res['message'])
+            json_res = response.json()
+            # print(json_res['message'])
+            return None
+        #     raise exceptions.McsAPIException(response)
+        #
+        # if str(json_res['status']) == 'error':
+        #     raise exceptions.McsRequestException(json_res['message'])
 
         return response.json()
 
@@ -87,11 +94,11 @@ class APIClient(object):
         size = path.stat().st_size
         filename = path.name
         with tqdm(
-            desc=filename,
-            total=size,
-            unit='B',
-            unit_scale=True,
-            unit_divisor=1024,
+                desc=filename,
+                total=size,
+                unit='B',
+                unit_scale=True,
+                unit_divisor=1024,
         ) as bar:
             encode = MultipartEncoder(params)
             body = MultipartEncoderMonitor(
@@ -118,8 +125,8 @@ class APIClient(object):
         encode = MultipartEncoder(params)
         previous = Previous()
         body = MultipartEncoderMonitor(
-                encode, lambda monitor: self.bar.update(previous.update(monitor.bytes_read)),
-            )
+            encode, lambda monitor: self.bar.update(previous.update(monitor.bytes_read)),
+        )
         header['Content-Type'] = body.content_type
         response = requests.post(url, data=body, headers=header)
 
@@ -131,7 +138,7 @@ class APIClient(object):
             raise exceptions.McsRequestException(json_res['message'])
 
         return response.json()
-    
+
     def upload_progress_bar(self, file_name, file_size):
         self.bar = tqdm(desc=file_name, total=file_size, unit='B', unit_scale=True, unit_divisor=1024)
 
@@ -141,10 +148,11 @@ class APIClient(object):
     def _request_with_params(self, method, request_path, mcs_api, params, token, files):
         return self._request(method, request_path, mcs_api, params, token, files)
 
+
 class Previous():
     def __init__(self):
         self.previous = 0
-    
+
     def update(self, new):
         self.old = self.previous
         self.previous = new

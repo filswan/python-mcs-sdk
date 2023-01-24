@@ -34,13 +34,11 @@ class OnchainAPI(object):
                   'token_id': int(token_id), 'mint_address': mint_address}
         return self.api_client._request_with_params(POST, MINT_INFO, self.MCS_API, params, self.token, None)
 
-    def stream_upload_file(self, wallet_address, file_path):
+    def stream_upload_file(self, file_path):
         params = {}
-        if wallet_address:
-            params['wallet_address'] = wallet_address
-            params['duration'] = '525'
-            params['storage_copy'] = '5'
-            params['file'] = (file_path, open(file_path, 'rb'))
+        params['duration'] = '525'
+        params['storage_copy'] = '5'
+        params['file'] = (file_path, open(file_path, 'rb'))
         return self.api_client._request_stream_upload(UPLOAD_FILE, self.MCS_API, params, self.token)
 
     def get_deal_detail(self, source_file_upload_id, deal_id='0'):

@@ -23,16 +23,41 @@ def test_user_register():
     print(api.token)
 
 
-def test_get_buckets():
+def test_list_buckets():
     info = test_info()
     api = BucketAPI(APIClient(info['api_key'], info['access_token'], chain_name))
-    print(api.get_buckets())
+    for i in api.list_buckets():
+        print(i.to_json())
 
 
 def test_create_bucket():
     info = test_info()
     api = BucketAPI(APIClient(info['api_key'], info['access_token'], chain_name))
-    print(api.create_bucket('test_bucket'))
+    print(api.create_bucket('33333'))
+
+
+def test_delete_bucket():
+    info = test_info()
+    api = BucketAPI(APIClient(info['api_key'], info['access_token'], chain_name))
+    print(api.delete_bucket('33333'))
+
+
+def test_get_bucket():
+    info = test_info()
+    api = BucketAPI(APIClient(info['api_key'], info['access_token'], chain_name))
+    print(api.get_bucket('123121'))
+
+
+def test_create_folder():
+    info = test_info()
+    api = BucketAPI(APIClient(info['api_key'], info['access_token'], chain_name))
+    print(api.create_folder('12312', '55555', '44444'))
+
+
+def test_delete_file():
+    info = test_info()
+    api = BucketAPI(APIClient(info['api_key'], info['access_token'], chain_name))
+    print(api.delete_file('12312', '44444/55555/log_mcs.png'))
 
 
 def test_upload_file():
@@ -40,44 +65,24 @@ def test_upload_file():
     api = BucketAPI(APIClient(info['api_key'], info['access_token'], chain_name))
     filepath = "/images/log_mcs.png"
     parentpath = os.path.abspath(os.path.dirname(__file__))
-    api.upload_to_bucket(api.get_bucket_id('test_bucket'), parentpath + filepath)
+    print(api.upload_file('12312', "44444/55555/log_mcs.png", parentpath + filepath).to_json())
 
 
-def test_get_bucket_id():
+def test_get_file():
     info = test_info()
     api = BucketAPI(APIClient(info['api_key'], info['access_token'], chain_name))
-    print(api.get_bucket_id('test_bucket'))
+    print(api.get_file('12312', '44444/55555/log_mcs.png').to_json())
 
-
-def test_get_file_id():
-    info = test_info()
-    api = BucketAPI(APIClient(info['api_key'], info['access_token'], chain_name))
-    print(api.get_file_id('test_bucket', 'log_mcs.png'))
-
-
-def test_delete_bucket():
-    info = test_info()
-    api = BucketAPI(APIClient(info['api_key'], info['access_token'], chain_name))
-    bucket_id = api.get_bucket_id('test_bucket')
-    api.delete_bucket(bucket_id)
-
-
-def test_upload_folder():
-    info = test_info()
-    api = BucketAPI(APIClient(info['api_key'], info['access_token'], chain_name))
-    api.create_bucket('folder_bucket')
-    api.upload_folder(api.get_bucket_id('folder_bucket'), os.path.abspath('test'))
 
 def test_get_file_list():
     info = test_info()
     api = BucketAPI(APIClient(info['api_key'], info['access_token'], chain_name))
-    api.get_file_list(api.get_bucket_id('folder_bucket'), 'test')
-    api.get_full_file_list(api.get_bucket_id('folder_bucket'), 'test')
+    for i in api.list_files(12312, '44444/55555', 100, '0'):
+        print(i.to_json())
+
 
 def test_download_file():
     info = test_info()
     api = BucketAPI(APIClient(info['api_key'], info['access_token'], chain_name))
-    result = api.download_file(api.get_bucket_id('folder_bucket'), 'log_mcs.png', 'test/images')
-    assert result == 'success'
-    time.sleep(3)
-    os.remove('log_mcs.png')
+    result = api.download_file('12312', '44444/55555/log_mcs.png', "aaaa.png")
+    print(result)
