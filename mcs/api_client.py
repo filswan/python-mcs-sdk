@@ -32,8 +32,19 @@ class APIClient(object):
         params['apikey'] = self.api_key
         params['access_token'] = self.access_token
         params['network'] = self.chain_name
+        if (params.get('apikey') == '' or params.get('access_token') == ''):
+            print("APIkey or access token does not exist")
+            return
         result = self._request_with_params(POST, APIKEY_LOGIN, self.MCS_API, params, None, None)
+        if (result == ''):
+            print("Request Error")
+            return
+        if (result['status'] != "success"):
+            print("Error: " + result['message'] + ". \nPlease check your APIkey and access token, or "
+                                                  "check whether the current network environment corresponds to the APIkey.")
+            return
         self.token = result['data']['jwt_token']
+        print("Login successful")
         return self.token
 
     def _request(self, method, request_path, mcs_api, params, token, files=False):

@@ -20,19 +20,25 @@ class BucketAPI(object):
     def list_buckets(self):
         result = self.api_client._request_without_params(GET, BUCKET_LIST, self.MCS_API, self.token)
         bucket_info_list = []
+        if result['status'] != 'success':
+            print("\033[31mError: "+ result['message'] + "\033[0m" )
+            return
         data = result['data']
         for bucket in data:
             bucket_info: Bucket = Bucket(bucket)
             bucket_info_list.append(bucket_info)
+
+        # print(bucket_info_list)
         return bucket_info_list
 
     def create_bucket(self, bucket_name):
         params = {'bucket_name': bucket_name}
         result = self.api_client._request_with_params(POST, CREATE_BUCKET, self.MCS_API, params, self.token, None)
         if result is None:
-            print("Error: This bucket already exists")
+            print("\033[31mError: This bucket already exists\033[0m")
             return False
         if result['status'] == 'success':
+            print("\033[32mBucket created successfully\033[0m")
             return True
 
     def delete_bucket(self, bucket_name):
@@ -40,9 +46,10 @@ class BucketAPI(object):
         params = {'bucket_uid': bucket_id}
         result = self.api_client._request_with_params(GET, DELETE_BUCKET, self.MCS_API, params, self.token, None)
         if result is None:
-            print("Error: Can't find this bucket")
+            print("\033[31mError: Can't find this bucket\033[0m")
             return False
         if result['status'] == 'success':
+            print("\033[32mBucket delete successfully\033[0m")
             return True
 
     def get_bucket(self, bucket_name='', bucket_id=''):
@@ -59,7 +66,7 @@ class BucketAPI(object):
             for bucket in bucketlist:
                 if bucket.bucket_uid == bucket_id:
                     return bucket
-        print("Error: User does not have this bucket")
+        print("\033[31mError: User does not have this bucket\033[0m")
         return None
 
     # object name
@@ -69,7 +76,7 @@ class BucketAPI(object):
         for file in file_list:
             if file.name == file_name:
                 return file
-        print("Error: Can't find this object")
+        print("\033[31mError: Can't find this object\033[0m")
         return None
 
     def create_folder(self, bucket_name, folder_name, prefix=''):
@@ -77,8 +84,10 @@ class BucketAPI(object):
         params = {"file_name": folder_name, "prefix": prefix, "bucket_uid": bucket_id}
         result = self.api_client._request_with_params(POST, CREATE_FOLDER, self.MCS_API, params, self.token, None)
         if result['status'] == 'success':
+            print("\033[32mFolder created successfully\033[0m")
             return True
         else:
+            print("\033[31mError: " + result['message']+ "\033[0m")
             return False
 
     def delete_file(self, bucket_name, object_name):
@@ -90,13 +99,14 @@ class BucketAPI(object):
                 file_id = file.id
         params = {'file_id': file_id}
         if file_id == '':
-            print("Error: Can't find the file")
+            print("\033[31mError: Can't find the file\033[0m")
             return False
         result = self.api_client._request_with_params(GET, DELETE_FILE, self.MCS_API, params, self.token, None)
         if result['status'] == 'success':
+            print("\033[32mFile delete successfully\033[0m")
             return True
         else:
-            print("Error: Can't delete the file")
+            print("\033[31mError: Can't delete the file\033[0m")
             return False
 
     def list_files(self, bucket_name, prefix='', limit='10', offset="0"):
@@ -110,40 +120,46 @@ class BucketAPI(object):
                 file_info: File = File(file)
                 file_list.append(file_info)
             return file_list
+        else:
+            print("\033[31mError: " + result['message'] + "\033[0m")
+            return False
+
 
     def upload_file(self, bucket_name, object_name, file_path):
         prefix, file_name = object_to_filename(object_name)
         bucket_id = self._get_bucket_id(bucket_name)
         if os.stat(file_path).st_size == 0:
-            print("Error:File size cannot be 0")
+            print("\033[31mError:File size cannot be 0\033[0m")
             return None
         file_name = os.path.basename(file_path)
         file_size = os.stat(file_path).st_size
         with open(file_path, 'rb') as file:
             file_hash = md5(file.read()).hexdigest()
         result = self._check_file(bucket_id, file_hash, file_name, prefix)
-        if not (result['data']['file_is_exist']):
-            if not (result['data']['ipfs_is_exist']):
-                with open(file_path, 'rb') as file:
-                    i = 0
-                    queue = Queue()
-                    self.api_client.upload_progress_bar(file_name, file_size)
-                    for chunk in self._read_chunks(file):
-                        i += 1
-                        queue.put((str(i), chunk))
-                    file.close()
-                threads = list()
-                for i in range(3):
-                    worker = threading.Thread(target=self._thread_upload_chunk, args=(queue, file_hash, file_name))
-                    threads.append(worker)
-                    worker.start()
-                for thread in threads:
-                    thread.join()
-                result = self._merge_file(bucket_id, file_hash, file_name, prefix)
-            file_id = result['data']['file_id']
-            file_info = self._get_file_info(file_id)
-            return file_info
-        print("Error:File already existed")
+        if not (result['status'] == 'error'):
+            if not (result['data']['file_is_exist']):
+                if not (result['data']['ipfs_is_exist']):
+                    with open(file_path, 'rb') as file:
+                        i = 0
+                        queue = Queue()
+                        self.api_client.upload_progress_bar(file_name, file_size)
+                        for chunk in self._read_chunks(file):
+                            i += 1
+                            queue.put((str(i), chunk))
+                        file.close()
+                    threads = list()
+                    for i in range(3):
+                        worker = threading.Thread(target=self._thread_upload_chunk, args=(queue, file_hash, file_name))
+                        threads.append(worker)
+                        worker.start()
+                    for thread in threads:
+                        thread.join()
+                    result = self._merge_file(bucket_id, file_hash, file_name, prefix)
+                file_id = result['data']['file_id']
+                file_info = self._get_file_info(file_id)
+                return file_info
+            print("\033[31mError:File already existed\033[0m")
+        print("\033[31mError: " + result['message'] + "\033[0m")
         return None
 
     # def upload_folder(self, bucket_id, folder_path, prefix=''):
@@ -169,8 +185,9 @@ class BucketAPI(object):
             with open(local_filename, 'wb') as f:
                 data = urllib.request.urlopen(ipfs_url)
                 f.write(data.read())
+            print("\033[32mFile download successfully\033[0m")
             return True
-        print('Error: File does not exist')
+        print('\033[31mError: File does not exist\033[0m')
         return False
 
     def _check_file(self, bucket_id, file_hash, file_name, prefix=''):
