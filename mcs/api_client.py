@@ -33,7 +33,7 @@ class APIClient(object):
             print("\033[31mAPIkey or access token does not exist\033[0m")
             return False
         result = self._request_with_params(POST, APIKEY_LOGIN, self.MCS_API, params, None, None)
-        if result == '':
+        if result is None:
             print("\033[31mRequest Error\033[0m")
             return
         if result['status'] != "success":
