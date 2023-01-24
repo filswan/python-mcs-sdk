@@ -28,12 +28,20 @@ class APIClient(object):
         return self._request_without_params(GET, PRICE_RATE, self.MCS_API, self.token)
 
     def api_key_login(self):
-        params = {}
-        params['apikey'] = self.api_key
-        params['access_token'] = self.access_token
-        params['network'] = self.chain_name
+        params = {'apikey': self.api_key, 'access_token': self.access_token, 'network': self.chain_name}
+        if params.get('apikey') == '' or params.get('access_token') == '':
+            print("\033[31mAPIkey or access token does not exist\033[0m")
+            return False
         result = self._request_with_params(POST, APIKEY_LOGIN, self.MCS_API, params, None, None)
+        if result == '':
+            print("\033[31mRequest Error\033[0m")
+            return
+        if result['status'] != "success":
+            print("\033[31mError: " + result['message'] + ". \nPlease check your APIkey and access token, or "
+                                                  "check whether the current network environment corresponds to the APIkey.\033[0m")
+            return
         self.token = result['data']['jwt_token']
+        print("\033[32mLogin successful\033[0m")
         return self.token
 
     def _request(self, method, request_path, mcs_api, params, token, files=False):
