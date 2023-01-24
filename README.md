@@ -71,10 +71,10 @@ from mcs import BucketAPI
 -  Upload a file to the bucket
 
 ```python
-# file_path is the path relative to the current file
-# object_name is your target path. e.g: 'FOLDER_NAME/FILENAME'
-file_data = bucket_client.upload_file('YOUR_BUCKET_NAME', 'OBJECT_NAME' , 'FILE_PATH') 
-print(file_data.to_json())
+    # file_path is the path relative to the current file
+    # object_name is your target path. e.g: 'FOLDER_NAME/FILENAME'
+    file_data = bucket_client.upload_file('YOUR_BUCKET_NAME', 'OBJECT_NAME' , 'FILE_PATH') 
+    print(file_data.to_json())
 ```
 
 ### Onchain Storage
@@ -84,10 +84,9 @@ Onchain storage is designed for stored file information in smart contract.It req
 * Upload File to Onchain storage
 
  ```python
- from mcs import OnchainAPI
- onchain = OnchainAPI(mcs_api)
-
- print(onchain.upload_file('<File Path>'))
+from mcs import OnchainAPI
+    onchain = OnchainAPI(mcs_api)
+    print(onchain.upload_file('<File Path>'))
  ```
 
 * Pay for the storage contract
