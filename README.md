@@ -57,24 +57,6 @@ if __name__ == '__main__':
 
 ## 👨‍💻 Examples
 
-
-### Onchain Storage
-
-Onchain storage is designed for stored file information in smart contract.It requires payment for each file
-
-* Upload File to Onchain storage
-
- ```python
- from mcs import OnchainAPI
- onchain = OnchainAPI(mcs_api)
-
- print(onchain.upload_file('<File Path>'))
- ```
-
-* Pay for the storage contract
-
-Please move forward for [How to pay for the storage](https://docs.filswan.com/multichain.storage/developer-quickstart/sdk/python-mcs-sdk/onchain-storage/advanced-usage)
-
 ### Bucket Storage
 
 - Create a bucket
@@ -94,6 +76,23 @@ Please move forward for [How to pay for the storage](https://docs.filswan.com/mu
 file_data = bucket_client.upload_file('YOUR_BUCKET_NAME', 'OBJECT_NAME' , 'FILE_PATH') 
 print(file_data.to_json())
 ```
+
+### Onchain Storage
+
+Onchain storage is designed for stored file information in smart contract.It requires payment for each file
+
+* Upload File to Onchain storage
+
+ ```python
+ from mcs import OnchainAPI
+ onchain = OnchainAPI(mcs_api)
+
+ print(onchain.upload_file('<File Path>'))
+ ```
+
+* Pay for the storage contract
+
+Please move forward for [How to pay for the storage](https://docs.filswan.com/multichain.storage/developer-quickstart/sdk/python-mcs-sdk/onchain-storage/advanced-usage)
 
 For more examples, please see the [SDK documentation.](https://docs.filswan.com/multi-chain-storage/developer-quickstart/sdk)
 
