@@ -4,6 +4,7 @@ from hashlib import md5
 from queue import Queue
 import os, threading
 import urllib.request
+import time
 
 from mcs.common.utils import object_to_filename
 from mcs.object.bucket_storage import Bucket, File
@@ -163,21 +164,39 @@ class BucketAPI(object):
         print("\033[31mError:File already existed\033[0m")
         return None
 
-    # def upload_folder(self, bucket_id, folder_path, prefix=''):
-    #     path = os.path.basename(folder_path)
-    #     folder_name = os.path.splitext(path)[0]
-    #     self.create_folder(folder_name, bucket_id, prefix)
-    #     files = os.listdir(folder_path)
-    #     success = []
-    #     for f in files:
-    #         f_path = os.path.join(folder_path, f)
-    #         if os.path.isdir(f_path):
-    #             success.extend(self.upload_folder(bucket_id, f_path, os.path.join(prefix, folder_name)))
-    #         else:
-    #             self.upload_to_bucket(bucket_id, f_path, os.path.join(prefix, folder_name))
-    #             time.sleep(0.5)
-    #             success.append(f_path)
-    #     return success
+    def upload_to_bucket(self, bucket_name, file_path, prefix=''):
+        if os.path.isdir(file_path):
+            return self.upload_folder(bucket_name, file_path, prefix)
+        else:
+            file_name = os.path.basename(file_path)
+            return self.upload_file(bucket_name, os.path.join(prefix,file_name), file_path)
+
+    def upload_folder(self, bucket_name, folder_path, prefix=''):
+        # path = os.path.basename(folder_path)
+        # folder_name = os.path.splitext(path)[0]
+        # self.create_folder(bucket_name, folder_path, prefix)
+        # files = os.listdir(folder_path)
+        # success = []
+        # for f in files:
+        #     f_path = os.path.join(folder_path, f)
+        #     if os.path.isdir(f_path):
+        #         success.extend(self.upload_folder(bucket_name, f_path, os.path.join(prefix, folder_name)))
+        #     else:
+        #         self.upload_file(bucket_name, os.path.join(prefix, f_path), f_path,)
+        #         time.sleep(0.5)
+        #         success.append(f_path)
+        # return success
+        folder_name = os.path.basename(folder_path)
+        self.create_folder(bucket_name, folder_name, prefix)
+        res = []
+        files = os.listdir(folder_path)
+        for f in files:
+            f_path = os.path.join(folder_path, f)
+            upload = self.upload_to_bucket(bucket_name, f_path, os.path.join(prefix, folder_name))
+            res.append(upload)
+        
+        return res
+
 
     def download_file(self, bucket_name, object_name, local_filename):
         file = self.get_file(bucket_name, object_name)
