@@ -29,9 +29,9 @@ class APIClient(object):
 
     def api_key_login(self):
         params = {'apikey': self.api_key, 'access_token': self.access_token, 'network': self.chain_name}
-        if params.get('apikey') == '' or params.get('access_token') == '':
-            print("\033[31mAPIkey or access token does not exist\033[0m")
-            return False
+        if params.get('apikey') == '' or params.get('access_token') == '' or params.get('chain_name') == '':
+            print("\033[31mAPIkey, access token, or chain name does not exist\033[0m")
+            return
         result = self._request_with_params(POST, APIKEY_LOGIN, self.MCS_API, params, None, None)
         if result is None:
             print("\033[31mRequest Error\033[0m")
