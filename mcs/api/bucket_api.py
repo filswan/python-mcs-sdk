@@ -29,7 +29,6 @@ class BucketAPI(object):
             bucket_info: Bucket = Bucket(bucket)
             bucket_info_list.append(bucket_info)
 
-        # print(bucket_info_list)
         return bucket_info_list
 
     def create_bucket(self, bucket_name):
@@ -74,6 +73,9 @@ class BucketAPI(object):
     def get_file(self, bucket_name, object_name):
         prefix, file_name = object_to_filename(object_name)
         file_list = self._get_full_file_list(bucket_name, prefix)
+        if file_list is None:
+            print("\033[31mError: Can't find this bucket\033[0m")
+            return
         for file in file_list:
             if file.name == file_name:
                 return file
@@ -84,6 +86,9 @@ class BucketAPI(object):
         bucket_id = self._get_bucket_id(bucket_name)
         params = {"file_name": folder_name, "prefix": prefix, "bucket_uid": bucket_id}
         result = self.api_client._request_with_params(POST, CREATE_FOLDER, self.MCS_API, params, self.token, None)
+        if result is None:
+            print("\033[31mError: Can't create this folder")
+            return 
         if result['status'] == 'success':
             print("\033[32mFolder created successfully\033[0m")
             return True
@@ -94,6 +99,9 @@ class BucketAPI(object):
     def delete_file(self, bucket_name, object_name):
         prefix, file_name = object_to_filename(object_name)
         file_list = self._get_full_file_list(bucket_name, prefix)
+        if file_list is None:
+            print("\033[31mError: Can't find this bucket\033[0m")
+            return
         file_id = ''
         for file in file_list:
             if file.name == file_name:
@@ -164,7 +172,7 @@ class BucketAPI(object):
         print("\033[31mError:File already existed\033[0m")
         return None
 
-    def upload_to_bucket(self, bucket_name, file_path, prefix=''):
+    def _upload_to_bucket(self, bucket_name, file_path, prefix=''):
         if os.path.isdir(file_path):
             return self.upload_folder(bucket_name, file_path, prefix)
         else:
@@ -192,7 +200,7 @@ class BucketAPI(object):
         files = os.listdir(folder_path)
         for f in files:
             f_path = os.path.join(folder_path, f)
-            upload = self.upload_to_bucket(bucket_name, f_path, os.path.join(prefix, folder_name))
+            upload = self._upload_to_bucket(bucket_name, f_path, os.path.join(prefix, folder_name))
             res.append(upload)
         
         return res
