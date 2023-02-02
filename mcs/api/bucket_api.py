@@ -29,7 +29,7 @@ class BucketAPI(object):
                 bucket_info_list.append(bucket_info)
             return bucket_info_list
         except:
-            logging.error("\033[31m" + result['message'] + "\033[0m")
+            logging.error("\033[31m" + 'error' + "\033[0m")
             return
         
 
@@ -80,17 +80,16 @@ class BucketAPI(object):
     # object name
     def get_file(self, bucket_name, object_name):
         try:
-            prefix, file_name = object_to_filename(object_name)
-            file_list = self._get_full_file_list(bucket_name, prefix)
+            bucket_id = self._get_bucket_id(bucket_name)
+            params = {"bucket_uid": bucket_id, "object_name": object_name}
+
+            result = self.api_client._request_with_params(GET, GET_FILE, self.MCS_API, params, self.token, None)
             
-            for file in file_list:
-                if file.name == file_name:
-                    return file
-            logging.error("\033[31mCan't find this object\033[0m")
-            return None
+            if result:
+                return File(result['data'])
         except:
-            logging.error("\033[31mCan't find this bucket\033[0m")
-            return
+            print('error')
+        return
 
     def create_folder(self, bucket_name, folder_name, prefix=''):
         try:
