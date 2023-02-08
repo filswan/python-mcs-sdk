@@ -12,6 +12,21 @@ from pathlib import Path
 
 class APIClient(object):
     def __init__(self, api_key, access_token, chain_name=None, login=True):
+        '''Connect to multichain.storage API
+
+        Parameters:
+            :type api_key: str
+            :param api_key: multichain.storage login API key
+
+            :type access_token: str
+            :param access_token: multichain.storage access token paired with API key
+
+            :type chain_name: str
+            :param chain_name: select mainnet or testnet to connect to
+
+            :type login: bool
+            :param login: whether API key login is required
+        '''
         self.token = None
         if chain_name is None:
             chain_name = "polygon.mainnet"
@@ -23,12 +38,30 @@ class APIClient(object):
             self.api_key_login()
 
     def get_params(self):
+        '''Get multichain.storage parameters
+
+        Return:
+            :type params: dict
+            :return params: multichain.storage informations required for authentificaiton, upload, etc
+        '''
         return self._request_without_params(GET, MCS_PARAMS, self.MCS_API, None)
 
     def get_price_rate(self):
+        '''Get current price rate
+
+        Return:
+            :type price_rate: int
+            :return price_rate: current price rate for onchain storage
+        '''
         return self._request_without_params(GET, PRICE_RATE, self.MCS_API, self.token)
 
     def api_key_login(self):
+        '''Login through API key and acess token pair
+        
+        Return:
+            :type token: str
+            :return token: JWT token for acessing multichain.storage API
+        '''
         params = {'apikey': self.api_key, 'access_token': self.access_token, 'network': self.chain_name}
         # if params.get('apikey') == '' or params.get('access_token') == '' or params.get('chain_name') == '':
         #     logging.error("\033[31mAPIkey, access token, or chain name does not exist\033[0m")

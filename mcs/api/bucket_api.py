@@ -13,6 +13,12 @@ from mcs.object.bucket_storage import Bucket, File
 
 class BucketAPI(object):
     def __init__(self, api_client=None):
+        '''Initialize Bucket API
+
+        Parameter:
+            :type api_client: obj APIClient
+            :param api_client: The mcs api client object
+        '''
         if api_client is None:
             api_client = APIClient()
         self.api_client = api_client
@@ -20,6 +26,12 @@ class BucketAPI(object):
         self.token = self.api_client.token
 
     def list_buckets(self):
+        '''Retrieve bucket list
+
+        Return: 
+            :type bucket_info_list: list[] Bucket
+            :return bucket_info_list: A list of all buckets created on multichain.storage
+        '''
         try:
             result = self.api_client._request_without_params(GET, BUCKET_LIST, self.MCS_API, self.token)
             bucket_info_list = []
@@ -34,6 +46,16 @@ class BucketAPI(object):
         
 
     def create_bucket(self, bucket_name):
+        '''Create bucket on multichain.storage
+
+        Parameters:
+            :type bucket_name: str
+            :param bucket_name: Name of the new bucket
+
+        Return:
+            :type: bool
+            :return: True/False as creation result
+        '''
         params = {'bucket_name': bucket_name}
         try:
             result = self.api_client._request_with_params(POST, CREATE_BUCKET, self.MCS_API, params, self.token, None)
@@ -48,6 +70,16 @@ class BucketAPI(object):
         return False
 
     def delete_bucket(self, bucket_name):
+        '''Delete bucket from multichain.storage
+
+        Parameters:
+            :type bucket_name: str
+            :param bucket_name: Name of the bucket to delete
+
+        Return:
+            :type: bool
+            :return: True/False as creation result
+        '''
         try:
             bucket_id = self._get_bucket_id(bucket_name)
             params = {'bucket_uid': bucket_id}
@@ -61,6 +93,19 @@ class BucketAPI(object):
         return False
 
     def get_bucket(self, bucket_name='', bucket_id=''):
+        '''Get bucket information
+        
+        Parameters:
+            :type bucket_name: str
+            :param bucket_name: Name of the bucket for searching
+
+            :type bucket_id: str
+            :param bucket_id: Bucket uuid for searching
+
+        Return:
+            :type bucket: obj Bucket
+            :return bucket: A bucket object retrieved
+        '''
         bucketlist = self.list_buckets()
         if bucket_id != '' and bucket_name != '':
             for bucket in bucketlist:
@@ -79,6 +124,19 @@ class BucketAPI(object):
 
     # object name
     def get_file(self, bucket_name, object_name):
+        '''Retrieve file object
+
+        Parameters:
+        :type bucket_name: str
+        :param bucket_name: Name of target bucket
+
+        :type object_name: str
+        :type object_name: Path and name of the target file
+
+        Return:
+        :type file: obj File
+        :return file: File object
+        '''
         try:
             prefix, file_name = object_to_filename(object_name)
             file_list = self._get_full_file_list(bucket_name, prefix)
@@ -93,6 +151,22 @@ class BucketAPI(object):
             return
 
     def create_folder(self, bucket_name, folder_name, prefix=''):
+        '''Create folder within bucket
+
+        Parameters:
+            :type bucket_name: str
+            :param bucket_name: Target bucket for folder creation
+
+            :type folder_name: str
+            :param folder_name: New folder name
+
+            :type prefix: str
+            :param prefix: Target path within bucket for folder creation
+
+        Return:
+            :type: bool
+            :return: True/False for 
+        '''
         try:
             bucket_id = self._get_bucket_id(bucket_name)
             params = {"file_name": folder_name, "prefix": prefix, "bucket_uid": bucket_id}
@@ -108,6 +182,19 @@ class BucketAPI(object):
             return 
 
     def delete_file(self, bucket_name, object_name):
+        '''Delete file from bucket
+
+        Parameters:
+            :type bucket_name: str
+            :param bucket_name: Bucket name for target file
+
+            :type object_name: str
+            :param object_name: Path and file name for the target file
+
+        Return:
+            :type: bool
+            :return: True/False as deletion result
+        '''
         try:
             prefix, file_name = object_to_filename(object_name)
             file_list = self._get_full_file_list(bucket_name, prefix)
@@ -132,6 +219,25 @@ class BucketAPI(object):
             return
 
     def list_files(self, bucket_name, prefix='', limit='10', offset="0"):
+        '''Get file list from a bucket
+
+        Parameters:
+            :type bucket_name: str
+            :param bucket_name: Target bucket name
+
+            :type prefix: str
+            :param prefix: Target path within the bucket for file list retrieve
+
+            :type limit: str
+            :param limit: Number of file per page
+
+            :type offset: str
+            :param limit: Number of page
+
+        Return:
+            :type file_list: list[] File
+            :return file_list: List of file object from the target bucket
+        '''
         bucket_id = self._get_bucket_id(bucket_name)
         params = {'bucket_uid': bucket_id, 'prefix': prefix, 'limit': limit, 'offset': offset}
         result = self.api_client._request_with_params(GET, FILE_LIST, self.MCS_API, params, self.token, None)
@@ -148,6 +254,22 @@ class BucketAPI(object):
 
 
     def upload_file(self, bucket_name, object_name, file_path):
+        '''Upload file to bucket
+
+        Parameters:
+            :type bucket_name: str
+            :param bucket_name: Target bucket name
+
+            :type object_name: str
+            :param object_name: Remote file path and name within bucket
+
+            :type file_path: str
+            :param file_path: Local file path
+
+        Return:
+            :type file_info: obj File
+            :return: File object for successfully uploaded file
+        '''
         prefix, file_name = object_to_filename(object_name)
         bucket_id = self._get_bucket_id(bucket_name)
         if os.stat(file_path).st_size == 0:
@@ -193,6 +315,22 @@ class BucketAPI(object):
             return self.upload_file(bucket_name, os.path.join(prefix,file_name), file_path)
 
     def upload_folder(self, bucket_name, folder_path, prefix=''):
+        '''Upload folder to bucket
+
+        Parameter:
+            :type bucket_name: str
+            :param bucket_name: Target bucket name
+
+            :type folder_path: str
+            :param folder_path: Local folder path
+
+            :type prefix: str
+            :param prefix: Remote folder path
+
+        Return:
+            :type res: list[] File
+            :return res: list of uploaded file in the folder
+        '''
         folder_name = os.path.basename(folder_path)
         self.create_folder(bucket_name, folder_name, prefix)
         res = []
@@ -206,6 +344,22 @@ class BucketAPI(object):
 
 
     def download_file(self, bucket_name, object_name, local_filename):
+        '''Download file from bucket
+
+        Parameters:
+            :type bucket_name: str
+            :param bucket_name: Target bucket name
+
+            :type object_name: str
+            :param object_name: Remote file path and file name
+
+            :type local_filename: str
+            :param local_filename: Path and name for store file locally
+
+        Return
+            :type: bool
+            :return: True/False status of download
+        '''
         file = self.get_file(bucket_name, object_name)
         if file is not None:
             ipfs_url = file.ipfs_url
