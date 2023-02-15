@@ -8,7 +8,7 @@ from eth_account import Account
 import json
 import logging
 
-from mcs.object.onchain_storage import Upload, Deal, Payment
+from mcs.object.onchain_storage import *
 
 
 class OnchainAPI(object):
@@ -162,6 +162,10 @@ class OnchainAPI(object):
             params['source_file_upload_id'] = source_file_upload_id
         deal = self.api_client._request_with_params(GET, DEAL_DETAIL + deal_id, self.MCS_API, params, self.token, None)
         return Deal(deal["data"]["source_file_upload_deal"])
+
+    def get_collections(self):
+        res = self.api_client._request_without_params(GET, COLLECTIONS, self.MCS_API, self.token)
+        return list(map(lambda collection: Collection(collection) ,res["data"]))
 
     def _upload_nft_metadata(self, nft):
         params = {}

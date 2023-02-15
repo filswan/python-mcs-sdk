@@ -18,6 +18,7 @@ USER_REGISTER = "/api/v1/user/register"
 USER_LOGIN = "/api/v1/user/login_by_metamask_signature"
 GENERATE_APIKEY = "/api/v1/user/generate_api_key"
 APIKEY_LOGIN = "/api/v1/user/login_by_api_key"
+COLLECTIONS = "/api/v1/storage/mint/nft_collections"
 # bucket api
 CREATE_BUCKET = "/api/v2/bucket/create"
 BUCKET_LIST = "/api/v2/bucket/get_bucket_list"

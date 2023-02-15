@@ -54,6 +54,19 @@ class Deal:
         return json.dumps(self, default=lambda o: o.__dict__,
                           sort_keys=True, indent=4)
 
+class Collection:
+    def __init__(self, collection_data):
+        self.id = collection_data["id"]
+        self.address = collection_data["address"]
+        self.wallet_id = collection_data["wallet_id"]
+        self.tx_hash = collection_data["tx_hash"]
+        self.create_at = collection_data["create_at"]
+        self.update_at = collection_data["update_at"]
+
+    def to_json(self):
+        return json.dumps(self, default=lambda o: o.__dict__,
+                          sort_keys=True, indent=4)
+
 class Payment:
     def __init__(self, payment_data):
         self.w_cid = payment_data["w_cid"]
