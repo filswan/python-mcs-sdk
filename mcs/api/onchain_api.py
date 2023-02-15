@@ -1,9 +1,9 @@
 from mcs.api_client import APIClient
-from mcs.contract import ContractClient
 from mcs.common.constants import *
 from mcs.common.utils import get_contract_abi, get_amount
 from web3 import Web3
 from web3.middleware import geth_poa_middleware
+from web3.logs import DISCARD
 from eth_account import Account
 import json
 import logging
@@ -30,7 +30,7 @@ class OnchainAPI(object):
         self.params = api_client.get_params()["data"]
         self.token_contract = self.w3.eth.contract(self.params['usdc_address'], abi=get_contract_abi(USDC_ABI))
         self.payment_contract = self.w3.eth.contract(self.params['payment_contract_address'], abi=get_contract_abi(SWAN_PAYMENT_ABI))
-        self.mint_contract = self.w3.eth.contract(self.params['mint_contract_address'], abi=get_contract_abi(MINT_ABI))
+        self.mint_contract = self.w3.eth.contract(self.params['nft_collection_factory_address'], abi=get_contract_abi(MINT_ABI))
 
 
     def upload(self, file_path, pay=False, params={}):
@@ -81,8 +81,10 @@ class OnchainAPI(object):
 
         return self.w3.toHex(tx_hash)
 
-    def mint(self, source_file_upload_id, nft_name, image_url, size, description=''):
-        metadata = self._upload_nft_metadata(source_file_upload_id, nft_name, image_url, size, description)
+    def mint(self, source_file_upload_id, nft, collection_address = '', quantity = 1):
+        if not collection_address:
+            collection_address = self.params["default_nft_collection_address"]
+        metadata = self._upload_nft_metadata(source_file_upload_id, nft)
         # print(metadata)
 
         nonce = self.w3.eth.getTransactionCount(self.account.address)
@@ -90,11 +92,11 @@ class OnchainAPI(object):
             'from': self.account.address,
             'nonce': nonce
         }
-        tx = self.mint_contract.functions.mintUnique(self.account.address, str(metadata["data"]["ipfs_url"])).buildTransaction(option_obj)
+        tx = self.mint_contract.functions.mint(collection_address, self.account.address, quantity, str(metadata["data"]["ipfs_url"])).buildTransaction(option_obj)
         signed_tx = self.w3.eth.account.signTransaction(tx, self.account._private_key)
         tx_hash = self.w3.eth.sendRawTransaction(signed_tx.rawTransaction)
         receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash, timeout=CONTRACT_TIME_OUT)
-        result = self.mint_contract.events.TransferSingle().processReceipt(receipt)
+        result = self.mint_contract.events.TransferSingle().processReceipt(receipt, errors=DISCARD)
         id = result[0]['args']['id']
         token_id = int(id)
 
@@ -143,7 +145,7 @@ class OnchainAPI(object):
         deal = self.api_client._request_with_params(GET, DEAL_DETAIL + deal_id, self.MCS_API, params, self.token, None)
         return Deal(deal["data"]["source_file_upload_deal"])
 
-    def _upload_nft_metadata(self, source_file_upload_id, nft_name, image_url, size, description):
+    def _upload_nft_metadata(self, source_file_upload_id, nft):
         params = {}
         params['duration'] = '525'
         params['file_type'] = '1'
@@ -151,20 +153,8 @@ class OnchainAPI(object):
 
         payment_info = self.get_payment_info(source_file_upload_id)
 
-        nft = {}
-        nft['name'] = nft_name
-        nft['description'] = description
-        nft['image'] = image_url
-        nft['tx_hash'] = payment_info.pay_tx_hash
-        nft['attributes'] = [
-            {
-                "trait_type": "Size",
-                "value": size
-            }
-        ]
-        nft['external_url'] = image_url
         # params['file'] = (nft_name, json.dumps(nft))
-        files = {"fileName": nft_name, "file": json.dumps(nft)}
+        files = {"fileName": nft["name"], "file": json.dumps(nft)}
         return self.api_client._request_with_params(POST, UPLOAD_FILE, self.MCS_API, params, self.token, files)
 
         # upload = self.api_client._request_stream_upload(UPLOAD_FILE, self.MCS_API, params, self.token)

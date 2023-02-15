@@ -22,7 +22,7 @@ class APIClient(object):
             self.api_key_login()
 
     def get_params(self):
-        return self._request_without_params(GET, MCS_PARAMS, self.MCS_API, None)
+        return self._request_without_params(GET, MCS_PARAMS, self.MCS_API, self.token)
 
     def get_price_rate(self):
         return self._request_without_params(GET, PRICE_RATE, self.MCS_API, self.token)

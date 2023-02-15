@@ -32,6 +32,6 @@ FILE_LIST = "/api/v2/oss_file/get_file_list"
 # contract
 USDC_ABI = "ERC20.json"
 SWAN_PAYMENT_ABI = "SwanPayment.json"
-MINT_ABI = "SwanNFT.json"
+MINT_ABI = "CollectionFactory.json"
 
 CONTRACT_TIME_OUT = 300
