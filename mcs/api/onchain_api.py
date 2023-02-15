@@ -84,7 +84,7 @@ class OnchainAPI(object):
     def mint(self, source_file_upload_id, nft, collection_address = '', quantity = 1):
         if not collection_address:
             collection_address = self.params["default_nft_collection_address"]
-        metadata = self._upload_nft_metadata(source_file_upload_id, nft)
+        metadata = self._upload_nft_metadata(nft)
         # print(metadata)
 
         nonce = self.w3.eth.getTransactionCount(self.account.address)
@@ -103,6 +103,24 @@ class OnchainAPI(object):
         self._post_mint_info(source_file_upload_id, self.w3.toHex(tx_hash), token_id, self.mint_contract.address)
 
         return self.w3.toHex(tx_hash), token_id
+
+    def create_collection(self, collection_metadata):
+        metadata = self._upload_nft_metadata(collection_metadata)
+        # print(metadata)
+
+        nonce = self.w3.eth.getTransactionCount(self.account.address)
+        option_obj = {
+            'from': self.account.address,
+            'nonce': nonce
+        }
+        tx = self.mint_contract.functions.createCollection(str(metadata["data"]["ipfs_url"])).buildTransaction(option_obj)
+        signed_tx = self.w3.eth.account.signTransaction(tx, self.account._private_key)
+        tx_hash = self.w3.eth.sendRawTransaction(signed_tx.rawTransaction)
+        receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash, timeout=CONTRACT_TIME_OUT)
+        result = self.mint_contract.events.CreateCollection().processReceipt(receipt, errors=DISCARD)
+        collection_address = result[0]['args']['collectionAddress']
+
+        return self.w3.toHex(tx_hash), collection_address
 
     def get_payment_info(self, source_file_upload_id):
         params = {}
@@ -145,13 +163,11 @@ class OnchainAPI(object):
         deal = self.api_client._request_with_params(GET, DEAL_DETAIL + deal_id, self.MCS_API, params, self.token, None)
         return Deal(deal["data"]["source_file_upload_deal"])
 
-    def _upload_nft_metadata(self, source_file_upload_id, nft):
+    def _upload_nft_metadata(self, nft):
         params = {}
         params['duration'] = '525'
         params['file_type'] = '1'
         params['wallet_address'] = self.account.address
-
-        payment_info = self.get_payment_info(source_file_upload_id)
 
         # params['file'] = (nft_name, json.dumps(nft))
         files = {"fileName": nft["name"], "file": json.dumps(nft)}
