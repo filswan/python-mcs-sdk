@@ -131,6 +131,7 @@ class OnchainAPI(object):
 
         collection_info = collection_metadata
         collection_info['address'] = collection_address
+        collection_info['tx_hash'] = self.w3.toHex(tx_hash)
 
         result = self._post_collection_info(collection_info)
 
