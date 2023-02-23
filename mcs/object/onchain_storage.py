@@ -20,8 +20,8 @@ class Upload:
 
 class Deal:
     def __init__(self, deal_data):
-        self.deal_id = deal_data["deal_id"]
-        self.message_cid = deal_data["message_cid"]
+        self.deal_id = deal_data.get("deal_id", None)
+        self.message_cid = deal_data.get("message_cid", None)
         self.deal_cid = deal_data["deal_cid"]
         self.height = deal_data["height"]
         self.piece_cid = deal_data["piece_cid"]
@@ -54,11 +54,42 @@ class Deal:
         return json.dumps(self, default=lambda o: o.__dict__,
                           sort_keys=True, indent=4)
 
+class SourceFile:
+    def __init__(self, file_data):
+        self.source_file_upload_id = file_data["source_file_upload_id"]
+        self.file_name = file_data["file_name"]
+        self.file_size = file_data["file_size"]
+        self.upload_at =  file_data["upload_at"]
+        self.duration =  file_data["duration"]
+        self.ipfs_url = file_data["ipfs_url"]
+        self.pin_status =  file_data["pin_status"]
+        self.pay_amount =  file_data["pay_amount"]
+        self.status =  file_data["status"]
+        self.note =  file_data["note"]
+        self.is_free =  file_data["is_free"]
+        self.is_minted =  file_data["is_minted"]
+        self.refunded_by_self =  file_data["refunded_by_self"]
+        self.offline_deal =  file_data["offline_deal"]
+    
+    def to_json(self):
+        return json.dumps(self, default=lambda o: o.__dict__,
+                          sort_keys=True, indent=4)
+
 class Collection:
     def __init__(self, collection_data):
         self.id = collection_data["id"]
         self.address = collection_data["address"]
+
+        self.name = collection_data["name"]
+        self.description = collection_data["description"]
+        self.image_url = collection_data["image_url"]
+        self.external_link = collection_data["external_link"]
+        self.seller_fee = collection_data["seller_fee"]
         self.wallet_id = collection_data["wallet_id"]
+        self.wallet_id_recipient = collection_data["wallet_id_recipient"]
+        self.wallet_recipient = collection_data["wallet_recipient"]
+        self.is_default = collection_data["is_default"]
+
         self.tx_hash = collection_data["tx_hash"]
         self.create_at = collection_data["create_at"]
         self.update_at = collection_data["update_at"]

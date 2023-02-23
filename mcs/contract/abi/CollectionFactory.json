@@ -65,6 +65,11 @@
     "inputs": [
       {
         "internalType": "string",
+        "name": "collectionName",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
         "name": "contractURI",
         "type": "string"
       }
@@ -142,6 +147,11 @@
   },
   {
     "inputs": [
+      {
+        "internalType": "string",
+        "name": "collectionName",
+        "type": "string"
+      },
       {
         "internalType": "string",
         "name": "contractURI",

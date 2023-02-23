@@ -52,14 +52,12 @@ class OnchainAPI(object):
         contract_amount = int(amount * (10 ** decimals))
 
         hash = self._approve_usdc(int(contract_amount * float(self.params['pay_multiply_factor'])))
-        print(hash)
-
         receipt = ''
 
         while not receipt:
             receipt = self.w3.eth.get_transaction_receipt(hash)
 
-        nonce = self.w3.eth.getTransactionCount(self.account.address)
+        nonce = self.w3.eth.get_transaction_count(self.account.address)
         decimals = self.token_contract.functions.decimals().call()
         lock_obj = {
             'id': payment_info.w_cid,
@@ -71,12 +69,12 @@ class OnchainAPI(object):
             'copyLimit': 5,
         }
 
-        tx = self.payment_contract.functions.lockTokenPayment(lock_obj).buildTransaction({
+        tx = self.payment_contract.functions.lockTokenPayment(lock_obj).build_transaction({
             'from': self.account.address,
             'nonce': nonce
         })
-        signed_tx = self.w3.eth.account.signTransaction(tx, self.account._private_key)
-        tx_hash = self.w3.eth.sendRawTransaction(signed_tx.rawTransaction)
+        signed_tx = self.w3.eth.account.sign_transaction(tx, self.account._private_key)
+        tx_hash = self.w3.eth.send_raw_transaction(signed_tx.rawTransaction)
         self.w3.eth.wait_for_transaction_receipt(tx_hash, timeout=CONTRACT_TIME_OUT)
 
         return self.w3.toHex(tx_hash)
@@ -87,40 +85,54 @@ class OnchainAPI(object):
         metadata = self._upload_nft_metadata(nft)
         # print(metadata)
 
-        nonce = self.w3.eth.getTransactionCount(self.account.address)
+        nonce = self.w3.eth.get_transaction_count(self.account.address)
         option_obj = {
             'from': self.account.address,
             'nonce': nonce
         }
-        tx = self.mint_contract.functions.mint(collection_address, self.account.address, quantity, str(metadata["data"]["ipfs_url"])).buildTransaction(option_obj)
-        signed_tx = self.w3.eth.account.signTransaction(tx, self.account._private_key)
-        tx_hash = self.w3.eth.sendRawTransaction(signed_tx.rawTransaction)
+        tx = self.mint_contract.functions.mint(collection_address, self.account.address, quantity, str(metadata["data"]["ipfs_url"])).build_transaction(option_obj)
+        signed_tx = self.w3.eth.account.sign_transaction(tx, self.account._private_key)
+        tx_hash = self.w3.eth.send_raw_transaction(signed_tx.rawTransaction)
         receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash, timeout=CONTRACT_TIME_OUT)
         result = self.mint_contract.events.TransferSingle().processReceipt(receipt, errors=DISCARD)
         id = result[0]['args']['id']
         token_id = int(id)
 
-        self._post_mint_info(source_file_upload_id, self.w3.toHex(tx_hash), token_id, self.mint_contract.address)
+        self._post_mint_info(source_file_upload_id, self.w3.toHex(tx_hash), token_id, self.mint_contract.address, nft.get("name", ""), nft.get("description", ""))
 
-        return self.w3.toHex(tx_hash), token_id
+        return {"hash": self.w3.toHex(tx_hash), "tx_hash": self.w3.toHex(tx_hash), "token_id": token_id, "id": token_id }
 
-    def create_collection(self, collection_metadata):
+    def create_collection(self, collection_name, collection_metadata):
         metadata = self._upload_nft_metadata(collection_metadata)
-        # print(metadata)
 
-        nonce = self.w3.eth.getTransactionCount(self.account.address)
+        nonce = self.w3.eth.get_transaction_count(self.account.address)
         option_obj = {
             'from': self.account.address,
             'nonce': nonce
         }
-        tx = self.mint_contract.functions.createCollection(str(metadata["data"]["ipfs_url"])).buildTransaction(option_obj)
-        signed_tx = self.w3.eth.account.signTransaction(tx, self.account._private_key)
-        tx_hash = self.w3.eth.sendRawTransaction(signed_tx.rawTransaction)
+        tx = self.mint_contract.functions.createCollection(collection_name, str(metadata["data"]["ipfs_url"])).build_transaction(option_obj)
+        signed_tx = self.w3.eth.account.sign_transaction(tx, self.account._private_key)
+        tx_hash = self.w3.eth.send_raw_transaction(signed_tx.rawTransaction)
         receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash, timeout=CONTRACT_TIME_OUT)
         result = self.mint_contract.events.CreateCollection().processReceipt(receipt, errors=DISCARD)
         collection_address = result[0]['args']['collectionAddress']
 
-        return self.w3.toHex(tx_hash), collection_address
+        collection_info = collection_metadata
+        collection_info['address'] = collection_address
+
+        result = self._post_collection_info(collection_info)
+
+        return {"hash": self.w3.toHex(tx_hash), "tx_hash": self.w3.toHex(tx_hash), "address": collection_address, "collection_address": collection_address}
+
+    def get_mint_info(self, source_file_upload_id):
+        params = {}
+        if source_file_upload_id:
+            params['source_file_upload_id'] = source_file_upload_id
+        mint_info = self.api_client._request_with_params(GET, MINT_INFO, self.MCS_API, params, self.token, None)
+        if not mint_info:
+            logging.error(f"\033[31mmint info for id {source_file_upload_id} not found \033[0m")
+            return
+        # return Payment(payment_data["data"])
 
     def get_payment_info(self, source_file_upload_id):
         params = {}
@@ -142,12 +154,25 @@ class OnchainAPI(object):
             params['file_name'] = file_name
         if status:
             params['status'] = status
-        return self.api_client._request_with_params(GET, TASKS_DEALS, self.MCS_API, params, self.token, None)
+        deal_response = self.api_client._request_with_params(GET, TASKS_DEALS, self.MCS_API, params, self.token, None)
+        deals = deal_response["data"]["source_file_upload"]
 
-    def _post_mint_info(self, source_file_upload_id, tx_hash, token_id, mint_address):
+        deal_list = []
+
+        for deal_info in deals:
+            deal_list.append(SourceFile(deal_info))
+        return deal_list
+
+    def _post_mint_info(self, source_file_upload_id, tx_hash, token_id, mint_address, name, description):
         params = {'source_file_upload_id': source_file_upload_id, 'tx_hash': tx_hash,
-                  'token_id': int(token_id), 'mint_address': mint_address}
+                  'token_id': int(token_id), 'mint_address': mint_address, 
+                  'name': name, 'description': description}
         return self.api_client._request_with_params(POST, MINT_INFO, self.MCS_API, params, self.token, None)
+
+    def _post_collection_info(self, collection_info):
+        collection_info['seller_fee'] = collection_info.get('seller_fee', 0)
+        return self.api_client._request_with_params(POST, COLLECTION, self.MCS_API, collection_info, self.token, None)
+
 
     def stream_upload_file(self, file_path):
         params = {}
@@ -183,13 +208,13 @@ class OnchainAPI(object):
         # return Upload(data)
 
     def _approve_usdc(self, amount):
-        nonce = self.w3.eth.getTransactionCount(self.account.address)
-        tx = self.token_contract.functions.approve(self.payment_contract.address, amount).buildTransaction({
+        nonce = self.w3.eth.get_transaction_count(self.account.address)
+        tx = self.token_contract.functions.approve(self.payment_contract.address, amount).build_transaction({
             'from': self.account.address,
             'nonce': nonce
         })
-        signed_tx = self.w3.eth.account.signTransaction(tx, self.account._private_key)
-        tx_hash = self.w3.eth.sendRawTransaction(signed_tx.rawTransaction)
+        signed_tx = self.w3.eth.account.sign_transaction(tx, self.account._private_key)
+        tx_hash = self.w3.eth.send_raw_transaction(signed_tx.rawTransaction)
         self.w3.eth.wait_for_transaction_receipt(tx_hash, timeout=CONTRACT_TIME_OUT)
         return self.w3.toHex(tx_hash)
 
