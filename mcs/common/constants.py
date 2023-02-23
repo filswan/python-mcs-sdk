@@ -18,6 +18,8 @@ USER_REGISTER = "/api/v1/user/register"
 USER_LOGIN = "/api/v1/user/login_by_metamask_signature"
 GENERATE_APIKEY = "/api/v1/user/generate_api_key"
 APIKEY_LOGIN = "/api/v1/user/login_by_api_key"
+COLLECTIONS = "/api/v1/storage/mint/nft_collections"
+COLLECTION = "/api/v1/storage/mint/nft_collection"
 # bucket api
 CREATE_BUCKET = "/api/v2/bucket/create"
 BUCKET_LIST = "/api/v2/bucket/get_bucket_list"
@@ -33,6 +35,6 @@ GET_FILE = "/api/v2/oss_file/get_file_by_object_name"
 # contract
 USDC_ABI = "ERC20.json"
 SWAN_PAYMENT_ABI = "SwanPayment.json"
-MINT_ABI = "SwanNFT.json"
+MINT_ABI = "CollectionFactory.json"
 
 CONTRACT_TIME_OUT = 300
