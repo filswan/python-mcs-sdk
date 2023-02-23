@@ -98,9 +98,21 @@ class OnchainAPI(object):
         id = result[0]['args']['id']
         token_id = int(id)
 
-        self._post_mint_info(source_file_upload_id, self.w3.toHex(tx_hash), token_id, self.mint_contract.address, nft.get("name", ""), nft.get("description", ""))
+        collection_id = self._get_collection_id(collection_address)
+
+        self._post_mint_info(source_file_upload_id, self.w3.toHex(tx_hash), token_id, collection_address, collection_id, nft.get("name", ""), nft.get("description", ""))
 
         return {"hash": self.w3.toHex(tx_hash), "tx_hash": self.w3.toHex(tx_hash), "token_id": token_id, "id": token_id }
+
+    def _get_collection_id(self, collection_address):
+        collections = self.get_collections()
+        result = [collection.id for collection in collections if collection.address.lower() == collection_address]
+        if len(result) == 0:
+            logging.error(f"\033[31mCollection address {collection_address} not found \033[0m")
+            return
+        else:
+            return result[0]
+
 
     def create_collection(self, collection_name, collection_metadata):
         metadata = self._upload_nft_metadata(collection_metadata)
@@ -163,10 +175,10 @@ class OnchainAPI(object):
             deal_list.append(SourceFile(deal_info))
         return deal_list
 
-    def _post_mint_info(self, source_file_upload_id, tx_hash, token_id, mint_address, name, description):
+    def _post_mint_info(self, source_file_upload_id, tx_hash, token_id, collection_address, collection_id, name, description):
         params = {'source_file_upload_id': source_file_upload_id, 'tx_hash': tx_hash,
-                  'token_id': int(token_id), 'mint_address': mint_address, 
-                  'name': name, 'description': description}
+                  'token_id': int(token_id), 'mint_address': collection_address, 
+                  'nft_collection_id': collection_id, 'name': name, 'description': description}
         return self.api_client._request_with_params(POST, MINT_INFO, self.MCS_API, params, self.token, None)
 
     def _post_collection_info(self, collection_info):
