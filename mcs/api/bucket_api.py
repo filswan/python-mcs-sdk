@@ -213,8 +213,9 @@ class BucketAPI(object):
         if file is not None:
             ipfs_url = file.ipfs_url
             with open(local_filename, 'wb') as f:
-                data = urllib.request.urlopen(ipfs_url)
-                f.write(data.read())
+                if file.size > 0:
+                    data = urllib.request.urlopen(ipfs_url)
+                    f.write(data.read())
             logging.info("\033[32mFile download successfully\033[0m")
             return True
         logging.error('\033[31mFile does not exist\033[0m')
