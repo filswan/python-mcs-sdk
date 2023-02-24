@@ -128,9 +128,6 @@ class BucketAPI(object):
     def upload_file(self, bucket_name, object_name, file_path):
         prefix, file_name = object_to_filename(object_name)
         bucket_id = self._get_bucket_id(bucket_name)
-        if os.stat(file_path).st_size == 0:
-            print("\033[31mError:File size cannot be 0\033[0m")
-            return None
         file_size = os.stat(file_path).st_size
         with open(file_path, 'rb') as file:
             file_hash = md5(file.read()).hexdigest()
@@ -184,8 +181,9 @@ class BucketAPI(object):
         if file is not None:
             ipfs_url = file.ipfs_url
             with open(local_filename, 'wb') as f:
-                data = urllib.request.urlopen(ipfs_url)
-                f.write(data.read())
+                if file.size > 0:
+                    data = urllib.request.urlopen(ipfs_url)
+                    f.write(data.read())
             print("\033[32mFile download successfully\033[0m")
             return True
         print('\033[31mError: File does not exist\033[0m')
