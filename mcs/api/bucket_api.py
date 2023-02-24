@@ -149,9 +149,9 @@ class BucketAPI(object):
     def upload_file(self, bucket_name, object_name, file_path, replace=False):
         prefix, file_name = object_to_filename(object_name)
         bucket_id = self._get_bucket_id(bucket_name)
-        if os.stat(file_path).st_size == 0:
-            logging.error("\033[31mFile size cannot be 0\033[0m")
-            return None
+        # if os.stat(file_path).st_size == 0:
+        #     logging.error("\033[31mFile size cannot be 0\033[0m")
+        #     return None
         file_size = os.stat(file_path).st_size
         with open(file_path, 'rb') as file:
             file_hash = md5(file.read()).hexdigest()
@@ -160,7 +160,7 @@ class BucketAPI(object):
             logging.error("\033[31mCan't find this bucket\033[0m")
             return
         # Replace file if already existed
-        if result[['data']['file_is_exist']] and replace:
+        if result['data']['file_is_exist'] and replace:
             self.delete_file(bucket_name, object_name)
             result = self._check_file(bucket_id, file_hash, file_name, prefix)
         if not (result['data']['file_is_exist']):
