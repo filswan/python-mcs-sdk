@@ -2,6 +2,7 @@ from mcs.common.constants import *
 from mcs.common.params import Params
 import requests
 import json
+import logging
 from mcs.common import utils, exceptions
 from mcs.common import constants as c
 from requests_toolbelt.multipart.encoder import MultipartEncoder, MultipartEncoderMonitor
@@ -22,27 +23,25 @@ class APIClient(object):
             self.api_key_login()
 
     def get_params(self):
-        return self._request_without_params(GET, MCS_PARAMS, self.MCS_API, None)
+        return self._request_without_params(GET, MCS_PARAMS, self.MCS_API, self.token)
 
     def get_price_rate(self):
         return self._request_without_params(GET, PRICE_RATE, self.MCS_API, self.token)
 
     def api_key_login(self):
         params = {'apikey': self.api_key, 'access_token': self.access_token, 'network': self.chain_name}
-        if params.get('apikey') == '' or params.get('access_token') == '':
-            print("\033[31mAPIkey or access token does not exist\033[0m")
-            return False
-        result = self._request_with_params(POST, APIKEY_LOGIN, self.MCS_API, params, None, None)
-        if result is None:
-            print("\033[31mRequest Error\033[0m")
-            return
-        if result['status'] != "success":
-            print("\033[31mError: " + result['message'] + ". \nPlease check your APIkey and access token, or "
+        # if params.get('apikey') == '' or params.get('access_token') == '' or params.get('chain_name') == '':
+        #     logging.error("\033[31mAPIkey, access token, or chain name does not exist\033[0m")
+        #     return
+        try:
+            result = self._request_with_params(POST, APIKEY_LOGIN, self.MCS_API, params, None, None)
+            self.token = result['data']['jwt_token']
+            logging.info("\033[32mLogin successful\033[0m")
+            return self.token
+        except:
+            logging.error("\033[31m Please check your APIkey and access token, or "
                                                   "check whether the current network environment corresponds to the APIkey.\033[0m")
             return
-        self.token = result['data']['jwt_token']
-        print("\033[32mLogin successful\033[0m")
-        return self.token
 
     def _request(self, method, request_path, mcs_api, params, token, files=False):
         if method == c.GET:
