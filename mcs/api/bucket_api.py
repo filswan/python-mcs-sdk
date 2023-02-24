@@ -146,7 +146,7 @@ class BucketAPI(object):
             return False
 
 
-    def upload_file(self, bucket_name, object_name, file_path):
+    def upload_file(self, bucket_name, object_name, file_path, replace=False):
         prefix, file_name = object_to_filename(object_name)
         bucket_id = self._get_bucket_id(bucket_name)
         if os.stat(file_path).st_size == 0:
@@ -159,6 +159,10 @@ class BucketAPI(object):
         if result is None:
             logging.error("\033[31mCan't find this bucket\033[0m")
             return
+        # Replace file if already existed
+        if result[['data']['file_is_exist']] and replace:
+            self.delete_file(bucket_name, object_name)
+            result = self._check_file(bucket_id, file_hash, file_name, prefix)
         if not (result['data']['file_is_exist']):
             if not (result['data']['ipfs_is_exist']):
                 with open(file_path, 'rb') as file:
