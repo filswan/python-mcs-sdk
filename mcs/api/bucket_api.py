@@ -183,10 +183,19 @@ class BucketAPI(object):
                 result = self._merge_file(bucket_id, file_hash, file_name, prefix)
             file_id = result['data']['file_id']
             file_info = self._get_file_info(file_id)
+            self._create_folders(bucket_name, prefix)
             logging.info("\033[32mFile upload successfully\033[0m")
             return file_info
         logging.error("\033[31mFile already exists\033[0m")
         return None
+    
+    def _create_folders(self, bucket_name, path):
+        bucket_id = self._get_bucket_id(bucket_name)
+        path, folder_name = object_to_filename(path)
+        while folder_name:
+            params = {"file_name": folder_name, "prefix": path, "bucket_uid": bucket_id}
+            self.api_client._request_with_params(POST, CREATE_FOLDER, self.MCS_API, params, self.token, None)
+            path, folder_name = object_to_filename(path)
 
     def _upload_to_bucket(self, bucket_name, file_path, prefix=''):
         if os.path.isdir(file_path):
