@@ -6,6 +6,8 @@ from queue import Queue
 import os, threading
 import urllib.request
 import logging
+import glob
+import shutil
 
 from mcs.common.utils import object_to_filename
 from mcs.object.bucket_storage import Bucket, File
@@ -18,6 +20,7 @@ class BucketAPI(object):
         self.api_client = api_client
         self.MCS_API = api_client.MCS_API
         self.token = self.api_client.token
+        self.gateway = self.get_gateway()[0]
 
     def list_buckets(self):
         try:
@@ -84,9 +87,9 @@ class BucketAPI(object):
             params = {"bucket_uid": bucket_id, "object_name": object_name}
 
             result = self.api_client._request_with_params(GET, GET_FILE, self.MCS_API, params, self.token, None)
-            
+
             if result:
-                return File(result['data'])
+                return File(result['data'], self.gateway)
         except:
             print('error')
         return
@@ -138,7 +141,7 @@ class BucketAPI(object):
             files = result['data']['file_list']
             file_list = []
             for file in files:
-                file_info: File = File(file)
+                file_info: File = File(file, self.gateway)
                 file_list.append(file_info)
             return file_list
         else:
@@ -206,6 +209,24 @@ class BucketAPI(object):
             res.append(upload)
         
         return res
+    
+    def upload_ipfs_folder(self, bucket_name, object_name, folder_path):
+        folder_name = os.path.basename(object_name) or os.path.basename(folder_path)
+        prefix = os.path.normpath(os.path.dirname(object_name)) if os.path.dirname(object_name) else ''
+        bucket_uid = self._get_bucket_id(bucket_name)
+        files = self._read_files(folder_path)
+        print(files)
+
+        form_data = {"folder_name": folder_name, "prefix": prefix, "bucket_uid": bucket_uid}
+        print(form_data)
+
+        res = self.api_client._request_with_params(POST, PIN_IPFS, self.MCS_API, form_data, self.token, files)
+
+        if res:
+            folder = (File(res["data"], self.gateway))
+            return folder
+        else: 
+            logging.error("\033[31mIPFS Folder Upload Error\033[0m")
 
 
     def download_file(self, bucket_name, object_name, local_filename):
@@ -264,12 +285,37 @@ class BucketAPI(object):
                 self.api_client._request_with_params(GET, FILE_LIST, self.MCS_API, params, self.token, None)['data'][
                     'file_list']
             for file in result:
-                file_info: File = File(file)
+                file_info: File = File(file, self.gateway)
                 file_list.append(file_info)
         return file_list
 
     def _get_file_info(self, file_id):
         params = {'file_id': file_id}
         result = self.api_client._request_with_params(GET, FILE_INFO, self.MCS_API, params, self.token, None)
-        file_info = File(result['data'])
+        file_info = File(result['data'], self.gateway)
         return file_info
+    
+    def get_gateway(self):
+        result = self.api_client._request_without_params(GET, GET_GATEWAY, self.MCS_API, self.token)
+        return result['data']
+
+    def _read_files(self, root_folder):
+    # Create an empty list to store the file tuples
+        file_dict = []
+
+        # Use glob to retrieve the file paths in the directory and its subdirectories
+        file_paths = glob.glob(os.path.join(root_folder, '**', '*'), recursive=True)
+
+        # Loop through each file path and read the contents of the file
+        for file_path in file_paths:
+            if os.path.isfile(file_path):
+                # Get the relative path from the root folder
+                rel_path = os.path.relpath(file_path, root_folder)
+
+                # Use the relative path as the file name
+                filename = os.path.normpath(rel_path).replace(os.sep, '/')
+
+                # Read the contents of the file in binary mode
+                file_dict.append(('files', open(file_path, 'rb')))
+
+        return file_dict

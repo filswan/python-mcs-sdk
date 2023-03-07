@@ -1,5 +1,5 @@
 MCS_POLYGON_MAIN_API = "https://api.multichain.storage"
-MCS_POLYGON_MUMBAI_API = "https://calibration-mcs-api.filswan.com"
+MCS_POLYGON_MUMBAI_API = "http://192.168.88.41:8889"
 MCS_BSC_API = 'https://calibration-mcs-bsc.filswan.com'
 GET = "GET"
 POST = "POST"
@@ -32,6 +32,8 @@ UPLOAD_CHUNK = "/api/v2/oss_file/upload"
 MERGE_FILE = "/api/v2/oss_file/merge"
 FILE_LIST = "/api/v2/oss_file/get_file_list"
 GET_FILE = "/api/v2/oss_file/get_file_by_object_name"
+GET_GATEWAY = "/api/v2/gateway/get_gateway"
+PIN_IPFS = "/api/v2/oss_file/pin_files_to_ipfs"
 # contract
 USDC_ABI = "ERC20.json"
 SWAN_PAYMENT_ABI = "SwanPayment.json"
