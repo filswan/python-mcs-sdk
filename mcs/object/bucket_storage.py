@@ -30,7 +30,7 @@ class File:
         self.prefix = file_data["prefix"]
         self.size = file_data["size"]
         self.payloadCid = file_data["payload_cid"]
-        self.ipfs_url = gateway + '/ipfs/' + file_data["payload_cid"]
+        self.ipfs_url = "http://" + gateway + '/ipfs/' + file_data["payload_cid"]
         self.pin_status = file_data["pin_status"]
         self.is_deleted = file_data["is_deleted"]
         self.is_folder = file_data["is_folder"]
@@ -38,7 +38,7 @@ class File:
         self.updated_at = file_data["updated_at"]
         self.created_at = file_data["created_at"]
         self.deleted_at = file_data["deleted_at"]
-
+        self.gateway = gateway
         self.object_name = file_data["object_name"]
         self.type = file_data["type"]
 

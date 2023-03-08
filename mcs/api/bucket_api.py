@@ -208,18 +208,18 @@ class BucketAPI(object):
 
         return res
 
-    def upload_ipfs_folder(self, bucket_name, object_name, folder_path):
-        folder_name = os.path.basename(object_name) or os.path.basename(folder_path)
-        prefix = os.path.normpath(os.path.dirname(object_name)) if os.path.dirname(object_name) else ''
-        bucket_uid = self._get_bucket_id(bucket_name)
-        files = self._read_files(folder_path, folder_name)
-        form_data = {"folder_name": folder_name, "prefix": prefix, "bucket_uid": bucket_uid}
-        res = self.api_client._request_with_params(POST, PIN_IPFS, self.MCS_API, form_data, self.token, files)
-        if res:
-            folder = (File(res["data"], self.gateway))
-            return folder
-        else:
-            logging.error("\033[31mIPFS Folder Upload Error\033[0m")
+    # def upload_ipfs_folder(self, bucket_name, object_name, folder_path):
+    #     folder_name = os.path.basename(object_name) or os.path.basename(folder_path)
+    #     prefix = os.path.normpath(os.path.dirname(object_name)) if os.path.dirname(object_name) else ''
+    #     bucket_uid = self._get_bucket_id(bucket_name)
+    #     files = self._read_files(folder_path, folder_name)
+    #     form_data = {"folder_name": folder_name, "prefix": prefix, "bucket_uid": bucket_uid}
+    #     res = self.api_client._request_with_params(POST, PIN_IPFS, self.MCS_API, form_data, self.token, files)
+    #     if res:
+    #         folder = (File(res["data"], self.gateway))
+    #         return folder
+    #     else:
+    #         logging.error("\033[31mIPFS Folder Upload Error\033[0m")
 
     def download_file(self, bucket_name, object_name, local_filename):
         file = self.get_file(bucket_name, object_name)
