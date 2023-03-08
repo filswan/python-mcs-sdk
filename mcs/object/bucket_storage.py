@@ -39,6 +39,9 @@ class File:
         self.created_at = file_data["created_at"]
         self.deleted_at = file_data["deleted_at"]
 
+        self.object_name = file_data["object_name"]
+        self.type = file_data["type"]
+
     def to_json(self):
         return json.dumps(self, default=lambda o: o.__dict__,
                           sort_keys=True, indent=4)
