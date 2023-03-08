@@ -292,8 +292,6 @@ class BucketAPI(object):
         return result['data']
 
     def _read_files(self, root_folder, folder_name):
-
-        print(root_folder, folder_name)
         # Create an empty list to store the file tuples
         file_dict = []
 
