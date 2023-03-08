@@ -80,8 +80,8 @@ def test_delete_file():
 
     assert delete == True
 
-# def test_upload_ipfs_folder():
-#     api = login()
-#     res = api.upload_ipfs_folder('test-bucket', 'ipfs-folder', 'images')
+def test_upload_ipfs_folder():
+    api = login()
+    res = api.upload_ipfs_folder('test-bucket', 'ipfs-folder', 'images')
 
-#     print(res)
+    print(res)
