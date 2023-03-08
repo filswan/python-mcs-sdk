@@ -34,7 +34,6 @@ class BucketAPI(object):
         except:
             logging.error("\033[31m" + 'error' + "\033[0m")
             return
-        
 
     def create_bucket(self, bucket_name):
         params = {'bucket_name': bucket_name}
@@ -47,7 +46,7 @@ class BucketAPI(object):
                 logging.error("\033[31m" + result['message'] + "\033[0m")
         except:
             logging.error("\033[31mThis bucket already exists\033[0m")
-        
+
         return False
 
     def delete_bucket(self, bucket_name):
@@ -103,17 +102,17 @@ class BucketAPI(object):
                 logging.info("\033[31mFolder created successfully\033[0m")
                 return True
             else:
-                logging.error("\033[31m" + result['message']+ "\033[0m")
+                logging.error("\033[31m" + result['message'] + "\033[0m")
                 return False
         except:
             logging.error("\033[31mCan't create this folder")
-            return 
+            return
 
     def delete_file(self, bucket_name, object_name):
         try:
             prefix, file_name = object_to_filename(object_name)
             file_list = self._get_full_file_list(bucket_name, prefix)
-        
+
             file_id = ''
             for file in file_list:
                 if file.name == file_name:
@@ -147,7 +146,6 @@ class BucketAPI(object):
         else:
             logging.error("\033[31m" + result['message'] + "\033[0m")
             return False
-
 
     def upload_file(self, bucket_name, object_name, file_path, replace=False):
         prefix, file_name = object_to_filename(object_name)
@@ -196,7 +194,7 @@ class BucketAPI(object):
             return self.upload_folder(bucket_name, file_path, prefix)
         else:
             file_name = os.path.basename(file_path)
-            return self.upload_file(bucket_name, os.path.join(prefix,file_name), file_path)
+            return self.upload_file(bucket_name, os.path.join(prefix, file_name), file_path)
 
     def upload_folder(self, bucket_name, folder_path, prefix=''):
         folder_name = os.path.basename(folder_path)
@@ -207,27 +205,21 @@ class BucketAPI(object):
             f_path = os.path.join(folder_path, f)
             upload = self._upload_to_bucket(bucket_name, f_path, os.path.join(prefix, folder_name))
             res.append(upload)
-        
+
         return res
-    
+
     def upload_ipfs_folder(self, bucket_name, object_name, folder_path):
         folder_name = os.path.basename(object_name) or os.path.basename(folder_path)
         prefix = os.path.normpath(os.path.dirname(object_name)) if os.path.dirname(object_name) else ''
         bucket_uid = self._get_bucket_id(bucket_name)
-        files = self._read_files(folder_path)
-        print(files)
-
+        files = self._read_files(folder_path, folder_name)
         form_data = {"folder_name": folder_name, "prefix": prefix, "bucket_uid": bucket_uid}
-        print(form_data)
-
         res = self.api_client._request_with_params(POST, PIN_IPFS, self.MCS_API, form_data, self.token, files)
-
         if res:
             folder = (File(res["data"], self.gateway))
             return folder
-        else: 
+        else:
             logging.error("\033[31mIPFS Folder Upload Error\033[0m")
-
 
     def download_file(self, bucket_name, object_name, local_filename):
         file = self.get_file(bucket_name, object_name)
@@ -294,13 +286,15 @@ class BucketAPI(object):
         result = self.api_client._request_with_params(GET, FILE_INFO, self.MCS_API, params, self.token, None)
         file_info = File(result['data'], self.gateway)
         return file_info
-    
+
     def get_gateway(self):
         result = self.api_client._request_without_params(GET, GET_GATEWAY, self.MCS_API, self.token)
         return result['data']
 
-    def _read_files(self, root_folder):
-    # Create an empty list to store the file tuples
+    def _read_files(self, root_folder, folder_name):
+
+        print(root_folder, folder_name)
+        # Create an empty list to store the file tuples
         file_dict = []
 
         # Use glob to retrieve the file paths in the directory and its subdirectories
@@ -310,12 +304,8 @@ class BucketAPI(object):
         for file_path in file_paths:
             if os.path.isfile(file_path):
                 # Get the relative path from the root folder
-                rel_path = os.path.relpath(file_path, root_folder)
-
-                # Use the relative path as the file name
-                filename = os.path.normpath(rel_path).replace(os.sep, '/')
-
-                # Read the contents of the file in binary mode
-                file_dict.append(('files', open(file_path, 'rb')))
+                upload_path = folder_name + "/" + os.path.relpath(file_path, root_folder)
+                file_dict.append(('files', (
+                    upload_path, open(file_path, 'rb'))))
 
         return file_dict
