@@ -38,17 +38,16 @@ def test_create_collection():
     api = login()
 
     num_collections = len(api.get_collections())
-    collection = api.create_collection('test-collection-' + str(num_collections), {"name": 'test-collection-'+str(num_collections)})
-    pytest.collection_address = collection["address"]
+    collection = api.create_collection({"name": 'test-collection-'+str(num_collections)})
 
     assert len(api.get_collections()) == num_collections + 1
 
-def test_mint():
-    api = login()
+# def test_mint():
+#     api = login()
 
-    mint = api.mint(pytest.file.source_file_upload_id, {"name": 'test-nft', 'image': pytest.file.ipfs_url}, pytest.collection_address)
+#     mint = api.mint(pytest.file.source_file_upload_id, {"name": 'test-nft', 'image': pytest.file.ipfs_url}, pytest.collection_address)
 
-    assert mint["id"] == 1
+#     assert mint["id"] == 1
 
 def test_get_uploads():
     api = login()

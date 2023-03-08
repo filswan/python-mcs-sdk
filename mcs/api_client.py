@@ -27,6 +27,11 @@ class APIClient(object):
 
     def get_price_rate(self):
         return self._request_without_params(GET, PRICE_RATE, self.MCS_API, self.token)
+    
+    def get_gateway(self):
+        res = self._request_without_params(GET, GET_GATEWAY, self.MCS_API, self.token)
+        gateway = res["data"][0]
+        return gateway
 
     def api_key_login(self):
         params = {'apikey': self.api_key, 'access_token': self.access_token, 'network': self.chain_name}

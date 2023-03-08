@@ -18,6 +18,7 @@ class BucketAPI(object):
         self.api_client = api_client
         self.MCS_API = api_client.MCS_API
         self.token = self.api_client.token
+        self.gateway = api_client.get_gateway()
 
     def list_buckets(self):
         try:
@@ -138,7 +139,7 @@ class BucketAPI(object):
             files = result['data']['file_list']
             file_list = []
             for file in files:
-                file_info: File = File(file)
+                file_info: File = File(file, self.gateway)
                 file_list.append(file_info)
             return file_list
         else:
@@ -275,12 +276,12 @@ class BucketAPI(object):
                 self.api_client._request_with_params(GET, FILE_LIST, self.MCS_API, params, self.token, None)['data'][
                     'file_list']
             for file in result:
-                file_info: File = File(file)
+                file_info: File = File(file, self.gateway)
                 file_list.append(file_info)
         return file_list
 
     def _get_file_info(self, file_id):
         params = {'file_id': file_id}
         result = self.api_client._request_with_params(GET, FILE_INFO, self.MCS_API, params, self.token, None)
-        file_info = File(result['data'])
+        file_info = File(result['data'], self.gateway)
         return file_info

@@ -32,6 +32,7 @@ UPLOAD_CHUNK = "/api/v2/oss_file/upload"
 MERGE_FILE = "/api/v2/oss_file/merge"
 FILE_LIST = "/api/v2/oss_file/get_file_list"
 GET_FILE = "/api/v2/oss_file/get_file_by_object_name"
+GET_GATEWAY = "/api/v2/gateway/get_gateway"
 # contract
 USDC_ABI = "ERC20.json"
 SWAN_PAYMENT_ABI = "SwanPayment.json"
