@@ -150,9 +150,11 @@ class BucketAPI(object):
     def upload_file(self, bucket_name, object_name, file_path, replace=False):
         prefix, file_name = object_to_filename(object_name)
         bucket_id = self._get_bucket_id(bucket_name)
+
         # if os.stat(file_path).st_size == 0:
         #     logging.error("\033[31mFile size cannot be 0\033[0m")
         #     return None
+
         file_size = os.stat(file_path).st_size
         with open(file_path, 'rb') as file:
             file_hash = md5(file.read()).hexdigest()
@@ -184,10 +186,19 @@ class BucketAPI(object):
                 result = self._merge_file(bucket_id, file_hash, file_name, prefix)
             file_id = result['data']['file_id']
             file_info = self._get_file_info(file_id)
+            self._create_folders(bucket_name, prefix)
             logging.info("\033[32mFile upload successfully\033[0m")
             return file_info
         logging.error("\033[31mFile already exists\033[0m")
         return None
+    
+    def _create_folders(self, bucket_name, path):
+        bucket_id = self._get_bucket_id(bucket_name)
+        path, folder_name = object_to_filename(path)
+        while folder_name:
+            params = {"file_name": folder_name, "prefix": path, "bucket_uid": bucket_id}
+            self.api_client._request_with_params(POST, CREATE_FOLDER, self.MCS_API, params, self.token, None)
+            path, folder_name = object_to_filename(path)
 
     def _upload_to_bucket(self, bucket_name, file_path, prefix=''):
         if os.path.isdir(file_path):

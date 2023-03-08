@@ -22,15 +22,15 @@ class Bucket:
 
 
 class File:
-    def __init__(self, file_data, gateway=''):
+    def __init__(self, file_data, gateway = 'https://ipfs.io'):
         self.name = file_data["name"]
         self.address = file_data["address"]
         self.bucket_uid = file_data["bucket_uid"]
         self.filehash = file_data["file_hash"]
         self.prefix = file_data["prefix"]
         self.size = file_data["size"]
-        self.payloadCid = file_data["payload_cid"]
-        self.ipfs_url = gateway + '/ipfs/' + file_data["payload_cid"]
+        self.payload_cid = file_data["payload_cid"]
+        self.ipfs_url = file_data.get("ipfs_url", gateway + '/ipfs/' + file_data["payload_cid"])
         self.pin_status = file_data["pin_status"]
         self.is_deleted = file_data["is_deleted"]
         self.is_folder = file_data["is_folder"]

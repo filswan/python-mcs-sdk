@@ -79,3 +79,9 @@ def test_delete_file():
     delete = api.delete_file('test-bucket', 'folder1/mcs-logo.png')
 
     assert delete == True
+
+# def test_upload_ipfs_folder():
+#     api = login()
+#     res = api.upload_ipfs_folder('test-bucket', 'ipfs-folder', 'images')
+
+#     print(res)
