@@ -114,7 +114,8 @@ class OnchainAPI(object):
             return result[0]
 
 
-    def create_collection(self, collection_name, collection_metadata):
+    def create_collection(self, collection_metadata):
+        collection_name = collection_metadata["name"]
         metadata = self._upload_nft_metadata(collection_metadata)
 
         nonce = self.w3.eth.get_transaction_count(self.account.address)
@@ -125,17 +126,18 @@ class OnchainAPI(object):
         tx = self.mint_contract.functions.createCollection(collection_name, str(metadata["data"]["ipfs_url"])).build_transaction(option_obj)
         signed_tx = self.w3.eth.account.sign_transaction(tx, self.account._private_key)
         tx_hash = self.w3.eth.send_raw_transaction(signed_tx.rawTransaction)
-        receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash, timeout=CONTRACT_TIME_OUT)
-        result = self.mint_contract.events.CreateCollection().processReceipt(receipt, errors=DISCARD)
-        collection_address = result[0]['args']['collectionAddress']
+        # receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash, timeout=CONTRACT_TIME_OUT)
+        # result = self.mint_contract.events.CreateCollection().processReceipt(receipt, errors=DISCARD)
+        # collection_address = result[0]['args']['collectionAddress']
 
         collection_info = collection_metadata
-        collection_info['address'] = collection_address
+        # collection_info['address'] = collection_address
         collection_info['tx_hash'] = self.w3.toHex(tx_hash)
 
         result = self._post_collection_info(collection_info)
-
-        return {"hash": self.w3.toHex(tx_hash), "tx_hash": self.w3.toHex(tx_hash), "address": collection_address, "collection_address": collection_address}
+        result["tx_hash"] = self.w3.toHex(tx_hash)
+        
+        return result
 
     def get_mint_info(self, source_file_upload_id):
         params = {}
