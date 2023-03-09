@@ -42,3 +42,4 @@ def object_to_filename(object_name):
         prefix = object_name[0:index]
         file_name = object_name[index + 1:]
     return prefix, file_name
+

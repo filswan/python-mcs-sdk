@@ -22,7 +22,7 @@ class Bucket:
 
 
 class File:
-    def __init__(self, file_data):
+    def __init__(self, file_data, gateway = 'https://ipfs.io'):
         self.name = file_data["name"]
         self.address = file_data["address"]
         self.bucket_uid = file_data["bucket_uid"]
@@ -30,7 +30,7 @@ class File:
         self.prefix = file_data["prefix"]
         self.size = file_data["size"]
         self.payloadCid = file_data["payload_cid"]
-        self.ipfs_url = file_data["ipfs_url"]
+        self.ipfs_url = gateway + '/ipfs/' + file_data["payload_cid"]
         self.pin_status = file_data["pin_status"]
         self.is_deleted = file_data["is_deleted"]
         self.is_folder = file_data["is_folder"]
@@ -38,6 +38,9 @@ class File:
         self.updated_at = file_data["updated_at"]
         self.created_at = file_data["created_at"]
         self.deleted_at = file_data["deleted_at"]
+        self.gateway = gateway
+        self.object_name = file_data["object_name"]
+        self.type = file_data["type"]
 
     def to_json(self):
         return json.dumps(self, default=lambda o: o.__dict__,
