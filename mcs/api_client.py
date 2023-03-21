@@ -27,7 +27,7 @@ class APIClient(object):
 
     def get_price_rate(self):
         return self._request_without_params(GET, PRICE_RATE, self.MCS_API, self.token)
-    
+
     def get_gateway(self):
         res = self._request_without_params(GET, GET_GATEWAY, self.MCS_API, self.token)
         gateway = res["data"][0]
@@ -45,7 +45,7 @@ class APIClient(object):
             return self.token
         except:
             logging.error("\033[31m Please check your APIkey and access token, or "
-                                                  "check whether the current network environment corresponds to the APIkey.\033[0m")
+                          "check whether the current network environment corresponds to the APIkey.\033[0m")
             return
 
     def _request(self, method, request_path, mcs_api, params, token, files=False):
@@ -85,7 +85,6 @@ class APIClient(object):
         #
         # if str(json_res['status']) == 'error':
         #     raise exceptions.McsRequestException(json_res['message'])
-
         return response.json()
 
     def _request_stream_upload(self, request_path, mcs_api, params, token):

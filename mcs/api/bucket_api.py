@@ -1,14 +1,15 @@
-from aiohttp import request
 from mcs.api_client import APIClient
 from mcs.common.constants import *
 from hashlib import md5
 from queue import Queue
-import os, threading
+import threading
 import urllib.request
 import logging
 import glob
-import shutil
-
+import tarfile
+import os
+import requests
+from contextlib import closing
 from mcs.common.utils import object_to_filename
 from mcs.object.bucket_storage import Bucket, File
 
@@ -191,7 +192,7 @@ class BucketAPI(object):
             return file_info
         logging.error("\033[31mFile already exists\033[0m")
         return None
-    
+
     def _create_folders(self, bucket_name, path):
         bucket_id = self._get_bucket_id(bucket_name)
         path, folder_name = object_to_filename(path)
@@ -219,18 +220,18 @@ class BucketAPI(object):
 
         return res
 
-    # def upload_ipfs_folder(self, bucket_name, object_name, folder_path):
-    #     folder_name = os.path.basename(object_name) or os.path.basename(folder_path)
-    #     prefix = os.path.normpath(os.path.dirname(object_name)) if os.path.dirname(object_name) else ''
-    #     bucket_uid = self._get_bucket_id(bucket_name)
-    #     files = self._read_files(folder_path, folder_name)
-    #     form_data = {"folder_name": folder_name, "prefix": prefix, "bucket_uid": bucket_uid}
-    #     res = self.api_client._request_with_params(POST, PIN_IPFS, self.MCS_API, form_data, self.token, files)
-    #     if res:
-    #         folder = (File(res["data"], self.gateway))
-    #         return folder
-    #     else:
-    #         logging.error("\033[31mIPFS Folder Upload Error\033[0m")
+    def upload_ipfs_folder(self, bucket_name, object_name, folder_path):
+        folder_name = os.path.basename(object_name) or os.path.basename(folder_path)
+        prefix = os.path.normpath(os.path.dirname(object_name)) if os.path.dirname(object_name) else ''
+        bucket_uid = self._get_bucket_id(bucket_name)
+        files = self._read_files(folder_path, folder_name)
+        form_data = {"folder_name": folder_name, "prefix": prefix, "bucket_uid": bucket_uid}
+        res = self.api_client._request_with_params(POST, PIN_IPFS, self.MCS_API, form_data, self.token, files)
+        if res:
+            folder = (File(res["data"], self.gateway))
+            return folder
+        else:
+            logging.error("\033[31mIPFS Folder Upload Error\033[0m")
 
     def download_file(self, bucket_name, object_name, local_filename):
         file = self.get_file(bucket_name, object_name)
@@ -244,6 +245,27 @@ class BucketAPI(object):
             return True
         logging.error('\033[31mFile does not exist\033[0m')
         return False
+
+    def download_ipfs_folder(self, bucket_name, object_name, path):
+        folder = self.get_file(bucket_name, object_name)
+        download_url = folder.gateway + "/api/v0/get?arg=" + folder.payloadCid + "&create=true"
+        filename = folder.name
+        new_folder_name = os.path.join(path, filename)
+        if os.path.exists(new_folder_name):
+            logging.error('\033[31mFolder already exists\033[0m')
+            return False
+        try:
+            with closing(requests.post(download_url, stream=True)) as resp:
+                if resp.status_code != 200:
+                    logging.error('\033[31mFile download failed\033[0m')
+                with tarfile.open(fileobj=resp.raw, mode="r|*") as tar:
+                    tar.extractall(path=path)
+                first_name = next(iter(tar), None).name
+                os.rename(path + "/" + first_name, new_folder_name)
+            return True
+        except Exception:
+            logging.error('\033[31mFile download failed\033[0m')
+            return False
 
     def _check_file(self, bucket_id, file_hash, file_name, prefix=''):
         params = {'bucket_uid': bucket_id, 'file_hash': file_hash, 'file_name': file_name, 'prefix': prefix}
