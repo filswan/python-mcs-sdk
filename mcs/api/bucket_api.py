@@ -246,12 +246,13 @@ class BucketAPI(object):
         logging.error('\033[31mFile does not exist\033[0m')
         return False
 
-    def download_ipfs_folder(self, bucket_name, object_name, path):
+    def download_ipfs_folder(self, bucket_name, object_name, folder_path):
         folder = self.get_file(bucket_name, object_name)
+        dir_name, folder_name = os.path.split(folder_path)
+
         download_url = folder.gateway + "/api/v0/get?arg=" + folder.payloadCid + "&create=true"
-        filename = folder.name
-        new_folder_name = os.path.join(path, filename)
-        if os.path.exists(new_folder_name):
+
+        if os.path.exists(folder_path):
             logging.error('\033[31mFolder already exists\033[0m')
             return False
         try:
@@ -259,9 +260,9 @@ class BucketAPI(object):
                 if resp.status_code != 200:
                     logging.error('\033[31mFile download failed\033[0m')
                 with tarfile.open(fileobj=resp.raw, mode="r|*") as tar:
-                    tar.extractall(path=path)
+                    tar.extractall(path=dir_name)
                 first_name = next(iter(tar), None).name
-                os.rename(path + "/" + first_name, new_folder_name)
+                os.rename(dir_name + "/" + first_name, folder_path)
             return True
         except Exception:
             logging.error('\033[31mFile download failed\033[0m')
