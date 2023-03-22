@@ -201,33 +201,36 @@ class BucketAPI(object):
             self.api_client._request_with_params(POST, CREATE_FOLDER, self.MCS_API, params, self.token, None)
             path, folder_name = object_to_filename(path)
 
-    def _upload_to_bucket(self, bucket_name, file_path, prefix=''):
+    def _upload_to_bucket(self, bucket_name, object_name, file_path):
         if os.path.isdir(file_path):
-            return self.upload_folder(bucket_name, file_path, prefix)
+            return self.upload_folder(bucket_name, object_name, file_path)
         else:
-            file_name = os.path.basename(file_path)
-            return self.upload_file(bucket_name, os.path.join(prefix, file_name), file_path)
+            return self.upload_file(bucket_name, object_name, file_path)
 
-    def upload_folder(self, bucket_name, folder_path, prefix=''):
-        folder_name = os.path.basename(folder_path)
+    def upload_folder(self, bucket_name, object_name, folder_path):
+        prefix, folder_name = object_to_filename(object_name)
         self.create_folder(bucket_name, folder_name, prefix)
         res = []
         files = os.listdir(folder_path)
         for f in files:
             f_path = os.path.join(folder_path, f)
-            upload = self._upload_to_bucket(bucket_name, f_path, os.path.join(prefix, folder_name))
+            upload = self._upload_to_bucket(bucket_name, os.path.join(object_name, f), f_path)
             res.append(upload)
+
+        self._create_folders(bucket_name, prefix)
 
         return res
 
     def upload_ipfs_folder(self, bucket_name, object_name, folder_path):
-        folder_name = os.path.basename(object_name) or os.path.basename(folder_path)
-        prefix = os.path.normpath(os.path.dirname(object_name)) if os.path.dirname(object_name) else ''
+        # folder_name = os.path.basename(object_name) or os.path.basename(folder_path)
+        # prefix = os.path.normpath(os.path.dirname(object_name)) if os.path.dirname(object_name) else ''
+        prefix, folder_name = object_to_filename(object_name)
         bucket_uid = self._get_bucket_id(bucket_name)
         files = self._read_files(folder_path, folder_name)
         form_data = {"folder_name": folder_name, "prefix": prefix, "bucket_uid": bucket_uid}
         res = self.api_client._request_with_params(POST, PIN_IPFS, self.MCS_API, form_data, self.token, files)
         if res:
+            self._create_folders(bucket_name, prefix)
             folder = (File(res["data"], self.gateway))
             return folder
         else:
