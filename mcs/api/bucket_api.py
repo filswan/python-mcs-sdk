@@ -106,7 +106,7 @@ class BucketAPI(object):
                 return False
         except:
             logging.error("\033[31mCan't create this folder")
-            return
+            return 
 
     def delete_file(self, bucket_name, object_name):
         try:
