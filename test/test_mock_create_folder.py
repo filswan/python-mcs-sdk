@@ -45,7 +45,7 @@ class TestMockCreateFolder:
         bucket_api = shared_mock_bucket
         result = bucket_api.create_folder(bucket_name, folder_name)
 
-        assert result is None
+        assert result is False
 
     def test_create_folder_already_exists(self, mock_requests, shared_mock_bucket):
         mock_requests.post(c.CREATE_FOLDER,
