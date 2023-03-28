@@ -20,6 +20,7 @@ def login():
     assert api
     return api
 
+
 def test_upload_file():
     api = login()
     filepath = "/images/log_mcs.png"
@@ -29,18 +30,21 @@ def test_upload_file():
     pytest.file = file
     assert file
 
+
 def test_pay_file():
     api = login()
     payment = api.pay(pytest.file.source_file_upload_id, pytest.file.file_size)
     print(payment)
 
+
 def test_create_collection():
     api = login()
 
     num_collections = len(api.get_collections())
-    collection = api.create_collection({"name": 'test-collection-'+str(num_collections)})
+    collection = api.create_collection({"name": 'test-collection-' + str(num_collections)})
 
     assert len(api.get_collections()) == num_collections + 1
+
 
 # def test_mint():
 #     api = login()
@@ -54,8 +58,9 @@ def test_get_uploads():
     deals = api.get_user_tasks_deals()
 
     file_ids = [deal.source_file_upload_id for deal in deals]
-    
+
     assert pytest.file.source_file_upload_id in file_ids
+
 
 def test_get_deal_detail():
     api = login()
