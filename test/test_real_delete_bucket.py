@@ -1,7 +1,7 @@
 import pytest
 
 
-class TestRealBucketAPI:
+class TestRealDeleteBucket:
     @pytest.fixture(autouse=True)
     def setup(self, shared_real_bucket):
         self.obj = shared_real_bucket
