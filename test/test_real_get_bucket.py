@@ -4,10 +4,10 @@ import datetime
 current_time = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
 
-class TestBucketAPI:
+class TestRealBucketAPI:
     @pytest.fixture(autouse=True)
     def setup(self, shared_real_bucket):
-        self.obj = shared_real_bucket # 替换为您的类的实例
+        self.obj = shared_real_bucket
         yield
 
     def test_get_bucket_by_name_and_id_success(self):

@@ -2,7 +2,7 @@ import pytest
 from mcs import APIClient
 
 
-class TestApiKeyLogin:
+class TestRealApiKeyLogin:
     @pytest.fixture(autouse=True)
     def setup(self, shared_login_info):
         self.obj = APIClient(shared_login_info['api_key'], shared_login_info['access_token'], shared_login_info['chain_name'])

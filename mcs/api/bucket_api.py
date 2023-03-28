@@ -59,8 +59,7 @@ class BucketAPI(object):
                 logging.info("\033[32mBucket delete successfully\033[0m")
                 return True
         except:
-            if result is None:
-                logging.error("\033[31mCan't find this bucket\033[0m")
+            logging.error("\033[31mCan't find this bucket\033[0m")
         return False
 
     def get_bucket(self, bucket_name='', bucket_id=''):
