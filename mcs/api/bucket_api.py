@@ -90,7 +90,7 @@ class BucketAPI(object):
             if result:
                 return File(result['data'], self.gateway)
         except:
-            print('error')
+            logging.error("\033[31mCannot get file\033[0m")
         return
 
     def create_folder(self, bucket_name, folder_name, prefix=''):
@@ -151,53 +151,57 @@ class BucketAPI(object):
             return False
 
     def upload_file(self, bucket_name, object_name, file_path, replace=False):
-        prefix, file_name = object_to_filename(object_name)
-        bucket_id = self._get_bucket_id(bucket_name)
+        try:
+            prefix, file_name = object_to_filename(object_name)
+            bucket_id = self._get_bucket_id(bucket_name)
 
-        if not file_name:
-            logging.error("\033[31mFile name cannot be empty")
-            return False
+            if not file_name:
+                logging.error("\033[31mFile name cannot be empty")
+                return False
 
-        # if os.stat(file_path).st_size == 0:
-        #     logging.error("\033[31mFile size cannot be 0\033[0m")
-        #     return None
+            # if os.stat(file_path).st_size == 0:
+            #     logging.error("\033[31mFile size cannot be 0\033[0m")
+            #     return None
 
-        file_size = os.stat(file_path).st_size
-        with open(file_path, 'rb') as file:
-            file_hash = md5(file.read()).hexdigest()
-        result = self._check_file(bucket_id, file_hash, file_name, prefix)
-        if result is None:
-            logging.error("\033[31mCan't find this bucket\033[0m")
-            return
-        # Replace file if already existed
-        if result['data']['file_is_exist'] and replace:
-            self.delete_file(bucket_name, object_name)
+            file_size = os.stat(file_path).st_size
+            with open(file_path, 'rb') as file:
+                file_hash = md5(file.read()).hexdigest()
             result = self._check_file(bucket_id, file_hash, file_name, prefix)
-        if not (result['data']['file_is_exist']):
-            if not (result['data']['ipfs_is_exist']):
-                with open(file_path, 'rb') as file:
-                    i = 0
-                    queue = Queue()
-                    self.api_client.upload_progress_bar(file_name, file_size)
-                    for chunk in self._read_chunks(file):
-                        i += 1
-                        queue.put((str(i), chunk))
-                    file.close()
-                threads = list()
-                for i in range(3):
-                    worker = threading.Thread(target=self._thread_upload_chunk, args=(queue, file_hash, file_name))
-                    threads.append(worker)
-                    worker.start()
-                for thread in threads:
-                    thread.join()
-                result = self._merge_file(bucket_id, file_hash, file_name, prefix)
-            file_id = result['data']['file_id']
-            file_info = self._get_file_info(file_id)
-            self._create_folders(bucket_name, prefix)
-            logging.info("\033[32mFile upload successfully\033[0m")
-            return file_info
-        logging.error("\033[31mFile already exists\033[0m")
-        return None
+            if result is None:
+                logging.error("\033[31mCan't find this bucket\033[0m")
+                return
+            # Replace file if already existed
+            if result['data']['file_is_exist'] and replace:
+                self.delete_file(bucket_name, object_name)
+                result = self._check_file(bucket_id, file_hash, file_name, prefix)
+            if not (result['data']['file_is_exist']):
+                if not (result['data']['ipfs_is_exist']):
+                    with open(file_path, 'rb') as file:
+                        i = 0
+                        queue = Queue()
+                        self.api_client.upload_progress_bar(file_name, file_size)
+                        for chunk in self._read_chunks(file):
+                            i += 1
+                            queue.put((str(i), chunk))
+                        file.close()
+                    threads = list()
+                    for i in range(3):
+                        worker = threading.Thread(target=self._thread_upload_chunk, args=(queue, file_hash, file_name))
+                        threads.append(worker)
+                        worker.start()
+                    for thread in threads:
+                        thread.join()
+                    result = self._merge_file(bucket_id, file_hash, file_name, prefix)
+                file_id = result['data']['file_id']
+                file_info = self._get_file_info(file_id)
+                self._create_folders(bucket_name, prefix)
+                logging.info("\033[32mFile upload successfully\033[0m")
+                return file_info
+            logging.error("\033[31mFile already exists\033[0m")
+            return None
+        except:
+            logging.error("\033[31mError while uploading file\033[0m")
+            return None
 
     def _create_folders(self, bucket_name, path):
         bucket_id = self._get_bucket_id(bucket_name)
