@@ -60,7 +60,7 @@ class TestMockUploadFile:
             'id': 12345,
             'is_deleted': False,
             'is_folder': False,
-            'object_name': "IMG_1708.JPG",
+            'object_name': object_name,
             'payload_cid': "simple_payload_cid",
             'pin_status': "Pinned",
             'prefix': "",
@@ -68,14 +68,13 @@ class TestMockUploadFile:
             'type': 2,
             'updated_at': "2023-03-28T20:09:45Z"
         }})
-        mock_requests.get('https://ipfs.io/ipfs/simple_payload_cid',
-                          json={'status': 'success', 'data': 'IPFS is working'})
         mock_requests.post(c.CHECK_UPLOAD,
                            json={'status': 'success', 'data': {'file_is_exist': False, 'ipfs_is_exist': False}})
         bucket_api = shared_mock_bucket
         result = bucket_api.upload_file(bucket_name, object_name, temp_file_path)
 
         assert result.name == 'IMG_1708.JPG'
+        assert result.object_name == object_name
 
         os.remove(temp_file_path)
 
@@ -92,12 +91,6 @@ class TestMockUploadFile:
         mock_requests.get(c.BUCKET_LIST, json={'data': shared_bucket_list})
         mock_requests.post(c.CHECK_UPLOAD,
                            json={'status': 'success', 'data': {'file_is_exist': True, 'ipfs_is_exist': True}})
-        mock_requests.post(c.UPLOAD_CHUNK, json={"status": "success", "data": ["IMG_1708.JPG"]})
-        mock_requests.post(c.MERGE_FILE, json={"status": "success",
-                                               "data": {"file_id": 12345, "file_hash": "simple_file_hash",
-                                                        "file_is_exist": True, "ipfs_is_exist": True, "size": 246493,
-                                                        "payload_cid": "simple_payload_cid"}})
-        mock_requests.post(c.CREATE_BUCKET, json={'status': 'success', 'data': 'Bucket created successfully'})
         mock_requests.get(c.FILE_INFO, json={"status": "success", "data": {
             'name': "IMG_1708.JPG",
             'address': "simple_address",
@@ -116,8 +109,6 @@ class TestMockUploadFile:
             'type': 2,
             'updated_at': "2023-03-28T20:09:45Z"
         }})
-        mock_requests.get('https://ipfs.io/ipfs/simple_payload_cid',
-                          json={'status': 'success', 'data': 'IPFS is working'})
 
         bucket_api = shared_mock_bucket
         result = bucket_api.upload_file(bucket_name, object_name, temp_file_path)
