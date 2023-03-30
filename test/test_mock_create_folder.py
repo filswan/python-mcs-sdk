@@ -1,3 +1,5 @@
+import logging
+
 import pytest
 import requests
 import requests_mock
@@ -12,6 +14,7 @@ class TestMockCreateFolder:
             yield m
 
     def test_create_folder_success(self, mock_requests, shared_bucket_list, shared_mock_bucket):
+        logging.info("test_create_folder_success")
         bucket_name = "test-bucket-1"
         folder_name = "test-folder"
 
@@ -24,6 +27,7 @@ class TestMockCreateFolder:
         assert result is True
 
     def test_create_folder_failure(self, mock_requests, shared_bucket_list, shared_mock_bucket):
+        logging.info("test_create_folder_failure")
         bucket_name = "test-bucket-1"
         folder_name = "test-folder"
 
@@ -36,6 +40,7 @@ class TestMockCreateFolder:
         assert result is False
 
     def test_create_folder_exception(self, mock_requests, shared_bucket_list, shared_mock_bucket):
+        logging.info("test_create_folder_exception")
         bucket_name = "test-bucket-1"
         folder_name = "test-folder"
 
@@ -47,6 +52,7 @@ class TestMockCreateFolder:
         assert result is False
 
     def test_create_folder_already_exists(self, mock_requests, shared_mock_bucket):
+        logging.info("test_create_folder_already_exists")
         mock_requests.post(c.CREATE_FOLDER,
                            exc=requests.exceptions.RequestException("This bucket already exists"))
 
@@ -56,6 +62,7 @@ class TestMockCreateFolder:
         assert result is False
 
     def test_create_invalid_folder_name_failure(self, mock_requests, shared_bucket_list, shared_mock_bucket):
+        logging.info("test_create_invalid_folder_name_failure")
         mock_requests.post(c.CREATE_FOLDER, json={'status': 'failed', 'message': 'Folder Name is invalid'})
         bucket_api = shared_mock_bucket
         result = bucket_api.create_bucket("")

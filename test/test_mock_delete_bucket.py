@@ -1,3 +1,5 @@
+import logging
+
 import pytest
 import requests_mock
 from mcs.common import constants as c
@@ -13,6 +15,7 @@ class TestMockDeleteBucket:
             yield m
 
     def test_delete_bucket_success(self,mock_requests, shared_mock_bucket, shared_bucket_list):
+        logging.info("test_delete_bucket_success")
         bucket_name = "test-bucket" + current_time
 
         mock_requests.get(c.BUCKET_LIST, json={
@@ -25,6 +28,7 @@ class TestMockDeleteBucket:
         assert result is True
 
     def test_delete_bucket_not_found(self,mock_requests, shared_mock_bucket, shared_bucket_list):
+        logging.info("test_delete_bucket_not_found")
         bucket_name = "test-bucket"
         mock_requests.get(c.BUCKET_LIST, json={
             'data': shared_bucket_list
@@ -37,6 +41,7 @@ class TestMockDeleteBucket:
         assert result is False
 
     def test_delete_bucket_failure(self,mock_requests, shared_mock_bucket, shared_bucket_list):
+        logging.info("test_delete_bucket_failure")
         bucket_name = "test-bucket"
 
         mock_requests.get(c.DELETE_BUCKET, json={'status': 'failed'})

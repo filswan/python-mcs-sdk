@@ -1,3 +1,5 @@
+import logging
+
 import pytest
 
 
@@ -8,6 +10,7 @@ class TestRealDeleteBucket:
         yield
 
     def test_delete_existing_bucket_success(self,shared_current_time):
+        logging.info("test_delete_existing_bucket_success")
         # 先创建一个桶
         bucket_name = "test_bucket" + shared_current_time
         self.obj.create_bucket(bucket_name)
@@ -16,12 +19,14 @@ class TestRealDeleteBucket:
         assert result is True
 
     def test_delete_non_existing_bucket_failure(self):
+        logging.info("test_delete_non_existing_bucket_failure")
         # 尝试删除一个不存在的桶，预期应该返回False
         bucket_name = "non_existing_bucket"
         result = self.obj.delete_bucket(bucket_name)
         assert result is False
 
     def test_delete_empty_bucket_name_failure(self):
+        logging.info("test_delete_empty_bucket_name_failure")
         # 尝试删除一个空桶名，预期应该返回False
         bucket_name = ""
         result = self.obj.delete_bucket(bucket_name)
