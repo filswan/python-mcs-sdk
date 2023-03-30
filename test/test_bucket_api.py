@@ -28,7 +28,7 @@ class TestBucketAPI:
     def test_create_bucket(self):
         api = self.login()
         create = api.create_bucket('test-bucket')
-        assert create == True
+        assert create is True
 
     def test_get_bucket(self):
         api = self.login()
@@ -39,7 +39,7 @@ class TestBucketAPI:
         api = self.login()
         create = api.create_folder('test-bucket', 'folder1')
 
-        assert create == True
+        assert create is True
 
     # def test_create_folder_with_same_name():
     #     api = login()
@@ -70,13 +70,13 @@ class TestBucketAPI:
         api = self.login()
         result = api.download_file('test-bucket', 'folder1/mcs-logo.png', "aaaa.png")
 
-        assert result == True
+        assert result is True
 
     def test_delete_file(self):
         api = self.login()
         delete = api.delete_file('test-bucket', 'folder1/mcs-logo.png')
 
-        assert delete == True
+        assert delete is True
 
     def test_upload_ipfs_folder(self):
         api = self.login()

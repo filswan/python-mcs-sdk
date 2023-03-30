@@ -1,7 +1,4 @@
 import pytest
-import datetime
-
-current_time = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
 
 class TestRealCreateBucketApi:
@@ -10,13 +7,13 @@ class TestRealCreateBucketApi:
         self.obj = shared_real_bucket
         yield
 
-    def test_create_bucket_success(self):
-        bucket_name = "test_bucket" + current_time
+    def test_create_bucket_success(self,shared_current_time):
+        bucket_name = "test_bucket" + shared_current_time
         result = self.obj.create_bucket(bucket_name)
         assert result is True
 
-    def test_create_existing_bucket_failure(self):
-        bucket_name = "test_bucket" + current_time
+    def test_create_existing_bucket_failure(self,shared_current_time):
+        bucket_name = "test_bucket" + shared_current_time
         self.obj.create_bucket(bucket_name)
         result = self.obj.create_bucket(bucket_name)
         assert result is False

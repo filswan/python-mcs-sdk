@@ -7,9 +7,9 @@ class TestRealDeleteBucket:
         self.obj = shared_real_bucket
         yield
 
-    def test_delete_existing_bucket_success(self):
+    def test_delete_existing_bucket_success(self,shared_current_time):
         # 先创建一个桶
-        bucket_name = "test_bucket"
+        bucket_name = "test_bucket" + shared_current_time
         self.obj.create_bucket(bucket_name)
         # 然后删除该桶
         result = self.obj.delete_bucket(bucket_name)

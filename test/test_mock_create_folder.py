@@ -1,7 +1,6 @@
 import pytest
 import requests
 import requests_mock
-from mcs import BucketAPI, APIClient
 from mcs.common import constants as c
 
 

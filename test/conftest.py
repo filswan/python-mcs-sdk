@@ -5,6 +5,7 @@ from mcs.common import constants as c
 from mcs import APIClient, BucketAPI
 from dotenv import load_dotenv
 import os
+import datetime
 
 from mcs.object.bucket_storage import Bucket
 
@@ -60,22 +61,23 @@ def shared_login_info():
 
 @pytest.fixture()
 def shared_bucket_list():
-    bucket_info = [{
-        'bucket_name': 'test-bucket-1',
-        'deleted_at': None,
-        'bucket_uid': 'bucket_uid',
-        'address': '0x5339595102d92a',
-        'max_size': 34359738368,
-        'size': 254,
-        'is_free': True,
-        'payment_tx': '',
-        'is_active': True,
-        'is_deleted': False,
-        'file_number': 2,
-        'id': 19,
-        'created_at': '2023-01-05T19:00:01Z',
-        'updated_at': '2023-01-05T19:00:01Z',
-    },
+    bucket_info = [
+        {
+            'bucket_name': 'test-bucket-1',
+            'deleted_at': None,
+            'bucket_uid': 'bucket_uid',
+            'address': '0x5339595102d92a',
+            'max_size': 34359738368,
+            'size': 254,
+            'is_free': True,
+            'payment_tx': '',
+            'is_active': True,
+            'is_deleted': False,
+            'file_number': 2,
+            'id': 19,
+            'created_at': '2023-01-05T19:00:01Z',
+            'updated_at': '2023-01-05T19:00:01Z',
+        },
         {
             'bucket_name': 'test-bucket-2',
             'deleted_at': None,
@@ -88,7 +90,55 @@ def shared_bucket_list():
             'is_active': True,
             'is_deleted': False,
             'file_number': 22,
-            'id': 191233,
+            'id': 191,
             'created_at': '2023-01-05T19:00:01Z',
             'updated_at': '2023-01-05T19:00:01Z', }]
     return bucket_info
+
+
+@pytest.fixture()
+def shared_file_list():
+    file_info = [
+        {
+            'name': "IMG_1708.JPG",
+            'address': "simple_address",
+            'bucket_uid': "simple_bucket_uid",
+            'created_at': "2023-03-28T20:09:45Z",
+            'deleted_at': None,
+            'file_hash': "simple_file_hash",
+            'id': 12345,
+            'is_deleted': False,
+            'is_folder': False,
+            'object_name': "IMG_1708.JPG",
+            'payload_cid': "simple_payload_cid",
+            'pin_status': "Pinned",
+            'prefix': "",
+            'size': 244029,
+            'type': 2,
+            'updated_at': "2023-03-28T20:09:45Z"
+        },
+        {
+            'name': "IMG_1708-1.JPG",
+            'address': "simple_address-1",
+            'bucket_uid': "simple_bucket_uid-1",
+            'created_at': "2023-03-28T20:09:45Z",
+            'deleted_at': None,
+            'file_hash': "simple_file_hash-1",
+            'id': 1234567,
+            'is_deleted': False,
+            'is_folder': False,
+            'object_name': "IMG_1708-1.JPG",
+            'payload_cid': "simple_payload_cid-1",
+            'pin_status': "Pinned",
+            'prefix': "",
+            'size': 244029,
+            'type': 2,
+            'updated_at': "2023-03-28T20:09:45Z",
+        }]
+    return file_info
+
+
+@pytest.fixture()
+def shared_current_time():
+    current_time = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    return current_time
