@@ -33,7 +33,7 @@ class BucketAPI(object):
                 bucket_info_list.append(bucket_info)
             return bucket_info_list
         except:
-            logging.error("\033[31m" + 'error' + "\033[0m")
+            logging.error("\033[31m" + result['message'] + "\033[0m")
             return
 
     def create_bucket(self, bucket_name):
