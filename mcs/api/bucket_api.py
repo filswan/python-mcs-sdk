@@ -28,9 +28,10 @@ class BucketAPI(object):
             result = self.api_client._request_without_params(GET, BUCKET_LIST, self.MCS_API, self.token)
             bucket_info_list = []
             data = result['data']
-            for bucket in data:
-                bucket_info: Bucket = Bucket(bucket)
-                bucket_info_list.append(bucket_info)
+            if data:
+                for bucket in data:
+                    bucket_info: Bucket = Bucket(bucket)
+                    bucket_info_list.append(bucket_info)
             return bucket_info_list
         except:
             logging.error("\033[31m" + result['message'] + "\033[0m")
@@ -64,18 +65,19 @@ class BucketAPI(object):
 
     def get_bucket(self, bucket_name='', bucket_id=''):
         bucketlist = self.list_buckets()
-        if bucket_id != '' and bucket_name != '':
-            for bucket in bucketlist:
-                if bucket.bucket_name == bucket_name and bucket.bucket_uid == bucket_id:
-                    return bucket
-        if bucket_name != '' and bucket_id == '':
-            for bucket in bucketlist:
-                if bucket.bucket_name == bucket_name:
-                    return bucket
-        if bucket_name == '' and bucket_id != '':
-            for bucket in bucketlist:
-                if bucket.bucket_uid == bucket_id:
-                    return bucket
+        if bucketlist:
+            if bucket_id != '' and bucket_name != '':
+                for bucket in bucketlist:
+                    if bucket.bucket_name == bucket_name and bucket.bucket_uid == bucket_id:
+                        return bucket
+            if bucket_name != '' and bucket_id == '':
+                for bucket in bucketlist:
+                    if bucket.bucket_name == bucket_name:
+                        return bucket
+            if bucket_name == '' and bucket_id != '':
+                for bucket in bucketlist:
+                    if bucket.bucket_uid == bucket_id:
+                        return bucket
         logging.error("\033[31mUser does not have this bucket\033[0m")
         return None
 
@@ -205,11 +207,16 @@ class BucketAPI(object):
 
     def _create_folders(self, bucket_name, path):
         bucket_id = self._get_bucket_id(bucket_name)
-        path, folder_name = object_to_filename(path)
-        while folder_name:
-            params = {"file_name": folder_name, "prefix": path, "bucket_uid": bucket_id}
-            self.api_client._request_with_params(POST, CREATE_FOLDER, self.MCS_API, params, self.token, None)
+        if bucket_id:
             path, folder_name = object_to_filename(path)
+            while folder_name:
+                params = {"file_name": folder_name, "prefix": path, "bucket_uid": bucket_id}
+                self.api_client._request_with_params(POST, CREATE_FOLDER, self.MCS_API, params, self.token, None)
+                path, folder_name = object_to_filename(path)
+            return True
+        else:
+            logging.error("\033[31mBucket not found\033[0m")
+            return False
 
     def _upload_to_bucket(self, bucket_name, object_name, file_path):
         if os.path.isdir(file_path):
@@ -314,9 +321,10 @@ class BucketAPI(object):
 
     def _get_bucket_id(self, bucket_name):
         bucketlist = self.list_buckets()
-        for bucket in bucketlist:
-            if bucket.bucket_name == str(bucket_name):
-                return bucket.bucket_uid
+        if bucketlist:
+            for bucket in bucketlist:
+                if bucket.bucket_name == str(bucket_name):
+                    return bucket.bucket_uid
         return None
 
     def _get_full_file_list(self, bucket_name, prefix=''):
