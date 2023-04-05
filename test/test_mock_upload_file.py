@@ -22,6 +22,9 @@ class TestMockUploadFile:
     # Init mock_requests, Organize all the APIs that need to be mocked
     @pytest.fixture
     def mock_requests(self, shared_bucket_list, shared_current_time, shared_mock_bucket):
+        self.object_name = "test-object" + shared_current_time
+        self.bucket_name = "test-bucket-1"
+        self.temp_file_path = temp_file(1024)
         with requests_mock.Mocker() as m:
             # Mock API requests
             m.get(c.BUCKET_LIST, json={'data': shared_bucket_list})
@@ -52,10 +55,6 @@ class TestMockUploadFile:
             }})
             m.post(c.CHECK_UPLOAD,
                    json={'status': 'success', 'data': {'file_is_exist': False, 'ipfs_is_exist': False}})
-            self.object_name = "test-object" + shared_current_time
-            self.bucket_name = "test-bucket-1"
-            self.temp_file_path = temp_file(1024)
-
             yield m
 
     def test_upload_file_success(self, mock_requests, shared_current_time, shared_bucket_list, shared_mock_bucket):

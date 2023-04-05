@@ -11,12 +11,12 @@ current_time = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 class TestMockDeleteBucket:
     @pytest.fixture
     def mock_requests(self, shared_bucket_list, shared_mock_bucket):
+        self.bucket_api = shared_mock_bucket
+        self.bucket_name = "test-bucket" + current_time
         with requests_mock.Mocker() as m:
             m.get(c.BUCKET_LIST, json={
                 'data': shared_bucket_list
             })
-            self.bucket_api = shared_mock_bucket
-            self.bucket_name = "test-bucket" + current_time
             yield m
 
     # Test case 1: Delete bucket successfully

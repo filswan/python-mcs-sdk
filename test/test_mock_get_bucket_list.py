@@ -9,9 +9,9 @@ from mcs.common import constants as c
 class TestCreateBucket:
     @pytest.fixture
     def mock_requests(self, shared_bucket_list, shared_mock_bucket):
+        self.bucket_api = shared_mock_bucket
         with requests_mock.Mocker() as m:
             m.get(c.BUCKET_LIST, json={'data': shared_bucket_list})
-            self.bucket_api = shared_mock_bucket
             yield m
 
     # Test case: list buckets

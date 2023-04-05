@@ -10,9 +10,11 @@ from test.myUtils.create_temp import create_temp_folder, create_temp_file
 class TestMockUploadFolder:
     @pytest.fixture(autouse=True)
     def mock_requests(self, shared_bucket_list, shared_mock_bucket, shared_current_time):
+        self.bucket_name = "test-bucket-1"
+        self.object_name = "test-object"
+        self.folder_path = "/tmp/test-folder"
+        self.bucket_api = shared_mock_bucket
         with requests_mock.Mocker() as m:
-            self.bucket_name = "test-bucket-1"
-            self.object_name = "test-object"
             m.get(c.BUCKET_LIST, json={'data': shared_bucket_list})
             m.post(c.CREATE_FOLDER, json={'status': 'success', 'data': 'simple_folder_name'})
             m.post(c.CHECK_UPLOAD,
@@ -40,8 +42,6 @@ class TestMockUploadFolder:
                 'type': 2,
                 'updated_at': "2023-03-28T20:09:45Z"
             }})
-            self.folder_path = "/tmp/test-folder"
-            self.bucket_api = shared_mock_bucket
             yield m
 
     def test_upload_folder_success(self, mock_requests, shared_bucket_list):
@@ -55,7 +55,7 @@ class TestMockUploadFolder:
             file.close()
 
         folder_path[0].cleanup()
-        
+
         assert len(result) == 3
 
     def test_upload_folder_empty_folder(self, mock_requests):

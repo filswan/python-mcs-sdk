@@ -9,8 +9,8 @@ from mcs.common import constants as c
 class TestMockCreateBucket:
     @pytest.fixture
     def mock_requests(self,shared_mock_bucket):
+        self.bucket_api = shared_mock_bucket
         with requests_mock.Mocker() as m:
-            self.bucket_api = shared_mock_bucket
             yield m
 
     # Test case 1: Create bucket successfully
