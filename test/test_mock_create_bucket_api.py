@@ -8,16 +8,16 @@ from mcs.common import constants as c
 
 class TestMockCreateBucket:
     @pytest.fixture
-    def mock_requests(self):
+    def mock_requests(self,shared_mock_bucket):
         with requests_mock.Mocker() as m:
+            self.bucket_api = shared_mock_bucket
             yield m
 
     # Test case 1: Create bucket successfully
     def test_create_bucket_success(self, mock_requests, shared_mock_bucket):
         logging.info("test_create_bucket_success")
-        bucket_api = shared_mock_bucket
         mock_requests.post(c.CREATE_BUCKET, json={'status': 'success', 'data': 'Bucket created successfully'})
-        result = bucket_api.create_bucket("test-bucket")
+        result = self.bucket_api.create_bucket("test-bucket")
 
         assert result is True
 
@@ -27,8 +27,7 @@ class TestMockCreateBucket:
         mock_requests.post(c.CREATE_BUCKET,
                            exc=requests.exceptions.RequestException("This bucket already exists"))
 
-        bucket_api = shared_mock_bucket
-        result = bucket_api.create_bucket("test-bucket")
+        result = self.bucket_api.create_bucket("test-bucket")
 
         assert result is False
 
@@ -36,7 +35,6 @@ class TestMockCreateBucket:
     def test_create_bucket_failure(self, mock_requests, shared_mock_bucket):
         logging.info("test_create_bucket_failure")
         mock_requests.post(c.CREATE_BUCKET, json={'status': 'failed', 'message': 'Failed to create bucket'})
-        bucket_api = shared_mock_bucket
-        result = bucket_api.create_bucket("test-bucket")
+        result = self.bucket_api.create_bucket("test-bucket")
 
         assert result is False

@@ -7,6 +7,7 @@ class TestRealBucketListAPI:
     @pytest.fixture(autouse=True)
     def setup(self, shared_real_bucket):
         self.obj = shared_real_bucket
+
         yield
 
     def test_list_buckets_success(self):

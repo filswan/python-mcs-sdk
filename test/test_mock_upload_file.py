@@ -1,11 +1,10 @@
 import logging
 
 import pytest
-import requests
 import requests_mock
 from mcs.common import constants as c
 import os
-import tempfile
+from test.myUtils.create_temp import create_temp_file as temp_file
 
 # Set the value of the api to be mocked as False
 api_failure_cases = [
@@ -16,23 +15,6 @@ api_failure_cases = [
     ('CREATE_BUCKET', c.CREATE_BUCKET, 'post'),
     ('FILE_INFO', c.FILE_INFO, 'get'),
 ]
-# setup the temporary file
-file_size = 1024
-bucket_name = "test-bucket-1"
-
-
-# Create a temporary file
-def create_temp_file(size, content=None):
-    with tempfile.NamedTemporaryFile(delete=False) as f:
-        if content is None:
-            content = b'\0' * size
-        f.write(content)
-        temp_file_path_in_create = f.name
-    return temp_file_path_in_create
-
-
-# setup the temporary file
-temp_file_path = create_temp_file(file_size)
 
 
 class TestMockUploadFile:
@@ -70,33 +52,31 @@ class TestMockUploadFile:
             }})
             m.post(c.CHECK_UPLOAD,
                    json={'status': 'success', 'data': {'file_is_exist': False, 'ipfs_is_exist': False}})
+            self.object_name = "test-object" + shared_current_time
+            self.bucket_name = "test-bucket-1"
+            self.temp_file_path = temp_file(1024)
 
             yield m
 
     def test_upload_file_success(self, mock_requests, shared_current_time, shared_bucket_list, shared_mock_bucket):
 
         logging.info("test_upload_file_success")
-        object_name = "test-object" + shared_current_time
-        result = shared_mock_bucket.upload_file(bucket_name, object_name, temp_file_path)
+        result = shared_mock_bucket.upload_file(self.bucket_name, self.object_name, self.temp_file_path)
 
         assert result.name == 'IMG_1708.JPG'
-        assert result.object_name == object_name
+        assert result.object_name == self.object_name
 
-        os.remove(temp_file_path)
-
-    def test_upload_file_already_exists(self, mock_requests, shared_current_time, shared_bucket_list,
-                                        shared_mock_bucket):
+    def test_upload_file_already_exists(self, mock_requests, shared_mock_bucket):
         logging.info("test_upload_file_already_exists")
-        object_name = "test-object" + shared_current_time
 
         # Mock custom API requests
         mock_requests.post(c.CHECK_UPLOAD,
                            json={'status': 'success', 'data': {'file_is_exist': True, 'ipfs_is_exist': True}})
-        result = shared_mock_bucket.upload_file(bucket_name, object_name, temp_file_path)
+        result = shared_mock_bucket.upload_file(self.bucket_name, self.object_name, self.temp_file_path)
 
         assert result is None
 
-        os.remove(temp_file_path)
+        os.remove(self.temp_file_path)
 
     @pytest.mark.skip(reason="Need to fix this test case")
     @pytest.mark.parametrize("api_case, api_url, api_method", api_failure_cases)
@@ -113,6 +93,6 @@ class TestMockUploadFile:
         logging.info("Testing API failure case: {}".format(api_case))
 
         with pytest.raises(Exception):
-            shared_mock_bucket.upload_file(bucket_name, object_name, temp_file_path)
+            shared_mock_bucket.upload_file(self.bucket_name, object_name, self.temp_file_path)
 
-        os.remove(temp_file_path)
+        os.remove(self.temp_file_path)

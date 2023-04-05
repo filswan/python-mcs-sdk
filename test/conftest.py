@@ -1,3 +1,5 @@
+import tempfile
+
 import pytest
 import requests_mock
 from mcs.common import constants as c
@@ -142,3 +144,12 @@ def shared_file_list():
 def shared_current_time():
     current_time = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     return current_time
+
+
+@pytest.fixture()
+def shared_temp_file():
+    files = [
+        {'name': 'file1.txt', 'size': 10, 'content': b'HelloWorld'},
+        {'name': 'file2.txt', 'size': 20, 'content': b'ThisIsATest'}
+    ]
+    return files

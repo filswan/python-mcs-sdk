@@ -5,17 +5,18 @@ import pytest
 
 class TestRealDeleteBucket:
     @pytest.fixture(autouse=True)
-    def setup(self, shared_real_bucket):
+    def setup(self, shared_real_bucket, shared_current_time):
         self.obj = shared_real_bucket
+        self.bucket_name = "test_bucket" + shared_current_time
         yield
 
-    def test_delete_existing_bucket_success(self,shared_current_time):
+    def test_delete_existing_bucket_success(self):
         logging.info("test_delete_existing_bucket_success")
         # 先创建一个桶
-        bucket_name = "test_bucket" + shared_current_time
-        self.obj.create_bucket(bucket_name)
+
+        self.obj.create_bucket(self.bucket_name)
         # 然后删除该桶
-        result = self.obj.delete_bucket(bucket_name)
+        result = self.obj.delete_bucket(self.bucket_name)
         assert result is True
 
     def test_delete_non_existing_bucket_failure(self):
