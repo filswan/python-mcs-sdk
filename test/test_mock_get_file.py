@@ -10,12 +10,12 @@ class TestGetFile:
     @pytest.fixture
     def mock_requests(self, shared_bucket_list, shared_mock_bucket, shared_current_time):
         self.bucket_name = "test-bucket-1"
-        self.object_name = "IMG_1708.JPG"
+        self.object_name = "test-object-1"
         self.bucket_id = "simple_bucket_uid"
         self.bucket_api = shared_mock_bucket
         with requests_mock.Mocker() as m:
             m.get(c.GET_FILE, json={"status": "success", "data": {
-                'name': "IMG_1708.JPG",
+                'name': "test-file-name-1",
                 'address': "simple_address",
                 'bucket_uid': "simple_bucket_uid",
                 'created_at': "2023-03-28T20:09:45Z",

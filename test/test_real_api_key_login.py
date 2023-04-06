@@ -9,6 +9,8 @@ class TestRealApiKeyLogin:
     def setup(self, shared_login_info):
         self.obj = APIClient(shared_login_info['api_key'], shared_login_info['access_token'],
                              shared_login_info['chain_name'])
+        print(shared_login_info['api_key'], shared_login_info['access_token'],
+              shared_login_info['chain_name'])
         self.obj.api_key = shared_login_info['api_key']
         self.obj.access_token = shared_login_info['access_token']
         self.obj.chain_name = shared_login_info['chain_name']

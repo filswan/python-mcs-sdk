@@ -25,7 +25,7 @@ class TestMockUploadFolder:
                                                 "size": 246493,
                                                 "payload_cid": "simple_payload_cid"}})
             m.get(c.FILE_INFO, json={"status": "success", "data": {
-                'name': "IMG_1708.JPG",
+                'name': "test-file-name-1",
                 'address': "simple_address",
                 'bucket_uid': "simple_bucket_uid",
                 'created_at': "2023-03-28T20:09:45Z",

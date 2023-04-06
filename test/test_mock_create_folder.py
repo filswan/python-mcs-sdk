@@ -9,7 +9,6 @@ bucket_name = "test-bucket-1"
 folder_name = "test-folder"
 
 
-# 替换这个值为你的测试用API URL
 class TestMockCreateFolder:
     @pytest.fixture
     def mock_requests(self, shared_bucket_list, shared_mock_bucket):

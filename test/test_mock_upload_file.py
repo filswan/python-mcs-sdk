@@ -28,7 +28,7 @@ class TestMockUploadFile:
         with requests_mock.Mocker() as m:
             # Mock API requests
             m.get(c.BUCKET_LIST, json={'data': shared_bucket_list})
-            m.post(c.UPLOAD_CHUNK, json={"status": "success", "data": ["IMG_1708.JPG"]})
+            m.post(c.UPLOAD_CHUNK, json={"status": "success", "data": ["test-file-name-1"]})
             m.post(c.MERGE_FILE, json={"status": "success",
                                        "data": {"file_id": 12345, "file_hash": "simple_file_hash",
                                                 "file_is_exist": False, "ipfs_is_exist": False,
@@ -36,7 +36,7 @@ class TestMockUploadFile:
                                                 "payload_cid": "simple_payload_cid"}})
             m.post(c.CREATE_BUCKET, json={'status': 'success', 'data': 'Bucket created successfully'})
             m.get(c.FILE_INFO, json={"status": "success", "data": {
-                'name': "IMG_1708.JPG",
+                'name': "test-file-name-1",
                 'address': "simple_address",
                 'bucket_uid': "simple_bucket_uid",
                 'created_at': "2023-03-28T20:09:45Z",

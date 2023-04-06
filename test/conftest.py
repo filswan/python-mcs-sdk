@@ -102,7 +102,7 @@ def shared_bucket_list():
 def shared_file_list():
     file_info = [
         {
-            'name': "IMG_1708.JPG",
+            'name': "test-file-name-1",
             'address': "simple_address",
             'bucket_uid': "simple_bucket_uid",
             'created_at': "2023-03-28T20:09:45Z",
@@ -111,7 +111,7 @@ def shared_file_list():
             'id': 12345,
             'is_deleted': False,
             'is_folder': False,
-            'object_name': "IMG_1708.JPG",
+            'object_name': "test-object-1",
             'payload_cid': "simple_payload_cid",
             'pin_status': "Pinned",
             'prefix': "",
