@@ -325,6 +325,7 @@ class BucketAPI(object):
             for bucket in bucketlist:
                 if bucket.bucket_name == str(bucket_name):
                     return bucket.bucket_uid
+        raise Exception()
         return None
 
     def _get_full_file_list(self, bucket_name, prefix=''):
