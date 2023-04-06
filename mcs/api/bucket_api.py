@@ -138,19 +138,22 @@ class BucketAPI(object):
             return False
 
     def list_files(self, bucket_name, prefix='', limit='10', offset="0"):
-        bucket_id = self._get_bucket_id(bucket_name)
-        params = {'bucket_uid': bucket_id, 'prefix': prefix, 'limit': limit, 'offset': offset}
-        result = self.api_client._request_with_params(GET, FILE_LIST, self.MCS_API, params, self.token, None)
-        if result['status'] == 'success':
-            files = result['data']['file_list']
-            file_list = []
-            for file in files:
-                file_info: File = File(file, self.gateway)
-                file_list.append(file_info)
-            return file_list
-        else:
-            logging.error("\033[31m" + result['message'] + "\033[0m")
-            return False
+        try:
+            bucket_id = self._get_bucket_id(bucket_name)
+            params = {'bucket_uid': bucket_id, 'prefix': prefix, 'limit': limit, 'offset': offset}
+            result = self.api_client._request_with_params(GET, FILE_LIST, self.MCS_API, params, self.token, None)
+            if result['status'] == 'success':
+                files = result['data']['file_list']
+                file_list = []
+                for file in files:
+                    file_info: File = File(file, self.gateway)
+                    file_list.append(file_info)
+                return file_list
+            else:
+                logging.error("\033[31m" + result['message'] + "\033[0m")
+        except:
+            logging.error("\033[31mCan't find this bucket\033[0m")
+        return 
 
     def upload_file(self, bucket_name, object_name, file_path, replace=False):
         try:
