@@ -273,17 +273,27 @@ class BucketAPI(object):
             logging.error("\033[31mIPFS Folder Upload Error\033[0m")
 
     def download_file(self, bucket_name, object_name, local_filename):
-        file = self.get_file(bucket_name, object_name)
-        if file is not None:
+        try:
+            file = self.get_file(bucket_name, object_name)
+        except:
+            logging.error('\033[31mFile does not exist\033[0m')
+            return False
+
+        try:
             ipfs_url = file.ipfs_url
             with open(local_filename, 'wb') as f:
                 if file.size > 0:
                     data = urllib.request.urlopen(ipfs_url)
-                    f.write(data.read())
-            logging.info("\033[32mFile download successfully\033[0m")
-            return True
-        logging.error('\033[31mFile does not exist\033[0m')
-        return False
+                    if data:
+                        f.write(data.read())
+                        logging.info("\033[32mFile downloaded successfully\033[0m")
+                        return True
+                    else:
+                        logging.error('\033[31mDownload failed\033[0m')
+                        return False
+        except:
+            logging.error('\033[31mDownload failed\033[0m')
+            return False
 
     def download_ipfs_folder(self, bucket_name, object_name, folder_path):
         folder = self.get_file(bucket_name, object_name)

@@ -1,4 +1,5 @@
 from mcs.common.constants import MCS_POLYGON_MUMBAI_API, MCS_BSC_API, MCS_POLYGON_MAIN_API
+import logging
 
 class Params:
     def __init__(self, chain_name='polygon.mainnet'):
@@ -9,7 +10,7 @@ class Params:
         elif chain_name == 'bsc.testnet' or chain_name == 'bsc':
             self.MCS_API = MCS_BSC_API
         else:
-            print('unknown chain name')
+            logging.error("\033[31munknown chain name\033[0m")
 
     def get_params(self):
 
