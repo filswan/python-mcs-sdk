@@ -14,6 +14,7 @@ class TestMockUploadIpfsFolder:
     def mock_requests(self, shared_current_time, shared_bucket_list, shared_mock_bucket, shared_ipfs_file_list):
         self.bucket_name = "test-bucket"
         self.object_name = "test-object"
+
         self.folder_path = Path("test_dir")/("test_folder" + shared_current_time)
         self.folder_path.mkdir()
         # Create some test files in the folder
@@ -21,6 +22,7 @@ class TestMockUploadIpfsFolder:
         self.file1.write_text("Test content 1")
         self.file2 = self.folder_path / ("file2.txt" + shared_current_time)
         self.file2.write_text("Test content 2")
+
         self.bucket_api = shared_mock_bucket
         with requests_mock.Mocker() as m:
             m.get(c.BUCKET_LIST, json={'data': shared_bucket_list})
