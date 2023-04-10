@@ -137,9 +137,19 @@ class BucketAPI(object):
             logging.error("\033[31mCan't find this bucket\033[0m")
             return False
 
-    def list_files(self, bucket_name, prefix='', limit='10', offset="0"):
+    def list_files(self, bucket_name, prefix='', limit=10, offset=0):
+
+        if type(limit) is not int or type(offset) is not int:
+            logging.error("\033[31mInvalid parameters\033[0m")
+            return None
+
         try:
             bucket_id = self._get_bucket_id(bucket_name)
+        except:
+            logging.error("\033[31mCan't find this bucket\033[0m")
+            return None
+        
+        try:
             params = {'bucket_uid': bucket_id, 'prefix': prefix, 'limit': limit, 'offset': offset}
             result = self.api_client._request_with_params(GET, FILE_LIST, self.MCS_API, params, self.token, None)
             if result['status'] == 'success':
@@ -149,11 +159,10 @@ class BucketAPI(object):
                     file_info: File = File(file, self.gateway)
                     file_list.append(file_info)
                 return file_list
-            else:
-                logging.error("\033[31m" + result['message'] + "\033[0m")
         except:
-            logging.error("\033[31mCan't find this bucket\033[0m")
-        return 
+            logging.error("\033[31mCan't list files\033[0m")
+            return None
+            
 
     def upload_file(self, bucket_name, object_name, file_path, replace=False):
         try:
