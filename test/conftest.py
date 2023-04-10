@@ -23,7 +23,7 @@ wrong_access_token = os.getenv('wrong_access_token')
 @pytest.fixture()
 def shared_mock_bucket(shared_mock_api_client):
     with requests_mock.Mocker() as m:
-        m.get(c.GET_GATEWAY, json={'status': 'success', 'data': 'https://8e88328c1.acl.multichain.storage'})
+        m.get(c.GET_GATEWAY, json={'status': 'success', 'data': ['ipfs.io']})
         bucket_api = BucketAPI(shared_mock_api_client)
         return bucket_api
 

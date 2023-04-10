@@ -11,7 +11,6 @@ class TestRealUploadFile:
         self.obj.create_bucket(self.bucket_name)
         self.folder_name = "test_folder" + shared_current_time
         self.obj.create_folder(self.bucket_name, self.folder_name)
-        # 然后上传一个文件
         self.file_path = "test_file.txt"
         with open(self.file_path, "w") as f:
             f.write("Test file content" + shared_current_time)

@@ -1,7 +1,5 @@
 import pytest
 import requests_mock
-from unittest.mock import MagicMock
-from mcs import BucketAPI, APIClient
 from mcs.common import constants as c
 
 
