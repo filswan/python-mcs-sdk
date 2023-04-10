@@ -1,5 +1,6 @@
 import io
 import os
+from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -16,9 +17,8 @@ class TestDownloadFile:
         self.bucket_name = "test-bucket-1"
         self.object_name = "test-object-1"
 
-        self.local_filename = "downloaded_file.txt"
+        self.local_filename = Path("test_dir")/("downloaded_file.txt")
         with requests_mock.Mocker() as m:
-            session = requests.Session()
             m.get(c.GET_FILE, json={"status": "success", "data": {
                 'name': "test-file-name-1",
                 'address': "simple_address",

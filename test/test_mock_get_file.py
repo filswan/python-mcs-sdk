@@ -36,7 +36,7 @@ class TestGetFile:
             yield m
 
     def test_get_file_success(self, mock_requests):
-        file_data = {'id': '12345', 'name': 'IMG_1708.JPG', 'size': 244029}
+        file_data = {'id': '12345', 'name': 'test-file-name-1', 'size': 244029}
 
         result = self.bucket_api.get_file(self.bucket_name, self.object_name)
 

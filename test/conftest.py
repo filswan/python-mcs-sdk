@@ -1,3 +1,4 @@
+import shutil
 import tempfile
 
 import pytest
@@ -153,3 +154,59 @@ def shared_temp_file():
         {'name': 'file2.txt', 'size': 20, 'content': b'ThisIsATest'}
     ]
     return files
+
+
+@pytest.fixture()
+def shared_ipfs_file_list():
+    ipfs_info = [
+        {
+
+            "name": "test_ipfs_file_name-1",
+            "address": "test_address-1",
+            "prefix": "",
+            "bucket_uid": "test_bucket_uid-1",
+            "file_hash": "",
+            "size": 1080,
+            "payload_cid": "test_payload_cid-1",
+            "pin_status": "Pinned",
+            "is_deleted": False,
+            "is_folder": False,
+            "object_name": "test",
+            "type": 0,
+            "id": 1,
+            "created_at": "2023-04-10T20:35:47.990049944Z",
+            "updated_at": "2023-04-10T20:35:47.990049944Z",
+            "deleted_at": None
+
+        },
+        {
+
+            "name": "test_ipfs_file_name-2",
+            "address": "test_address-2",
+            "prefix": "",
+            "bucket_uid": "test_bucket_uid-2",
+            "file_hash": "",
+            "size": 10800000,
+            "payload_cid": "test_payload_cid-2",
+            "pin_status": "Pinned",
+            "is_deleted": False,
+            "is_folder": False,
+            "object_name": "test",
+            "type": 0,
+            "id": 2,
+            "created_at": "2023-04-10T20:35:47.990049944Z",
+            "updated_at": "2023-04-10T20:35:47.990049944Z",
+            "deleted_at": None
+
+        }
+    ]
+    return ipfs_info
+
+
+@pytest.fixture(scope="session", autouse=True)
+def temp_dir():
+    dirpath = os.path.join(os.getcwd(), "test_dir")
+    os.makedirs(dirpath)
+    yield dirpath
+    # teardown - remove directory after all tests complete
+    shutil.rmtree(dirpath)

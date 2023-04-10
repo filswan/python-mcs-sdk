@@ -13,7 +13,6 @@ class TestMockApiKeyLogin:
         with requests_mock.Mocker() as m:
             yield m
 
-    # 测试成功的情况
     def test_api_key_login_success(self, mock_requests):
         logging.info("test_api_key_login_success")
         mock_requests.register_uri(c.POST, c.APIKEY_LOGIN, json={"data": {"jwt_token": "sample_token"}})
@@ -22,7 +21,7 @@ class TestMockApiKeyLogin:
         token = api_client.api_key_login()
         assert compare_digest(token, "sample_token")
 
-    # 测试参数为空的情况
+
     @pytest.mark.parametrize("api_key, access_token, chain_name", [
         ("", "sample_access_token", "polygon.mumbai"),
         ("sample_api_key", "", "polygon.mumbai")
@@ -34,7 +33,6 @@ class TestMockApiKeyLogin:
         token = api_client.api_key_login()
         assert token is None
 
-    # 测试chain_name参数为空的情况
     def test_api_key_login_empty_chain_name(self, mock_requests):
         logging.info("test_api_key_login_empty_chain_name")
         mock_requests.register_uri(c.POST, c.APIKEY_LOGIN, status_code=400)
@@ -42,7 +40,6 @@ class TestMockApiKeyLogin:
         token = api_client.api_key_login()
         assert token is None
 
-    # 测试错误的API密钥或访问令牌
     def test_api_key_login_invalid_credentials(self, mock_requests):
         logging.info("test_api_key_login_invalid_credentials")
         mock_requests.register_uri(c.POST, c.APIKEY_LOGIN, status_code=401)

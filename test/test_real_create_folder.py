@@ -23,13 +23,11 @@ class TestRealCreateFolder:
         logging.info("test_create_existing_folder_failure")
 
         self.obj.create_folder(self.bucket_name, self.folder_name)
-        # 再次尝试使用相同的文件夹名称创建文件夹，预期应该返回False
         result = self.obj.create_folder(self.bucket_name, self.folder_name)
         assert result is False
 
     def test_create_invalid_folder_name_failure(self,shared_current_time):
         logging.info("test_create_invalid_folder_name_failure")
-        # 尝试使用无效的文件夹名称创建文件夹，预期应该返回False
         folder_name = ""
         result = self.obj.create_folder(self.bucket_name, folder_name)
         assert result is False

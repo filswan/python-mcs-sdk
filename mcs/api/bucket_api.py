@@ -251,7 +251,6 @@ class BucketAPI(object):
     def download_ipfs_folder(self, bucket_name, object_name, folder_path):
         folder = self.get_file(bucket_name, object_name)
         dir_name, folder_name = os.path.split(folder_path)
-
         download_url = folder.gateway + "/api/v0/get?arg=" + folder.payloadCid + "&create=true"
 
         if os.path.exists(folder_path):

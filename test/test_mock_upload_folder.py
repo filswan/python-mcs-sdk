@@ -1,10 +1,10 @@
 import os
+from pathlib import Path
 
 import pytest
 import requests_mock
 from unittest.mock import patch
 from mcs.common import constants as c
-from test.myUtils.create_temp import create_temp_folder, create_temp_file
 
 
 class TestMockUploadFolder:
@@ -12,7 +12,12 @@ class TestMockUploadFolder:
     def mock_requests(self, shared_bucket_list, shared_mock_bucket, shared_current_time):
         self.bucket_name = "test-bucket-1"
         self.object_name = "test-object"
-        self.folder_path = "/tmp/test-folder"
+        self.folder_path = Path("test_dir") / ("test-folder" + shared_current_time)
+        os.mkdir(self.folder_path)
+        self.file1 = self.folder_path / ("file1.txt" + shared_current_time)
+        self.file1.write_text("Test content 1")
+        self.file2 = self.folder_path / ("file2.txt" + shared_current_time)
+        self.file2.write_text("Test content 2")
         self.bucket_api = shared_mock_bucket
         with requests_mock.Mocker() as m:
             m.get(c.BUCKET_LIST, json={'data': shared_bucket_list})
@@ -44,28 +49,15 @@ class TestMockUploadFolder:
             }})
             yield m
 
-    def test_upload_folder_success(self, mock_requests, shared_bucket_list):
-        files = [create_temp_file(1024), create_temp_file(1024), create_temp_file(1024)]
-        file_path = [file.name for file in files]
-        folder_path = create_temp_folder(file_path)
+    def test_upload_folder_success(self, mock_requests, shared_bucket_list, shared_current_time):
+        result = self.bucket_api.upload_folder(self.bucket_name, self.object_name, self.folder_path)
 
-        result = self.bucket_api.upload_folder(self.bucket_name, self.object_name, folder_path[0].name)
-        # 关闭临时文件
-        for file in files:
-            file.close()
-
-        folder_path[0].cleanup()
-
-        assert len(result) == 3
+        assert len(result) == 2
 
     def test_upload_folder_empty_folder(self, mock_requests):
-        files = []
+        file_path = Path("test_dir") / "empty_folder"
+        os.mkdir(file_path)
 
-        # Mock os.listdir and os.path.join
-        with patch('os.listdir') as mock_listdir:
-            with patch('os.path.join') as mock_path_join:
-                mock_listdir.return_value = files
-                mock_path_join.side_effect = lambda a, b: f"{a}/{b}"
-                result = self.bucket_api.upload_folder(self.bucket_name, self.object_name, create_temp_folder())
+        result = self.bucket_api.upload_folder(self.bucket_name, self.object_name, file_path)
 
         assert result == []
