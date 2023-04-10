@@ -262,15 +262,20 @@ class BucketAPI(object):
             return False
         
         bucket_uid = self._get_bucket_id(bucket_name)
-        files = self._read_files(folder_path, folder_name)
-        form_data = {"folder_name": folder_name, "prefix": prefix, "bucket_uid": bucket_uid}
-        res = self.api_client._request_with_params(POST, PIN_IPFS, self.MCS_API, form_data, self.token, files)
-        if res:
-            self._create_folders(bucket_name, prefix)
-            folder = (File(res["data"], self.gateway))
-            return folder
+        if bucket_uid:
+            files = self._read_files(folder_path, folder_name)
+            form_data = {"folder_name": folder_name, "prefix": prefix, "bucket_uid": bucket_uid}
+            res = self.api_client._request_with_params(POST, PIN_IPFS, self.MCS_API, form_data, self.token, files)
+            if res and res["data"]:
+                self._create_folders(bucket_name, prefix)
+                folder = (File(res["data"], self.gateway))
+                return folder
+            else:
+                logging.error("\033[31mIPFS Folder Upload Error\033[0m")
+                return None
         else:
-            logging.error("\033[31mIPFS Folder Upload Error\033[0m")
+            logging.error("\033[31mBucket not found\033[0m")
+            return None
 
     def download_file(self, bucket_name, object_name, local_filename):
         try:
@@ -347,7 +352,6 @@ class BucketAPI(object):
             for bucket in bucketlist:
                 if bucket.bucket_name == str(bucket_name):
                     return bucket.bucket_uid
-        raise Exception()
         return None
 
     def _get_full_file_list(self, bucket_name, prefix=''):
