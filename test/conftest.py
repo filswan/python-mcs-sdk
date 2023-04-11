@@ -203,10 +203,17 @@ def shared_ipfs_file_list():
     return ipfs_info
 
 
-@pytest.fixture(scope="session", autouse=True)
+@pytest.fixture(scope="function", autouse=True)
+def remove_temp_dir():
+    if os.path.exists(os.path.join(os.getcwd(), "test_dir")):
+        shutil.rmtree(os.path.join(os.getcwd(), "test_dir"))
+
+@pytest.fixture(scope="function", autouse=True)
 def temp_dir():
     dirpath = os.path.join(os.getcwd(), "test_dir")
     os.makedirs(dirpath)
     yield dirpath
     # teardown - remove directory after all tests complete
     shutil.rmtree(dirpath)
+
+

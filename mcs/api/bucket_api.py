@@ -34,8 +34,8 @@ class BucketAPI(object):
                     bucket_info_list.append(bucket_info)
             return bucket_info_list
         except:
-            logging.error("\033[31m" + result['message'] + "\033[0m")
-            return
+            logging.error("An error occurred while executing list_buckets()")
+            return None
 
     def create_bucket(self, bucket_name):
         params = {'bucket_name': bucket_name}
@@ -117,6 +117,8 @@ class BucketAPI(object):
         try:
             prefix, file_name = object_to_filename(object_name)
             file_list = self._get_full_file_list(bucket_name, prefix)
+            if file_list is None:
+                return False
 
             file_id = ''
             for file in file_list:
@@ -145,10 +147,13 @@ class BucketAPI(object):
 
         try:
             bucket_id = self._get_bucket_id(bucket_name)
+            if bucket_id == '':
+                logging.error("\033[31mCan't find this bucket\033[0m")
+                return None
         except:
             logging.error("\033[31mCan't find this bucket\033[0m")
             return None
-        
+
         try:
             params = {'bucket_uid': bucket_id, 'prefix': prefix, 'limit': limit, 'offset': offset}
             result = self.api_client._request_with_params(GET, FILE_LIST, self.MCS_API, params, self.token, None)
@@ -162,7 +167,6 @@ class BucketAPI(object):
         except:
             logging.error("\033[31mCan't list files\033[0m")
             return None
-            
 
     def upload_file(self, bucket_name, object_name, file_path, replace=False):
         try:
@@ -260,7 +264,7 @@ class BucketAPI(object):
         if not folder_name:
             logging.error("\033[31mFolder name cannot be empty")
             return False
-        
+
         bucket_uid = self._get_bucket_id(bucket_name)
         if bucket_uid:
             files = self._read_files(folder_path, folder_name)
@@ -359,6 +363,8 @@ class BucketAPI(object):
 
     def _get_full_file_list(self, bucket_name, prefix=''):
         bucket_id = self._get_bucket_id(bucket_name)
+        if bucket_id is None:
+            return None
         params = {'bucket_uid': bucket_id, 'prefix': prefix, 'limit': 10, 'offset': 0}
         count = self.api_client._request_with_params(GET, FILE_LIST, self.MCS_API, params, self.token, None)['data'][
             'count']
@@ -383,12 +389,11 @@ class BucketAPI(object):
         try:
             result = self.api_client._request_without_params(GET, GET_GATEWAY, self.MCS_API, self.token)
             data = result['data']
-            
+
             return 'https://' + data[0]
         except:
             logging.error("\033[31m" + result['message'] + "\033[0m")
             return
-    
 
     def _read_files(self, root_folder, folder_name):
         # Create an empty list to store the file tuples

@@ -72,6 +72,6 @@ class TestDownloadFile:
             m.return_value = io.BytesIO(b'Test content')
             result = self.bucket_api.download_file(self.bucket_name, self.object_name, self.local_filename)
 
-        assert result is False
+        assert result is None
 
         os.remove(self.local_filename)

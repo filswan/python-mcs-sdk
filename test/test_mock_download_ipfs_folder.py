@@ -1,4 +1,5 @@
 import io
+import os
 import tarfile
 from pathlib import Path
 
@@ -49,14 +50,15 @@ class TestDownloadIpfsFolder:
                    headers={"Content-Type": "application/x-tar"})
             yield m
 
-    def test_download_folder_success(self, mock_requests, tmp_path):
+    def test_download_ipfs_folder_success(self, mock_requests, tmp_path):
         result = self.bucket_api.download_ipfs_folder(self.bucket_name, self.object_name, self.folder_path)
 
         # Check the result
         assert result is True
-        assert Path(self.folder_path).exists()
+        assert Path(self.folder_path).exists() is True
 
-    def test_download_folder_failure(self, mock_requests, tmp_path):
+    def test_download_ipfs_folder_failure(self, mock_requests, tmp_path):
+        assert Path(self.folder_path).exists() is False
         mock_requests.post("https://ipfs.io/api/v0/get?arg=simple_payload_cid&create=true",
                            status_code=400,
                            content=self.tarfile_content,

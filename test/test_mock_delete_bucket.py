@@ -3,16 +3,13 @@ import logging
 import pytest
 import requests_mock
 from mcs.common import constants as c
-import datetime
-
-current_time = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
 
 class TestMockDeleteBucket:
     @pytest.fixture
-    def mock_requests(self, shared_bucket_list, shared_mock_bucket):
+    def mock_requests(self, shared_bucket_list, shared_mock_bucket, shared_current_time):
         self.bucket_api = shared_mock_bucket
-        self.bucket_name = "test-bucket" + current_time
+        self.bucket_name = "test-bucket" + shared_current_time
         with requests_mock.Mocker() as m:
             m.get(c.BUCKET_LIST, json={
                 'data': shared_bucket_list
