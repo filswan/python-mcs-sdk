@@ -172,7 +172,9 @@ class BucketAPI(object):
         try:
             prefix, file_name = object_to_filename(object_name)
             bucket_id = self._get_bucket_id(bucket_name)
-
+            if bucket_id is None:
+                logging.error("\033[31mCan't find this bucket\033[0m")
+                return None
             if not file_name:
                 logging.error("\033[31mFile name cannot be empty")
                 return None
@@ -185,9 +187,7 @@ class BucketAPI(object):
             with open(file_path, 'rb') as file:
                 file_hash = md5(file.read()).hexdigest()
             result = self._check_file(bucket_id, file_hash, file_name, prefix)
-            if result is None:
-                logging.error("\033[31mCan't find this bucket\033[0m")
-                return None
+
             # Replace file if already existed
             if result['data']['file_is_exist'] and replace:
                 self.delete_file(bucket_name, object_name)
