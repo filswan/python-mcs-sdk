@@ -66,4 +66,4 @@ class TestMockUploadFolder:
     def test_upload_folder_false(self, mock_requests):
         mock_requests.post(c.CREATE_FOLDER, json={'status': 'error', 'data': 'simple_folder_name'})
         result = self.bucket_api.upload_folder(self.bucket_name, self.object_name, self.folder_path)
-        assert result is False
+        assert result is None
