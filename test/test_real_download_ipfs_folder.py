@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 
 
-class TestDownloadFolder:
+class TestDownloadIPFSFolder:
     @pytest.fixture(autouse=True)
     def setup(self, shared_real_bucket, shared_current_time):
         self.obj = shared_real_bucket
@@ -22,19 +22,19 @@ class TestDownloadFolder:
         self.obj.upload_ipfs_folder(self.bucket_name, self.folder_name, self.folder_path)
         yield
 
-    def test_download_folder_success(self, shared_current_time):
+    def test_download_IPFS_folder_success(self, shared_current_time):
         # 测试下载已存在的文件夹
         result = self.obj.download_ipfs_folder(self.bucket_name, self.object_name,
                                                Path(self.folder_path) / ("test" + shared_current_time))
         assert result is True
         assert os.path.exists(self.folder_path)
 
-    def test_download_existing_folder_failure(self):
+    def test_download_existing_IPFS_folder_failure(self):
         # 测试尝试下载已经存在的文件夹
         result = self.obj.download_ipfs_folder(self.bucket_name, self.object_name, self.folder_path)
         assert result is False
 
-    def test_download_non_existing_folder_failure(self):
+    def test_download_non_existing_IPFS_folder_failure(self):
         # 测试尝试下载不存在的文件夹
         shutil.rmtree(self.folder_path)
         result = self.obj.download_ipfs_folder(self.bucket_name, "non_existing_folder", self.folder_path)

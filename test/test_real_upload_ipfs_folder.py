@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 
 
-class TestUploadFolder:
+class TestUploadIPFSFolder:
     @pytest.fixture(autouse=True)
     def setup(self, shared_real_bucket, shared_current_time):
         self.obj = shared_real_bucket
@@ -20,7 +20,8 @@ class TestUploadFolder:
         self.obj.create_bucket(self.bucket_name)
         yield
 
-    def test_upload_folder_success(self):
+    def test_upload_IPFS_folder_success(self):
+        print(self.folder_path)
         # 尝试上传一个文件夹，预期返回成功的文件夹对象
         result = self.obj.upload_ipfs_folder(self.bucket_name, self.folder_name, self.folder_path)
         assert result is not None
@@ -29,7 +30,7 @@ class TestUploadFolder:
         os.remove(self.file2)
         os.rmdir(self.folder_path)
 
-    def test_upload_existing_folder_failure(self):
+    def test_upload_existing_IPFS_folder_failure(self):
         # 尝试上传一个已经存在的文件夹，预期返回None
         result = self.obj.upload_ipfs_folder(self.bucket_name, self.folder_name, self.folder_path)
         print(result)
@@ -41,7 +42,7 @@ class TestUploadFolder:
         os.remove(self.file2)
         os.rmdir(self.folder_path)
 
-    def test_upload_folder_with_non_existing_bucket_failure(self, shared_current_time):
+    def test_upload_IPFS_folder_with_non_existing_bucket_failure(self, shared_current_time):
         # 尝试上传到一个不存在的桶中，预期返回None
         result = self.obj.upload_ipfs_folder("non_existing_bucket" + shared_current_time, self.folder_name,
                                              self.folder_path)
@@ -50,7 +51,7 @@ class TestUploadFolder:
         os.remove(self.file2)
         os.rmdir(self.folder_path)
 
-    def test_upload_empty_folder_success(self, shared_current_time):
+    def test_upload_empty_IPFS_folder_success(self, shared_current_time):
         empty_folder_path = Path("test_dir")/("test_empty_folder" + shared_current_time)
         os.mkdir(empty_folder_path)
         result = self.obj.upload_ipfs_folder(self.bucket_name, self.folder_name, empty_folder_path)
