@@ -393,6 +393,8 @@ class BucketAPI(object):
     def get_gateway(self):
         try:
             result = self.api_client._request_without_params(GET, GET_GATEWAY, self.MCS_API, self.token)
+            if result is None:
+                return
             data = result['data']
             return 'https://' + data[0]
         except:
