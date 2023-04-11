@@ -144,7 +144,7 @@ def shared_file_list():
 
 @pytest.fixture()
 def shared_current_time():
-    current_time = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    current_time = datetime.datetime.now().strftime("%Y%m%d_%H%M%S.%f")
     return current_time
 
 
