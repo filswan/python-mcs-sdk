@@ -328,7 +328,9 @@ class BucketAPI(object):
                 with tarfile.open(fileobj=resp.raw, mode="r|*") as tar:
                     tar.extractall(path=dir_name)
                 first_name = next(iter(tar), None).name
-                os.rename(dir_name + "/" + first_name, folder_path)
+                if dir_name != "":
+                    first_name = dir_name + "/" + first_name
+                os.rename(first_name, folder_path)
             return True
         except Exception:
             logging.error('\033[31mFile download failed\033[0m')
