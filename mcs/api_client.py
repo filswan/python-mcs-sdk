@@ -30,8 +30,14 @@ class APIClient(object):
 
     def get_gateway(self):
         res = self._request_without_params(GET, GET_GATEWAY, self.MCS_API, self.token)
-        gateway = res["data"][0]
-        return gateway
+        if res:
+            gateway = res["data"][0]
+            return gateway
+        else:
+            logging.error("\033[31m Please check your APIkey and access token, or "
+                          "check whether the current network environment corresponds to the APIkey.\033[0m")
+            return
+
 
     def api_key_login(self):
         params = {'apikey': self.api_key, 'access_token': self.access_token, 'network': self.chain_name}

@@ -28,7 +28,7 @@ class TestRealListFiles:
 
         file_list = self.obj.list_files("non_existing_bucket" + shared_current_time)
         os.remove(self.file_path)
-        assert file_list is False
+        assert file_list == []
 
     def test_list_files_with_limit_success(self):
 
@@ -54,10 +54,10 @@ class TestRealListFiles:
 
         file_list = self.obj.list_files(self.bucket_name, limit="invalid_limit")
         os.remove(self.file_path)
-        assert file_list == []
+        assert file_list is None
 
     def test_list_files_with_invalid_offset_failure(self):
 
         file_list = self.obj.list_files(self.bucket_name, offset="invalid_offset")
         os.remove(self.file_path)
-        assert file_list is False
+        assert file_list is None

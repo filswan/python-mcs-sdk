@@ -49,11 +49,11 @@ class TestMockUploadFolder:
                 'type': 2,
                 'updated_at': "2023-03-28T20:09:45Z"
             }})
+            m.post(c.UPLOAD_CHUNK, json={"status": "success", "data": ["test-file-name-1"]})
             yield m
 
     def test_upload_folder_success(self, mock_requests, shared_bucket_list, shared_current_time):
         result = self.bucket_api.upload_folder(self.bucket_name, self.object_name, self.folder_path)
-
         assert len(result) == 2
 
     def test_upload_folder_empty_folder(self, mock_requests):
@@ -63,3 +63,8 @@ class TestMockUploadFolder:
         result = self.bucket_api.upload_folder(self.bucket_name, self.object_name, file_path)
 
         assert result == []
+
+    def test_upload_folder_false(self, mock_requests):
+        mock_requests.post(c.CREATE_FOLDER, json={'status': 'error', 'data': 'simple_folder_name'})
+        result = self.bucket_api.upload_folder(self.bucket_name, self.object_name, self.folder_path)
+        assert result is False

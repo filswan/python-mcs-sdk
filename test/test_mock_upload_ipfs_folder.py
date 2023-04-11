@@ -12,8 +12,8 @@ from pathlib import Path
 class TestMockUploadIpfsFolder:
     @pytest.fixture
     def mock_requests(self, shared_current_time, shared_bucket_list, shared_mock_bucket, shared_ipfs_file_list):
-        self.bucket_name = "test-bucket"
-        self.object_name = "test-object"
+        self.bucket_name = "test-bucket-1"
+        self.object_name = "test-object-1"
 
         self.folder_path = Path("test_dir")/("test_folder" + shared_current_time)
         self.folder_path.mkdir()

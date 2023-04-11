@@ -30,4 +30,4 @@ class TestListFiles:
         mock_requests.get(c.FILE_LIST, json={'status': 'failed', 'message': 'Error listing files'})
         result = self.bucket_api.list_files(self.bucket_name)
 
-        assert result is False
+        assert result is None
