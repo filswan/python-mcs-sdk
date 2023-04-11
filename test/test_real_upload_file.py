@@ -45,3 +45,9 @@ class TestRealUploadFile:
         assert result.object_name == object_name
 
         os.remove(self.file_path)
+
+    def test_upload_file_with_wrong_bucket(self, shared_current_time):
+        result = self.obj.upload_file("self.bucket_name", self.object_name, self.file_path)
+        assert result is None
+
+        os.remove(self.file_path)
