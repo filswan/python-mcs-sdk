@@ -51,7 +51,7 @@ class TestUploadFolder:
         os.rmdir(self.folder_path)
 
     def test_upload_empty_folder_success(self, shared_current_time):
-        empty_folder_path = "test_empty_folder" + shared_current_time
+        empty_folder_path = Path("test_dir")/("test_empty_folder" + shared_current_time)
         os.mkdir(empty_folder_path)
         result = self.obj.upload_ipfs_folder(self.bucket_name, self.folder_name, empty_folder_path)
         assert result is None
