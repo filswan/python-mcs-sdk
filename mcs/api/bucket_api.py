@@ -302,8 +302,10 @@ class BucketAPI(object):
 
     def download_ipfs_folder(self, bucket_name, object_name, folder_path):
         folder = self.get_file(bucket_name, object_name)
+        if folder is None:
+            logging.error('\033[31mFolder does not exist\033[0m')
+            return False
         dir_name, folder_name = os.path.split(folder_path)
-
         download_url = folder.gateway + "/api/v0/get?arg=" + folder.payloadCid + "&create=true"
 
         if os.path.exists(folder_path):
@@ -313,6 +315,7 @@ class BucketAPI(object):
             with closing(requests.post(download_url, stream=True)) as resp:
                 if resp.status_code != 200:
                     logging.error('\033[31mFile download failed\033[0m')
+                    return False
                 with tarfile.open(fileobj=resp.raw, mode="r|*") as tar:
                     tar.extractall(path=dir_name)
                 first_name = next(iter(tar), None).name
