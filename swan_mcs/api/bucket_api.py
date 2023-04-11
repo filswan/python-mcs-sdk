@@ -259,7 +259,7 @@ class BucketAPI(object):
 
             self._create_folders(bucket_name, prefix)
             return res
-        return False
+        return None
 
     def upload_ipfs_folder(self, bucket_name, object_name, folder_path):
         # folder_name = os.path.basename(object_name) or os.path.basename(folder_path)
