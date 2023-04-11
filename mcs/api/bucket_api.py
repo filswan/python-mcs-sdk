@@ -175,7 +175,7 @@ class BucketAPI(object):
 
             if not file_name:
                 logging.error("\033[31mFile name cannot be empty")
-                return False
+                return None
 
             # if os.stat(file_path).st_size == 0:
             #     logging.error("\033[31mFile size cannot be 0\033[0m")
@@ -187,7 +187,7 @@ class BucketAPI(object):
             result = self._check_file(bucket_id, file_hash, file_name, prefix)
             if result is None:
                 logging.error("\033[31mCan't find this bucket\033[0m")
-                return
+                return None
             # Replace file if already existed
             if result['data']['file_is_exist'] and replace:
                 self.delete_file(bucket_name, object_name)
@@ -210,8 +210,14 @@ class BucketAPI(object):
                     for thread in threads:
                         thread.join()
                     result = self._merge_file(bucket_id, file_hash, file_name, prefix)
+                if result is None:
+                    logging.error("\033[31m Merge file failed\033[0m")
+                    return None
                 file_id = result['data']['file_id']
                 file_info = self._get_file_info(file_id)
+                if file_info is None:
+                    logging.error("\033[31m Get file info failed\033[0m")
+                    return None
                 self._create_folders(bucket_name, prefix)
                 logging.info("\033[32mFile upload successfully\033[0m")
                 return file_info
@@ -243,7 +249,7 @@ class BucketAPI(object):
     def upload_folder(self, bucket_name, object_name, folder_path):
         prefix, folder_name = object_to_filename(object_name)
         folder_res = self.create_folder(bucket_name, folder_name, prefix)
-        if folder_res:
+        if folder_res is True:
             res = []
             files = os.listdir(folder_path)
             for f in files:
@@ -252,7 +258,6 @@ class BucketAPI(object):
                 res.append(upload)
 
             self._create_folders(bucket_name, prefix)
-
             return res
         return False
 
