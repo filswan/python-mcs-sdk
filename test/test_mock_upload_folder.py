@@ -3,8 +3,7 @@ from pathlib import Path
 
 import pytest
 import requests_mock
-from unittest.mock import patch
-from mcs.common import constants as c
+from swan_mcs.common import constants as c
 
 
 class TestMockUploadFolder:

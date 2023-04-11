@@ -1,10 +1,10 @@
-from mcs.common.constants import *
-from mcs.common.params import Params
+from swan_mcs.common.constants import *
+from swan_mcs.common.params import Params
 import requests
 import json
 import logging
-from mcs.common import utils, exceptions
-from mcs.common import constants as c
+from swan_mcs.common import utils, exceptions
+from swan_mcs.common import constants as c
 from requests_toolbelt.multipart.encoder import MultipartEncoder, MultipartEncoderMonitor
 from tqdm import tqdm
 from pathlib import Path

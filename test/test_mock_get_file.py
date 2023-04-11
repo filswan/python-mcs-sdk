@@ -1,8 +1,8 @@
 import pytest
 import requests_mock
 
-import mcs.object.bucket_storage
-from mcs.common import constants as c
+from swan_mcs.object import bucket_storage
+from swan_mcs.common import constants as c
 
 
 class TestGetFile:
@@ -40,7 +40,7 @@ class TestGetFile:
 
         result = self.bucket_api.get_file(self.bucket_name, self.object_name)
 
-        assert isinstance(result, mcs.object.bucket_storage.File)
+        assert isinstance(result, bucket_storage.File)
         assert result.name == file_data['name']
         assert result.size == file_data['size']
 

@@ -1,9 +1,7 @@
 import pytest
 import requests_mock
-from unittest.mock import MagicMock
-
-import mcs.object.bucket_storage
-from mcs.common import constants as c
+from swan_mcs.object import bucket_storage
+from swan_mcs.common import constants as c
 
 
 class TestListFiles:
@@ -24,7 +22,7 @@ class TestListFiles:
         result = self.bucket_api.list_files(self.bucket_name)
 
         assert len(result) == len(shared_file_list)
-        assert isinstance(result[0], mcs.object.bucket_storage.File)
+        assert isinstance(result[0], bucket_storage.File)
 
     def test_list_files_failure(self, mock_requests):
         mock_requests.get(c.FILE_LIST, json={'status': 'failed', 'message': 'Error listing files'})

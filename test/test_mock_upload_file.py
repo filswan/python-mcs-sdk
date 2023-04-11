@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 import requests_mock
-from mcs.common import constants as c
+from swan_mcs.common import constants as c
 import os
 
 # Set the value of the api to be mocked as False

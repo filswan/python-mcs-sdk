@@ -3,8 +3,8 @@ import os
 import pytest
 import requests_mock
 
-import mcs.object.bucket_storage
-from mcs.common import constants as c
+from swan_mcs.object import bucket_storage
+from swan_mcs.common import constants as c
 
 from pathlib import Path
 
@@ -36,7 +36,7 @@ class TestMockUploadIpfsFolder:
 
         # Check the result
         assert result is not None
-        assert isinstance(result, mcs.object.bucket_storage.File)
+        assert isinstance(result, bucket_storage.File)
         assert result.id == 1
         assert result.name == "test_ipfs_file_name-1"
         os.remove(self.folder_path / ("file1.txt" + shared_current_time))

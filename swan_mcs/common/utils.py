@@ -1,5 +1,5 @@
 import requests
-from mcs.common.constants import FIL_PRICE_API
+from swan_mcs.common.constants import FIL_PRICE_API
 import json
 import os
 

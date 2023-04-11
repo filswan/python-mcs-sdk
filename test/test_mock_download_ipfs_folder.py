@@ -1,12 +1,10 @@
 import io
-import os
 import tarfile
 from pathlib import Path
 
 import requests_mock
-from io import BytesIO
 import pytest
-from mcs.common import constants as c
+from swan_mcs.common import constants as c
 
 
 class TestDownloadIpfsFolder:

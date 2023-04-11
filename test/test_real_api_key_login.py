@@ -1,7 +1,7 @@
 import logging
 
 import pytest
-from mcs import APIClient
+from swan_mcs import APIClient
 
 
 class TestRealApiKeyLogin:

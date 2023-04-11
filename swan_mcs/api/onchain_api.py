@@ -1,6 +1,6 @@
-from mcs.api_client import APIClient
-from mcs.common.constants import *
-from mcs.common.utils import get_contract_abi, get_amount
+from swan_mcs.api_client import APIClient
+from swan_mcs.common.constants import *
+from swan_mcs.common.utils import get_contract_abi, get_amount
 from web3 import Web3
 from web3.middleware import geth_poa_middleware
 from web3.logs import DISCARD
@@ -8,7 +8,7 @@ from eth_account import Account
 import json
 import logging
 
-from mcs.object.onchain_storage import *
+from swan_mcs.object.onchain_storage import *
 
 
 class OnchainAPI(object):

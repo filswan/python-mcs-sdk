@@ -2,8 +2,7 @@ import os
 
 import pytest
 
-import mcs.object.bucket_storage
-
+from swan_mcs.object import bucket_storage
 
 class TestRealGetFile:
     @pytest.fixture(autouse=True)
@@ -21,7 +20,7 @@ class TestRealGetFile:
         self.obj.upload_file(bucket_name, object_name, file_path)
         result = self.obj.get_file(bucket_name, object_name)
         os.remove(file_path)
-        assert isinstance(result, mcs.object.bucket_storage.File)
+        assert isinstance(result, bucket_storage.File)
 
     def test_get_non_existing_file_failure(self):
 

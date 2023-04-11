@@ -1,8 +1,7 @@
 import pytest
 import os
 from dotenv import load_dotenv
-from mcs.common.params import Params
-from mcs import OnchainAPI, APIClient
+from swan_mcs import OnchainAPI, APIClient
 
 
 @pytest.mark.skip(reason="no way of currently testing this")

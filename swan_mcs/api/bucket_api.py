@@ -1,5 +1,5 @@
-from mcs.api_client import APIClient
-from mcs.common.constants import *
+from swan_mcs.api_client import APIClient
+from swan_mcs.common.constants import *
 from hashlib import md5
 from queue import Queue
 import threading
@@ -10,8 +10,8 @@ import tarfile
 import os
 import requests
 from contextlib import closing
-from mcs.common.utils import object_to_filename
-from mcs.object.bucket_storage import Bucket, File
+from swan_mcs.common.utils import object_to_filename
+from swan_mcs.object.bucket_storage import Bucket, File
 
 
 class BucketAPI(object):

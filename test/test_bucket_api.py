@@ -1,7 +1,7 @@
 import pytest
 import os
 from dotenv import load_dotenv
-from mcs import BucketAPI, APIClient
+from swan_mcs import BucketAPI, APIClient
 
 
 @pytest.mark.skip(reason="no way of currently testing this")
@@ -50,31 +50,31 @@ class TestBucketAPI:
         api = self.login()
         filepath = "/images/log_mcs.png"
         parentpath = os.path.abspath(os.path.dirname(__file__))
-        file = api.upload_file('test-bucket', "folder1/mcs-logo.png", parentpath + filepath)
-        assert file.name == "mcs-logo.png"
+        file = api.upload_file('test-bucket', "folder1/swan_mcs-logo.png", parentpath + filepath)
+        assert file.name == "swan_mcs-logo.png"
 
     def test_get_file(self):
         api = self.login()
-        file = api.get_file('test-bucket', 'folder1/mcs-logo.png')
+        file = api.get_file('test-bucket', 'folder1/swan_mcs-logo.png')
 
-        assert file.name == "mcs-logo.png"
+        assert file.name == "swan_mcs-logo.png"
 
     def test_get_file_list(self):
         api = self.login()
         list = api.list_files('test-bucket', 'folder1')
 
         assert len(list) == 1
-        assert list[0].name == 'mcs-logo.png'
+        assert list[0].name == 'swan_mcs-logo.png'
 
     def test_download_file(self):
         api = self.login()
-        result = api.download_file('test-bucket', 'folder1/mcs-logo.png', "aaaa.png")
+        result = api.download_file('test-bucket', 'folder1/swan_mcs-logo.png', "aaaa.png")
 
         assert result is True
 
     def test_delete_file(self):
         api = self.login()
-        delete = api.delete_file('test-bucket', 'folder1/mcs-logo.png')
+        delete = api.delete_file('test-bucket', 'folder1/swan_mcs-logo.png')
 
         assert delete is True
 

@@ -1,12 +1,12 @@
 MCS_POLYGON_MAIN_API = "https://api.multichain.storage"
-MCS_POLYGON_MUMBAI_API = "https://calibration-mcs-api.filswan.com"
+MCS_POLYGON_MUMBAI_API = "http://192.168.88.41:8889"
 MCS_BSC_API = 'https://calibration-mcs-bsc.filswan.com'
 GET = "GET"
 POST = "POST"
 PUT = "PUT"
 DELETE = "DELETE"
 FIL_PRICE_API = "https://api.filswan.com/stats/storage"
-# mcs api
+# swan_mcs api
 MCS_PARAMS = "/api/v1/common/system/params"
 PRICE_RATE = "/api/v1/billing/price/filecoin"
 PAYMENT_INFO = "/api/v1/billing/deal/lockpayment/info"

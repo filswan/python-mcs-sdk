@@ -47,7 +47,7 @@ rpc_endpoint="<RPC_ENDPOINT>"# e.g https://polygon-rpc.com
 **Authentication**
 
  ```python
-from mcs import APIClient
+from swan_mcs import APIClient
 if __name__ == '__main__':
     api_key="<API_KEY>"
     access_token="<ACCESS_TOKEN>"
@@ -62,7 +62,7 @@ if __name__ == '__main__':
 - Create a bucket
 
 ```python
-from mcs import BucketAPI
+from swan_mcs import BucketAPI
     bucket_client = BucketAPI(mcs_api)
     bucket_data = bucket_client.create_bucket('YOUR_BUCKET_NAME')
     print(bucket_data)
@@ -84,7 +84,7 @@ Onchain storage is designed for stored file information in smart contract.It req
 * Upload File to Onchain storage
 
  ```python
-from mcs import OnchainAPI
+from swan_mcs import OnchainAPI
     onchain = OnchainAPI(mcs_api)
     print(onchain.upload_file('<File Path>'))
  ```

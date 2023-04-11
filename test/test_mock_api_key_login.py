@@ -2,8 +2,8 @@ import logging
 
 import pytest
 import requests_mock
-from mcs import APIClient
-from mcs.common import constants as c
+from swan_mcs import APIClient
+from swan_mcs.common import constants as c
 from secrets import compare_digest
 
 

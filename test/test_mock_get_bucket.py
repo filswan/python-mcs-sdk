@@ -2,7 +2,7 @@ import logging
 
 import requests_mock
 import pytest
-from mcs.common import constants as c
+from swan_mcs.common import constants as c
 
 
 class TestMockGetBucket:

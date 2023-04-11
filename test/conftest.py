@@ -3,14 +3,14 @@ import tempfile
 
 import pytest
 import requests_mock
-from mcs.common import constants as c
+from swan_mcs.common import constants as c
 
-from mcs import APIClient, BucketAPI
+from swan_mcs import APIClient, BucketAPI
 from dotenv import load_dotenv
 import os
 import datetime
 
-from mcs.object.bucket_storage import Bucket
+from swan_mcs.object.bucket_storage import Bucket
 
 load_dotenv('.env_test')
 api_key = os.getenv('api_key')

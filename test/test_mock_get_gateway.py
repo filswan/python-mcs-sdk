@@ -1,7 +1,7 @@
 import pytest
 import requests_mock
 
-from mcs.common import constants as c
+from swan_mcs.common import constants as c
 
 
 class TestMockGetGateway():
