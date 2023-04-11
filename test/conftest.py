@@ -1,5 +1,4 @@
 import shutil
-import tempfile
 
 import pytest
 import requests_mock
@@ -208,6 +207,7 @@ def remove_temp_dir():
     if os.path.exists(os.path.join(os.getcwd(), "test_dir")):
         shutil.rmtree(os.path.join(os.getcwd(), "test_dir"))
 
+
 @pytest.fixture(scope="function", autouse=True)
 def temp_dir():
     dirpath = os.path.join(os.getcwd(), "test_dir")
@@ -215,5 +215,3 @@ def temp_dir():
     yield dirpath
     # teardown - remove directory after all tests complete
     shutil.rmtree(dirpath)
-
-
