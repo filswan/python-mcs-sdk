@@ -394,10 +394,9 @@ class BucketAPI(object):
         try:
             result = self.api_client._request_without_params(GET, GET_GATEWAY, self.MCS_API, self.token)
             data = result['data']
-
             return 'https://' + data[0]
         except:
-            logging.error("\033[31m" + result['message'] + "\033[0m")
+            logging.error("\033[31m" "Get Gateway failed" "\033[0m")
             return
 
     def _read_files(self, root_folder, folder_name):
