@@ -34,10 +34,8 @@ class APIClient(object):
             gateway = res["data"][0]
             return gateway
         else:
-            logging.error("\033[31m Please check your APIkey and access token, or "
-                          "check whether the current network environment corresponds to the APIkey.\033[0m")
+            logging.error("\033[31m Get Gateway error\033[0m")
             return
-
 
     def api_key_login(self):
         params = {'apikey': self.api_key, 'access_token': self.access_token, 'network': self.chain_name}
