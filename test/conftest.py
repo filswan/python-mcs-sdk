@@ -11,7 +11,8 @@ import datetime
 
 from swan_mcs.object.bucket_storage import Bucket
 
-load_dotenv('.env_test')
+abs_path = os.path.dirname(os.path.abspath(__file__))
+load_dotenv(abs_path + '/.env_test')
 api_key = os.getenv('api_key')
 access_token = os.getenv('access_token')
 chain_name = os.getenv('chain_name')
