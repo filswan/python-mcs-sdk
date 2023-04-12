@@ -9,7 +9,7 @@ class McsAPIException(Exception):
         try:
             json_res = response.json()
         except ValueError:
-            self.message = 'Invalid JSON error message from Mcs: {}'.format(response.text)
+            self.message = 'Invalid JSON error message from swan_mcs: {}'.format(response.text)
         else:
             if "error_code" in json_res.keys() and "error_message" in json_res.keys():
                 self.code = json_res['error_code']

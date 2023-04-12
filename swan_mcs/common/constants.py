@@ -6,7 +6,7 @@ POST = "POST"
 PUT = "PUT"
 DELETE = "DELETE"
 FIL_PRICE_API = "https://api.filswan.com/stats/storage"
-# mcs api
+# swan_mcs api
 MCS_PARAMS = "/api/v1/common/system/params"
 PRICE_RATE = "/api/v1/billing/price/filecoin"
 PAYMENT_INFO = "/api/v1/billing/deal/lockpayment/info"

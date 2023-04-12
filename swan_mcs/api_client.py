@@ -1,10 +1,10 @@
-from mcs.common.constants import *
-from mcs.common.params import Params
+from swan_mcs.common.constants import *
+from swan_mcs.common.params import Params
 import requests
 import json
 import logging
-from mcs.common import utils, exceptions
-from mcs.common import constants as c
+from swan_mcs.common import utils, exceptions
+from swan_mcs.common import constants as c
 from requests_toolbelt.multipart.encoder import MultipartEncoder, MultipartEncoderMonitor
 from tqdm import tqdm
 from pathlib import Path
@@ -27,11 +27,15 @@ class APIClient(object):
 
     def get_price_rate(self):
         return self._request_without_params(GET, PRICE_RATE, self.MCS_API, self.token)
-    
+
     def get_gateway(self):
         res = self._request_without_params(GET, GET_GATEWAY, self.MCS_API, self.token)
-        gateway = res["data"][0]
-        return gateway
+        if res:
+            gateway = res["data"][0]
+            return gateway
+        else:
+            logging.error("\033[31m Get Gateway error\033[0m")
+            return
 
     def api_key_login(self):
         params = {'apikey': self.api_key, 'access_token': self.access_token, 'network': self.chain_name}
@@ -45,7 +49,7 @@ class APIClient(object):
             return self.token
         except:
             logging.error("\033[31m Please check your APIkey and access token, or "
-                                                  "check whether the current network environment corresponds to the APIkey.\033[0m")
+                          "check whether the current network environment corresponds to the APIkey.\033[0m")
             return
 
     def _request(self, method, request_path, mcs_api, params, token, files=False):
@@ -85,7 +89,6 @@ class APIClient(object):
         #
         # if str(json_res['status']) == 'error':
         #     raise exceptions.McsRequestException(json_res['message'])
-
         return response.json()
 
     def _request_stream_upload(self, request_path, mcs_api, params, token):
