@@ -1,5 +1,20 @@
 # Change Log
 
+All notable changes to this project will be documented in this file.
+
+## [Unreleased]
+
+### Added
+
+
+### Changed
+
+
+### Removed
+
+
+### Fixed
+
 ## [0.3.1] - 2023-04-12
 
 ### Added
@@ -25,4 +40,4 @@
   in the MCS web console.
   
 [0.3.1]: https://github.com/filswan/python-mcs-sdk/releases/tag/v0.3.1
-
+[Unreleased]: https://github.com/filswan/python-mcs-sdk/tree/dev
