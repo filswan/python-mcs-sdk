@@ -1,27 +1,5 @@
 # Change Log
 
-All notable changes to this project will be documented in this file.
-
-## [Unreleased]
-
-### Added
-
-- Added feature A.
-- Added feature B.
-
-### Changed
-
-- Changed behavior of C.
-- Optimized performance of D.
-
-### Removed
-
-- Removed feature E.
-
-### Fixed
-
-- Fixed issue F.
-
 ## [0.3.0] - 2023-04-12
 
 ### Added
@@ -44,9 +22,8 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 - Help user to create Hierarchical Relationships base on the object name so user can see the Hierarchical Relationships
-  in the MCS web console.
-
-[Unreleased]: https://github.com/your-project/compare/v1.0.0...HEAD
+  in the MCS web conso
+  le.
 
 [0.3.0]: https://github.com/filswan/python-mcs-sdk/releases/tag/v0.3.0
 
