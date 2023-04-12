@@ -24,5 +24,5 @@
 - Help user to create Hierarchical Relationships base on the object name so user can see the Hierarchical Relationships
   in the MCS web console.
   
-[0.3.0]: https://github.com/filswan/python-mcs-sdk/releases/tag/v0.3.1
+[0.3.1]: https://github.com/filswan/python-mcs-sdk/releases/tag/v0.3.1
 
