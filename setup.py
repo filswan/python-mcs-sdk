@@ -17,5 +17,3 @@ setup(name="python-mcs-sdk",
       long_description=long_description,
       long_description_content_type='text/markdown',
       )
-
-warnings.warn("This version includes breaking changes. Please read the changelog before upgrading.")
