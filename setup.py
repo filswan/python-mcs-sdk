@@ -2,7 +2,7 @@ from setuptools import setup
 from pathlib import Path
 
 this_directory = Path(__file__).parent
-long_description = (this_directory / "PipReleaseDoc.md").read_text()
+long_description = (this_directory / "PIPRELEASEDOC.md").read_text()
 
 setup(name="python-mcs-sdk",
       version="0.2.13",
