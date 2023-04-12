@@ -1,6 +1,5 @@
 from setuptools import setup
 from pathlib import Path
-import warnings
 
 this_directory = Path(__file__).parent
 long_description = (this_directory / "PIPRELEASEDOC.md").read_text()
@@ -17,5 +16,3 @@ setup(name="python-mcs-sdk",
       long_description=long_description,
       long_description_content_type='text/markdown',
       )
-
-warnings.warn("This version includes breaking changes. Please read the changelog before upgrading.")
