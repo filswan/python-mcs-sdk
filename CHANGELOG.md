@@ -48,5 +48,5 @@ All notable changes to this project will be documented in this file.
 
 [Unreleased]: https://github.com/your-project/compare/v1.0.0...HEAD
 
-[0.3.0]: https://github.com/your-project/releases/tag/v1.0.0
+[0.3.0]: https://github.com/filswan/python-mcs-sdk/releases/tag/v0.3.0
 
