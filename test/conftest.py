@@ -216,3 +216,16 @@ def temp_dir():
     yield dirpath
     # teardown - remove directory after all tests complete
     shutil.rmtree(dirpath)
+
+
+@pytest.fixture(scope="module", autouse=True)
+def delete_all_buckets():
+    bucket_api = BucketAPI(APIClient(api_key, access_token, chain_name))
+    buckets = bucket_api.list_buckets()
+    for bucket in buckets:
+        bucket_api.delete_bucket(bucket.bucket_name)
+        print("Deleted bucket: ", bucket.bucket_name)
+
+
+def pytest_sessionfinish(session, exitstatus):
+    delete_all_buckets()
