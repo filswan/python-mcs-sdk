@@ -108,6 +108,10 @@ class BucketAPI(object):
             return 
 
     def delete_file(self, bucket_name, object_name):
+        '''Delete a single file or folder from buckets
+        Params: bucket_name, object (file/folder) dir
+        Return: True (success), False (failed)
+        '''
         try:
             prefix, file_name = object_to_filename(object_name)
             file_list = self._get_full_file_list(bucket_name, prefix)
