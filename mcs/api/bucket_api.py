@@ -107,6 +107,41 @@ class BucketAPI(object):
             logging.error("\033[31mCan't create this folder")
             return 
 
+    def delete_object(self, bucket_name, object_name):
+        '''Delete an object from buckets
+        Params: bucket_name, object (file/folder) dir
+        Return: True (success), False (failed)
+        '''
+        return self.delete_file(bucket_name, object_name)
+    
+    def delete_folder(self, bucket_name, object_name):
+        '''Delete a single folder from buckets
+        Params: bucket_name, object (file/folder) dir
+        Return: True (success), False (failed)
+        '''
+        try:
+            prefix, file_name = object_to_filename(object_name)
+            file_list = self._get_full_file_list(bucket_name, prefix)
+        
+            file_id = ''
+            for file in file_list:
+                if file.name == file_name and file.is_folder:
+                    file_id = file.id
+            params = {'file_id': file_id}
+            if file_id == '':
+                logging.error("\033[31mCan't find the folder\033[0m")
+                return False
+            result = self.api_client._request_with_params(GET, DELETE_FILE, self.MCS_API, params, self.token, None)
+            if result['status'] == 'success':
+                logging.info("\033[32mFile delete successfully\033[0m")
+                return True
+            else:
+                logging.error("\033[31mCan't delete the file\033[0m")
+                return False
+        except:
+            logging.error("\033[31mCan't find this bucket\033[0m")
+            return
+
     def delete_file(self, bucket_name, object_name):
         '''Delete a single file or folder from buckets
         Params: bucket_name, object (file/folder) dir
