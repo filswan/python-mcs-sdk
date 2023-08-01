@@ -15,9 +15,9 @@ from swan_mcs.object.bucket_storage import Bucket, File
 
 
 class BucketAPI(object):
-    def __init__(self, api_client=None):
+    def __init__(self, api_client=None, api_key=None, is_calibration=False):
         if api_client is None:
-            api_client = APIClient()
+            api_client = APIClient(api_key=api_key, is_calibration=is_calibration)
         self.api_client = api_client
         self.MCS_API = api_client.MCS_API
         self.token = self.api_client.token
