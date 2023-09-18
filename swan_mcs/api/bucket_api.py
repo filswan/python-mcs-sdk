@@ -17,15 +17,18 @@ from swan_mcs.object.bucket_storage import Bucket, File
 class BucketAPI(object):
     def __init__(self, api_client=None, api_key=None, is_calibration=False):
         if api_client is None:
-            api_client = APIClient(api_key=api_key, is_calibration=is_calibration)
+            api_client = APIClient(
+                api_key=api_key, is_calibration=is_calibration)
         self.api_client = api_client
+        self.is_calibration = api_client.is_calibration
         self.MCS_API = api_client.MCS_API
         self.token = self.api_client.token
         self.gateway = self.get_gateway()
 
     def list_buckets(self):
         try:
-            result = self.api_client._request_without_params(GET, BUCKET_LIST, self.MCS_API, self.token)
+            result = self.api_client._request_without_params(
+                GET, BUCKET_LIST, self.MCS_API, self.token)
             bucket_info_list = []
             data = result['data']
             if data:
@@ -40,7 +43,8 @@ class BucketAPI(object):
     def create_bucket(self, bucket_name):
         params = {'bucket_name': bucket_name}
         try:
-            result = self.api_client._request_with_params(POST, CREATE_BUCKET, self.MCS_API, params, self.token, None)
+            result = self.api_client._request_with_params(
+                POST, CREATE_BUCKET, self.MCS_API, params, self.token, None)
             if result['status'] == 'success':
                 logging.info("\033[32mBucket created successfully\033[0m")
                 return True
@@ -55,7 +59,8 @@ class BucketAPI(object):
         try:
             bucket_id = self._get_bucket_id(bucket_name)
             params = {'bucket_uid': bucket_id}
-            result = self.api_client._request_with_params(GET, DELETE_BUCKET, self.MCS_API, params, self.token, None)
+            result = self.api_client._request_with_params(
+                GET, DELETE_BUCKET, self.MCS_API, params, self.token, None)
             if result['status'] == 'success':
                 logging.info("\033[32mBucket delete successfully\033[0m")
                 return True
@@ -87,7 +92,8 @@ class BucketAPI(object):
             bucket_id = self._get_bucket_id(bucket_name)
             params = {"bucket_uid": bucket_id, "object_name": object_name}
 
-            result = self.api_client._request_with_params(GET, GET_FILE, self.MCS_API, params, self.token, None)
+            result = self.api_client._request_with_params(
+                GET, GET_FILE, self.MCS_API, params, self.token, None)
 
             if result:
                 return File(result['data'], self.gateway)
@@ -101,8 +107,10 @@ class BucketAPI(object):
             return False
         try:
             bucket_id = self._get_bucket_id(bucket_name)
-            params = {"file_name": folder_name, "prefix": prefix, "bucket_uid": bucket_id}
-            result = self.api_client._request_with_params(POST, CREATE_FOLDER, self.MCS_API, params, self.token, None)
+            params = {"file_name": folder_name,
+                      "prefix": prefix, "bucket_uid": bucket_id}
+            result = self.api_client._request_with_params(
+                POST, CREATE_FOLDER, self.MCS_API, params, self.token, None)
             if result['status'] == 'success':
                 logging.info("\033[31mFolder created successfully\033[0m")
                 return True
@@ -128,7 +136,8 @@ class BucketAPI(object):
             if file_id == '':
                 logging.error("\033[31mCan't find the file\033[0m")
                 return False
-            result = self.api_client._request_with_params(GET, DELETE_FILE, self.MCS_API, params, self.token, None)
+            result = self.api_client._request_with_params(
+                GET, DELETE_FILE, self.MCS_API, params, self.token, None)
             if result['status'] == 'success':
                 logging.info("\033[32mFile delete successfully\033[0m")
                 return True
@@ -155,8 +164,10 @@ class BucketAPI(object):
             return None
 
         try:
-            params = {'bucket_uid': bucket_id, 'prefix': prefix, 'limit': limit, 'offset': offset}
-            result = self.api_client._request_with_params(GET, FILE_LIST, self.MCS_API, params, self.token, None)
+            params = {'bucket_uid': bucket_id, 'prefix': prefix,
+                      'limit': limit, 'offset': offset}
+            result = self.api_client._request_with_params(
+                GET, FILE_LIST, self.MCS_API, params, self.token, None)
             if result['status'] == 'success':
                 files = result['data']['file_list']
                 file_list = []
@@ -191,25 +202,29 @@ class BucketAPI(object):
             # Replace file if already existed
             if result['data']['file_is_exist'] and replace:
                 self.delete_file(bucket_name, object_name)
-                result = self._check_file(bucket_id, file_hash, file_name, prefix)
+                result = self._check_file(
+                    bucket_id, file_hash, file_name, prefix)
             if not (result['data']['file_is_exist']):
                 if not (result['data']['ipfs_is_exist']):
                     with open(file_path, 'rb') as file:
                         i = 0
                         queue = Queue()
-                        self.api_client.upload_progress_bar(file_name, file_size)
+                        self.api_client.upload_progress_bar(
+                            file_name, file_size)
                         for chunk in self._read_chunks(file):
                             i += 1
                             queue.put((str(i), chunk))
                         file.close()
                     threads = list()
                     for i in range(3):
-                        worker = threading.Thread(target=self._thread_upload_chunk, args=(queue, file_hash, file_name))
+                        worker = threading.Thread(
+                            target=self._thread_upload_chunk, args=(queue, file_hash, file_name))
                         threads.append(worker)
                         worker.start()
                     for thread in threads:
                         thread.join()
-                    result = self._merge_file(bucket_id, file_hash, file_name, prefix)
+                    result = self._merge_file(
+                        bucket_id, file_hash, file_name, prefix)
                 if result is None:
                     logging.error("\033[31m Merge file failed\033[0m")
                     return None
@@ -232,8 +247,10 @@ class BucketAPI(object):
         if bucket_id:
             path, folder_name = object_to_filename(path)
             while folder_name:
-                params = {"file_name": folder_name, "prefix": path, "bucket_uid": bucket_id}
-                self.api_client._request_with_params(POST, CREATE_FOLDER, self.MCS_API, params, self.token, None)
+                params = {"file_name": folder_name,
+                          "prefix": path, "bucket_uid": bucket_id}
+                self.api_client._request_with_params(
+                    POST, CREATE_FOLDER, self.MCS_API, params, self.token, None)
                 path, folder_name = object_to_filename(path)
             return True
         else:
@@ -254,7 +271,8 @@ class BucketAPI(object):
             files = os.listdir(folder_path)
             for f in files:
                 f_path = os.path.join(folder_path, f)
-                upload = self._upload_to_bucket(bucket_name, os.path.join(object_name, f), f_path)
+                upload = self._upload_to_bucket(
+                    bucket_name, os.path.join(object_name, f), f_path)
                 res.append(upload)
 
             self._create_folders(bucket_name, prefix)
@@ -273,8 +291,10 @@ class BucketAPI(object):
         bucket_uid = self._get_bucket_id(bucket_name)
         if bucket_uid:
             files = self._read_files(folder_path, folder_name)
-            form_data = {"folder_name": folder_name, "prefix": prefix, "bucket_uid": bucket_uid}
-            res = self.api_client._request_with_params(POST, PIN_IPFS, self.MCS_API, form_data, self.token, files)
+            form_data = {"folder_name": folder_name,
+                         "prefix": prefix, "bucket_uid": bucket_uid}
+            res = self.api_client._request_with_params(
+                POST, PIN_IPFS, self.MCS_API, form_data, self.token, files)
             if res and res["data"]:
                 self._create_folders(bucket_name, prefix)
                 folder = (File(res["data"], self.gateway))
@@ -300,7 +320,8 @@ class BucketAPI(object):
                     data = urllib.request.urlopen(ipfs_url)
                     if data:
                         f.write(data.read())
-                        logging.info("\033[32mFile downloaded successfully\033[0m")
+                        logging.info(
+                            "\033[32mFile downloaded successfully\033[0m")
                         return True
                     else:
                         logging.error('\033[31mDownload failed\033[0m')
@@ -315,7 +336,8 @@ class BucketAPI(object):
             logging.error('\033[31mFolder does not exist\033[0m')
             return False
         dir_name, folder_name = os.path.split(folder_path)
-        download_url = folder.gateway + "/api/v0/get?arg=" + folder.payloadCid + "&create=true"
+        download_url = folder.gateway + "/api/v0/get?arg=" + \
+            folder.payloadCid + "&create=true"
 
         if os.path.exists(folder_path):
             logging.error('\033[31mFolder already exists\033[0m')
@@ -337,7 +359,8 @@ class BucketAPI(object):
             return False
 
     def _check_file(self, bucket_id, file_hash, file_name, prefix=''):
-        params = {'bucket_uid': bucket_id, 'file_hash': file_hash, 'file_name': file_name, 'prefix': prefix}
+        params = {'bucket_uid': bucket_id, 'file_hash': file_hash,
+                  'file_name': file_name, 'prefix': prefix}
         return self.api_client._request_with_params(POST, CHECK_UPLOAD, self.MCS_API, params, self.token, None)
 
     def _upload_chunk(self, file_hash, file_name, chunk):
@@ -350,7 +373,8 @@ class BucketAPI(object):
             self._upload_chunk(file_hash, chunk[0] + '_' + file_name, chunk[1])
 
     def _merge_file(self, bucket_id, file_hash, file_name, prefix=''):
-        params = {'bucket_uid': bucket_id, 'file_hash': file_hash, 'file_name': file_name, 'prefix': prefix}
+        params = {'bucket_uid': bucket_id, 'file_hash': file_hash,
+                  'file_name': file_name, 'prefix': prefix}
         return self.api_client._request_with_params(POST, MERGE_FILE, self.MCS_API, params, self.token, None)
 
     def _read_chunks(self, file, chunk_size=10485760):
@@ -372,7 +396,8 @@ class BucketAPI(object):
         bucket_id = self._get_bucket_id(bucket_name)
         if bucket_id is None:
             return None
-        params = {'bucket_uid': bucket_id, 'prefix': prefix, 'limit': 10, 'offset': 0}
+        params = {'bucket_uid': bucket_id,
+                  'prefix': prefix, 'limit': 10, 'offset': 0}
         count = self.api_client._request_with_params(GET, FILE_LIST, self.MCS_API, params, self.token, None)['data'][
             'count']
         file_list = []
@@ -388,13 +413,15 @@ class BucketAPI(object):
 
     def _get_file_info(self, file_id):
         params = {'file_id': file_id}
-        result = self.api_client._request_with_params(GET, FILE_INFO, self.MCS_API, params, self.token, None)
+        result = self.api_client._request_with_params(
+            GET, FILE_INFO, self.MCS_API, params, self.token, None)
         file_info = File(result['data'], self.gateway)
         return file_info
 
     def get_gateway(self):
         try:
-            result = self.api_client._request_without_params(GET, GET_GATEWAY, self.MCS_API, self.token)
+            result = self.api_client._request_without_params(
+                GET, GET_GATEWAY, self.MCS_API, self.token)
             if result is None:
                 return
             data = result['data']
@@ -408,13 +435,15 @@ class BucketAPI(object):
         file_dict = []
 
         # Use glob to retrieve the file paths in the directory and its subdirectories
-        file_paths = glob.glob(os.path.join(root_folder, '**', '*'), recursive=True)
+        file_paths = glob.glob(os.path.join(
+            root_folder, '**', '*'), recursive=True)
 
         # Loop through each file path and read the contents of the file
         for file_path in file_paths:
             if os.path.isfile(file_path):
                 # Get the relative path from the root folder
-                upload_path = folder_name + "/" + os.path.relpath(file_path, root_folder)
+                upload_path = folder_name + "/" + \
+                    os.path.relpath(file_path, root_folder)
                 file_dict.append(('files', (
                     upload_path, open(file_path, 'rb'))))
 
