@@ -42,7 +42,7 @@ def shared_mock_api_client():
 @pytest.fixture()
 def shared_real_bucket():
     bucket = BucketAPI(APIClient(api_key, access_token,
-                       chain_name), is_calibration=True)
+                       chain_name, is_calibration=True))
     return bucket
 
 
