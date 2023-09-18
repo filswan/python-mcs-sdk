@@ -32,21 +32,24 @@ def shared_mock_bucket(shared_mock_api_client):
 @pytest.fixture()
 def shared_mock_api_client():
     with requests_mock.Mocker() as m:
-        m.register_uri(c.POST, c.APIKEY_LOGIN, json={"data": {"jwt_token": "sample_token"}})
+        m.register_uri(c.POST, c.APIKEY_LOGIN, json={
+                       "data": {"jwt_token": "sample_token"}})
         api_client = APIClient(api_key="sample_api_key", access_token="sample_access_token",
-                               chain_name="polygon.mumbai")
+                               chain_name="polygon.mumbai", is_calibration=True)
         return api_client
 
 
 @pytest.fixture()
 def shared_real_bucket():
-    bucket = BucketAPI(APIClient(api_key, access_token, chain_name))
+    bucket = BucketAPI(APIClient(api_key, access_token,
+                       chain_name, is_calibration=True))
     return bucket
 
 
 @pytest.fixture()
 def shared_real_api_client():
-    api_client = APIClient(api_key, access_token, chain_name)
+    api_client = APIClient(api_key, access_token,
+                           chain_name, is_calibration=True)
     return api_client
 
 

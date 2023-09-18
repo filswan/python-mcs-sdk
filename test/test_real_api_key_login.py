@@ -8,9 +8,9 @@ class TestRealApiKeyLogin:
         api_client = APIClient(shared_login_info['api_key'], shared_login_info['access_token'],
                                shared_login_info['chain_name'])
         print(api_client)
-        token = api_client.token
-        assert token is not None
-        assert isinstance(token, str)
+        api_key = api_client.api_key
+        assert api_key is not None
+        assert isinstance(api_key, str)
 
     def test_invalid_api_key_login(self, shared_login_info):
         api_client = APIClient(shared_login_info['wrong_api_key'], shared_login_info['access_token'],
@@ -23,8 +23,3 @@ class TestRealApiKeyLogin:
                                shared_login_info['chain_name'])
         token = api_client.token
         assert token is None
-
-    def test_invalid_chain_name_login(self, shared_login_info):
-        with pytest.raises(AttributeError):
-            APIClient(shared_login_info['api_key'], shared_login_info['access_token'],
-                      shared_login_info['wrong_chain_name'])

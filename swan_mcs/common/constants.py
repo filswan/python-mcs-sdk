@@ -17,7 +17,7 @@ DEAL_DETAIL = "/api/v1/storage/deal/detail/"
 USER_REGISTER = "/api/v1/user/register"
 USER_LOGIN = "/api/v1/user/login_by_metamask_signature"
 GENERATE_APIKEY = "/api/v1/user/generate_api_key"
-APIKEY_LOGIN = "/api/v1/user/login_by_api_key"
+APIKEY_LOGIN = "/api/v2/user/login_by_api_key"
 COLLECTIONS = "/api/v1/storage/mint/nft_collections"
 COLLECTION = "/api/v1/storage/mint/nft_collection"
 # bucket api

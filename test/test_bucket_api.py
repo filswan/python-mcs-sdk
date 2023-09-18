@@ -11,24 +11,24 @@ class TestBucketAPI:
         api_key = os.getenv('api_key')
         access_token = os.getenv('access_token')
         chain_name = os.getenv("chain_name")
-        api = BucketAPI(APIClient(api_key, access_token, chain_name))
+        api = BucketAPI(api_key=api_key, is_calibration=True)
 
         assert api
         return api
 
     def test_delete_bucket(self):
         api = self.login()
-        print(api.delete_bucket('test-bucket'))
-
-    def test_list_buckets(self):
-        api = self.login()
-        print(api.list_buckets())
-        assert api.list_buckets() is not None
+        delete = api.delete_bucket('test-bucket')
 
     def test_create_bucket(self):
         api = self.login()
         create = api.create_bucket('test-bucket')
         assert create is True
+
+    def test_list_buckets(self):
+        api = self.login()
+        buckets = api.list_buckets()
+        assert api.list_buckets() is not None
 
     def test_get_bucket(self):
         api = self.login()
@@ -41,16 +41,17 @@ class TestBucketAPI:
 
         assert create is True
 
-    # def test_create_folder_with_same_name():
-    #     api = login()
-    #     create = api.create_folder('test-bucket', 'folder1')
-    #     print(create)
+    def test_create_folder_with_same_name(self):
+        api = self.login()
+        create = api.create_folder('test-bucket', 'folder1')
+        print(create)
 
     def test_upload_file(self):
         api = self.login()
         filepath = "/images/log_mcs.png"
         parentpath = os.path.abspath(os.path.dirname(__file__))
-        file = api.upload_file('test-bucket', "folder1/swan_mcs-logo.png", parentpath + filepath)
+        file = api.upload_file(
+            'test-bucket', "folder1/swan_mcs-logo.png", parentpath + filepath)
         assert file.name == "swan_mcs-logo.png"
 
     def test_get_file(self):
@@ -68,7 +69,10 @@ class TestBucketAPI:
 
     def test_download_file(self):
         api = self.login()
-        result = api.download_file('test-bucket', 'folder1/swan_mcs-logo.png', "aaaa.png")
+        result = api.download_file(
+            'test-bucket', 'folder1/swan_mcs-logo.png', "aaaa.png")
+
+        print(result)
 
         assert result is True
 

@@ -2,15 +2,11 @@ from swan_mcs.common.constants import MCS_POLYGON_MUMBAI_API, MCS_BSC_API, MCS_P
 import logging
 
 class Params:
-    def __init__(self, chain_name='polygon.mainnet'):
-        if chain_name == 'polygon.mainnet' or chain_name == 'main':
-            self.MCS_API = MCS_POLYGON_MAIN_API
-        elif chain_name == 'polygon.mumbai' or chain_name == 'mumbai':
+    def __init__(self, is_calibration=False):
+        if is_calibration:
             self.MCS_API = MCS_POLYGON_MUMBAI_API
-        elif chain_name == 'bsc.testnet' or chain_name == 'bsc':
-            self.MCS_API = MCS_BSC_API
         else:
-            logging.error("\033[31munknown chain name\033[0m")
+            self.MCS_API = MCS_POLYGON_MAIN_API
 
     def get_params(self):
 
