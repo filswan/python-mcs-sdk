@@ -11,14 +11,14 @@ from pathlib import Path
 
 
 class APIClient(object):
-    def __init__(self, api_key, access_token, chain_name=None, login=True):
+    def __init__(self, api_key, access_token=None, chain_name=None, login=True, is_calibration=False, ):
         self.token = None
-        if chain_name is None:
-            chain_name = "polygon.mainnet"
-        self.chain_name = chain_name
+        # if chain_name is None:
+        #     chain_name = "polygon.mainnet"
+        self.is_calibration = is_calibration
         self.api_key = api_key
         self.access_token = access_token
-        self.MCS_API = Params(self.chain_name).MCS_API
+        self.MCS_API = Params(self.is_calibration).MCS_API
         if login:
             self.api_key_login()
 
@@ -29,7 +29,8 @@ class APIClient(object):
         return self._request_without_params(GET, PRICE_RATE, self.MCS_API, self.token)
 
     def get_gateway(self):
-        res = self._request_without_params(GET, GET_GATEWAY, self.MCS_API, self.token)
+        res = self._request_without_params(
+            GET, GET_GATEWAY, self.MCS_API, self.token)
         if res:
             gateway = res["data"][0]
             return gateway
@@ -38,18 +39,18 @@ class APIClient(object):
             return
 
     def api_key_login(self):
-        params = {'apikey': self.api_key, 'access_token': self.access_token, 'network': self.chain_name}
+        params = {'apikey': self.api_key}
         # if params.get('apikey') == '' or params.get('access_token') == '' or params.get('chain_name') == '':
         #     logging.error("\033[31mAPIkey, access token, or chain name does not exist\033[0m")
         #     return
         try:
-            result = self._request_with_params(POST, APIKEY_LOGIN, self.MCS_API, params, None, None)
-            self.token = result['data']['jwt_token']
+            result = self._request_with_params(
+                POST, APIKEY_LOGIN, self.MCS_API, params, None, None)
+            self.token = result['data']
             logging.info("\033[32mLogin successful\033[0m")
             return self.token
         except:
-            logging.error("\033[31m Please check your APIkey and access token, or "
-                          "check whether the current network environment corresponds to the APIkey.\033[0m")
+            logging.error("\033[31m Please check your APIkey.\033[0m")
             return
 
     def _request(self, method, request_path, mcs_api, params, token, files=False):
@@ -69,7 +70,8 @@ class APIClient(object):
         elif method == c.POST:
             if files:
                 body = params
-                response = requests.post(url, data=body, headers=header, files=files)
+                response = requests.post(
+                    url, data=body, headers=header, files=files)
             else:
                 body = json.dumps(params) if method == c.POST else ""
                 response = requests.post(url, data=body, headers=header)
@@ -132,7 +134,8 @@ class APIClient(object):
         encode = MultipartEncoder(params)
         previous = Previous()
         body = MultipartEncoderMonitor(
-            encode, lambda monitor: self.bar.update(previous.update(monitor.bytes_read)),
+            encode, lambda monitor: self.bar.update(
+                previous.update(monitor.bytes_read)),
         )
         header['Content-Type'] = body.content_type
         response = requests.post(url, data=body, headers=header)
@@ -147,7 +150,8 @@ class APIClient(object):
         return response.json()
 
     def upload_progress_bar(self, file_name, file_size):
-        self.bar = tqdm(desc=file_name, total=file_size, unit='B', unit_scale=True, unit_divisor=1024)
+        self.bar = tqdm(desc=file_name, total=file_size,
+                        unit='B', unit_scale=True, unit_divisor=1024)
 
     def _request_without_params(self, method, request_path, mcs_api, token):
         return self._request(method, request_path, mcs_api, {}, token)

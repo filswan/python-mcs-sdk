@@ -2,16 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [Unreleased] - 2023-09-18
 
 ### Added
 
-
 ### Changed
 
+- Login API (now supports calibration)
 
 ### Removed
 
+- On-chain: now just bucket storage
+- Access Token: just api_key is enough
+- Chain Name: we removed on-chain, so no chain needed
+- (This means .env is just api_key)
 
 ### Fixed
 
@@ -36,8 +40,9 @@ All notable changes to this project will be documented in this file.
 ### Removed
 
 ### Fixed
+
 - Help user to create Hierarchical Relationships base on the object name so user can see the Hierarchical Relationships
   in the MCS web console.
-  
+
 [0.3.1]: https://github.com/filswan/python-mcs-sdk/releases/tag/v0.3.1
-[Unreleased]: https://github.com/filswan/python-mcs-sdk/tree/dev
+[unreleased]: https://github.com/filswan/python-mcs-sdk/tree/dev

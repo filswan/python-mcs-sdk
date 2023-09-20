@@ -14,12 +14,12 @@ class TestMockApiKeyLogin:
             yield m
 
     def test_api_key_login_success(self, mock_requests):
-        mock_requests.register_uri(c.POST, c.APIKEY_LOGIN, json={"data": {"jwt_token": "sample_token"}})
+        mock_requests.register_uri(c.POST, c.APIKEY_LOGIN, json={
+                                   "data": {"jwt_token": "sample_token"}})
         api_client = APIClient(api_key="sample_api_key", access_token="sample_access_token",
-                               chain_name="polygon.mumbai")
+                               chain_name="polygon.mumbai", is_calibration=True)
         token = api_client.token
         assert compare_digest(token, "sample_token")
-
 
     @pytest.mark.parametrize("api_key, access_token, chain_name", [
         ("", "sample_access_token", "polygon.mumbai"),
@@ -28,14 +28,16 @@ class TestMockApiKeyLogin:
     def test_api_key_login_empty_params(self, mock_requests, api_key, access_token, chain_name):
         logging.info("test_api_key_login_empty_params")
         mock_requests.register_uri(c.POST, c.APIKEY_LOGIN, status_code=400)
-        api_client = APIClient(api_key=api_key, access_token=access_token, chain_name=chain_name)
+        api_client = APIClient(
+            api_key=api_key, access_token=access_token, chain_name=chain_name)
         token = api_client.api_key_login()
         assert token is None
 
     def test_api_key_login_empty_chain_name(self, mock_requests):
         logging.info("test_api_key_login_empty_chain_name")
         mock_requests.register_uri(c.POST, c.APIKEY_LOGIN, status_code=400)
-        api_client = APIClient(api_key="sample_api_key", access_token="sample_access_token")
+        api_client = APIClient(api_key="sample_api_key",
+                               access_token="sample_access_token")
         token = api_client.api_key_login()
         assert token is None
 
