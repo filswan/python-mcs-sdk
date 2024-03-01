@@ -1,4 +1,4 @@
-MCS_POLYGON_MAIN_API = "https://api.multichain.storage"
+MCS_POLYGON_MAIN_API = "https://api.swanipfs.com"
 MCS_POLYGON_MUMBAI_API = "https://calibration-mcs-api.filswan.com"
 MCS_BSC_API = 'https://calibration-mcs-bsc.filswan.com'
 GET = "GET"
