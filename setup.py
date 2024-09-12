@@ -5,7 +5,7 @@ this_directory = Path(__file__).parent
 long_description = (this_directory / "PIPRELEASEDOC.md").read_text()
 
 setup(name="python-mcs-sdk",
-      version="0.2.13",
+      version="0.3.2",
       author="daniel8088",
       author_email="danilew8088@gmail.com",
       install_requires=["web3==6.15.1", "requests==2.28.1", "requests_toolbelt==0.10.1", "tqdm==4.64.1","eth_typing==4.1.0"],
