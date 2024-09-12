@@ -12,7 +12,7 @@ import datetime
 from swan_mcs.object.bucket_storage import Bucket
 
 abs_path = os.path.dirname(os.path.abspath(__file__))
-load_dotenv(abs_path + '/.env_test')
+load_dotenv(abs_path + '/.env')
 api_key = os.getenv('api_key')
 access_token = os.getenv('access_token')
 chain_name = os.getenv('chain_name')
@@ -36,6 +36,7 @@ def shared_mock_api_client():
                        "data": {"jwt_token": "sample_token"}})
         api_client = APIClient(api_key="sample_api_key", access_token="sample_access_token",
                                chain_name="polygon.mumbai", is_calibration=True)
+        api_client.token=api_client.token['jwt_token']
         return api_client
 
 
@@ -219,3 +220,16 @@ def temp_dir():
     yield dirpath
     # teardown - remove directory after all tests complete
     shutil.rmtree(dirpath)
+
+
+@pytest.fixture(scope="module", autouse=True)
+def delete_all_buckets():
+    bucket_api = BucketAPI(APIClient(api_key, access_token, chain_name))
+    buckets = bucket_api.list_buckets()
+    for bucket in buckets:
+        bucket_api.delete_bucket(bucket.bucket_name)
+        print("Deleted bucket: ", bucket.bucket_name)
+
+
+def pytest_sessionfinish(session, exitstatus):
+    delete_all_buckets()
