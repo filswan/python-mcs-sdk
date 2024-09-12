@@ -36,6 +36,7 @@ def shared_mock_api_client():
                        "data": {"jwt_token": "sample_token"}})
         api_client = APIClient(api_key="sample_api_key", access_token="sample_access_token",
                                chain_name="polygon.mumbai", is_calibration=True)
+        api_client.token=api_client.token['jwt_token']
         return api_client
 
 
