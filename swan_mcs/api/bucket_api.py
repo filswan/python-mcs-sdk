@@ -317,8 +317,8 @@ class BucketAPI(object):
             ipfs_url = file.ipfs_url
             with open(local_filename, 'wb') as f:
                 if file.size > 0:
-                    logging.error('\033[31m'+ipfs_url+'\033[0m')
-                    logging.error('\033[31m'+file.gateway+'\033[0m')
+                    logging.error('\033[31mThe file ipfs url: '+ipfs_url+'\033[0m')
+                    logging.error('\033[31mThe file gateway: '+file.gateway+'\033[0m')
                     data = urllib.request.urlopen(ipfs_url)
                     if data:
                         f.write(data.read())

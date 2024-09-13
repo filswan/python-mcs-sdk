@@ -1,6 +1,6 @@
 from swan_mcs.common.constants import *
 from swan_mcs.common.params import Params
-import requests
+import requests 
 import json
 import logging
 from swan_mcs.common import utils, exceptions
