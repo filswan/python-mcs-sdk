@@ -222,16 +222,15 @@ def temp_dir():
     shutil.rmtree(dirpath)
 
 
-@pytest.fixture(scope="module", autouse=False)
+
+@pytest.fixture(scope="module", autouse=True)
 def delete_all_buckets():
     bucket_api = BucketAPI(APIClient(api_key, access_token, chain_name))
     buckets = bucket_api.list_buckets()
-    if buckets:
-        for bucket in buckets:
-            bucket_api.delete_bucket(bucket.bucket_name)
-            print("Deleted bucket: ", bucket.bucket_name)
+    for bucket in buckets:
+        bucket_api.delete_bucket(bucket.bucket_name)
+        print("Deleted bucket: ", bucket.bucket_name)
 
 
 def pytest_sessionfinish(session, exitstatus):
-    #delete_all_buckets()
-    pass
+    delete_all_buckets()
