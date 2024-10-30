@@ -67,11 +67,7 @@ from swan_mcs import BucketAPI
     print(file_data.to_json())
 ```
 
-* Pay for the storage contract
-
-Please move forward for [How to pay for the storage](https://docs.filswan.com/multichain.storage/developer-quickstart/sdk/python-mcs-sdk/onchain-storage/advanced-usage)
-
-For more examples, please see the [SDK documentation.](https://docs.filswan.com/multi-chain-storage/developer-quickstart/sdk)
+For more examples, please see the [SDK documentation.](https://docs.swanchain.io/bulders/app-developer/store-and-retrieve-a-file-with-swan-storage)
 
 ## ℹ️ Functions
 
