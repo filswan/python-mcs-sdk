@@ -99,17 +99,6 @@ For more examples, please see the [SDK documentation.](https://docs.filswan.com/
 
 This SDK has the following functionalities:
 
-### For Onchain Storage
-
----
-
-- **POST**    Upload file to Filswan IPFS gateway
-- **GET**     List of files uploaded
-- **GET**     Files by cid
-- **GET**     Status from filecoin
-- **CONTRACT**    Make payment to swan filecoin storage gateway
-- **CONTRACT**    Mint asset as NFT
-
 ### For Buckets Storage
 
 ---

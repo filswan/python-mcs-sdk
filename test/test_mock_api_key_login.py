@@ -18,7 +18,7 @@ class TestMockApiKeyLogin:
                                    "data": {"jwt_token": "sample_token"}})
         api_client = APIClient(api_key="sample_api_key", access_token="sample_access_token",
                                chain_name="polygon.mumbai", is_calibration=True)
-        token = api_client.token
+        token = api_client.token['jwt_token']
         assert compare_digest(token, "sample_token")
 
     @pytest.mark.parametrize("api_key, access_token, chain_name", [
