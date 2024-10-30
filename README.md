@@ -11,7 +11,6 @@ A python software development kit for the Multi-Chain Storage(MCS) https://www.m
   - [Installation](#Installation)
 - [Examples](#-Examples)
 - [Functions](#ℹ️-Functions)
-  - [For Onchain Storage](#For-Onchain-Storage)
   - [For Buckets Storage](#For-Buckets-Storage)
 - [Contributing](#contributing)
 
@@ -37,13 +36,6 @@ pip install -r requirements.txt
 
 api_key/access_token can be found in https://www.multichain.storage/#/api_key, make sure save your APIKey and Access Token after you have generated it, you will not find it again after you created it
 
-```
-#for onchain storage only
-private_key="<PRIVATE_KEY>" # private key of your wallet
-rpc_endpoint="<RPC_ENDPOINT>"# e.g https://polygon-rpc.com
-
-```
-
 **Authentication**
 
  ```python
@@ -51,8 +43,7 @@ from swan_mcs import APIClient
 if __name__ == '__main__':
     api_key="<API_KEY>"
     access_token="<ACCESS_TOKEN>"
-    mcs_api = APIClient(api_key, access_token, chain_name)
-    # polygon.mainnet for mainnet, polygon.mumbai for testnet
+    mcs_api = APIClient(api_key)
  ```
 
 ## 👨‍💻 Examples
@@ -76,18 +67,6 @@ from swan_mcs import BucketAPI
     file_data = bucket_client.upload_file('YOUR_BUCKET_NAME', 'OBJECT_NAME' , 'FILE_PATH') 
     print(file_data.to_json())
 ```
-
-### Onchain Storage
-
-Onchain storage is designed for stored file information in smart contract.It requires payment for each file
-
-* Upload File to Onchain storage
-
- ```python
-from swan_mcs import OnchainAPI
-    onchain = OnchainAPI(mcs_api)
-    print(onchain.upload_file('<File Path>'))
- ```
 
 * Pay for the storage contract
 
